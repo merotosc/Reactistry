@@ -1,7 +1,10 @@
-﻿public enum Item
+﻿using Godot;
+
+public class Item
 {
-    Empty,
-    H,
-    O,
-    C,
+    public Sprite Sprite { get; set; }
+
+    public ItemType Type { get; set; }
+
+    public float Progress { get; set; }
 }

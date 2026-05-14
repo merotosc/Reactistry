@@ -4,10 +4,13 @@ using Godot;
 
 public class SimulationManager : Node
 {
-    private const int TicksPerSecond = 2;
+    private const int TicksPerSecond = 10;
     private const float TickRate = 1.0f / TicksPerSecond;
+    private const int PixelsPerTile = 8;
     private float elapsedTime;
     private readonly Dictionary<Vector2, Belt> belts = [];
+    private readonly Dictionary<Vector2, Producer> producers = [];
+    private readonly List<Item> items = [];
     private TileMap tileMap;
     private Node2D itemLayer;
 
@@ -16,13 +19,18 @@ public class SimulationManager : Node
         tileMap = GetNode<TileMap>("/root/Game/TileMap");
         itemLayer = GetNode<Node2D>("/root/Game/Items");
 
-        belts.Add(new Vector2(0, 0), new Belt { Direction = Direction.Right, Item = Item.O });
-        belts.Add(new Vector2(1, 0), new Belt { Direction = Direction.Right });
-        belts.Add(new Vector2(2, 0), new Belt { Direction = Direction.Right });
-        belts.Add(new Vector2(3, 0), new Belt { Direction = Direction.Right });
-        belts.Add(new Vector2(4, 0), new Belt { Direction = Direction.Right });
+        items.Add(new Item { Type = ItemType.O });
+
+        belts.Add(new Vector2(0, 0), new Belt { OutputDirection = Direction.Right, Item = items[0] });
+        belts.Add(new Vector2(1, 0), new Belt { OutputDirection = Direction.Right });
+        belts.Add(new Vector2(2, 0), new Belt { OutputDirection = Direction.Right });
+        belts.Add(new Vector2(3, 0), new Belt { OutputDirection = Direction.Right });
+        belts.Add(new Vector2(4, 0), new Belt { OutputDirection = Direction.Right });
+
+        producers.Add(new Vector2(-1, 0), new Producer { OutputDirection = Direction.Right });
 
         DrawBelts();
+        DrawItems();
     }
 
     public override void _PhysicsProcess(float delta)
@@ -31,41 +39,58 @@ public class SimulationManager : Node
 
         while (elapsedTime >= TickRate)
         {
-            Tick();
+            Tick(delta);
             elapsedTime -= TickRate;
         }
     }
 
-    private void Tick()
+    private void Tick(float delta)
     {
-        DrawItems();
+        var beltsWithItems = belts
+            .Where(x => x.Value.Item != null)
+            .ToList();
 
-        foreach (var (position, belt) in belts.Reverse())
+        foreach (var (position, belt) in beltsWithItems)
         {
-            if (belt.Item == Item.Empty)
+            if (belt.Item.Progress >= 1)
             {
-                continue;
+                MoveToNextBeltIfFree(position, belt);
             }
-
-            var nextPosition = position + belt.GetNextPosition();
-            if (!belts.TryGetValue(nextPosition, out var nextBelt))
+            else
             {
-                continue;
+                MoveOnBelt(position, belt, delta);
             }
-
-            if (nextBelt.Item != Item.Empty)
-            {
-                continue;
-            }
-
-            nextBelt.Item = belt.Item;
-            belt.Item = Item.Empty;
         }
+
+        foreach (var (position, producer) in producers)
+        {
+            producer.Update(delta);
+        }
+    }
+
+    private void MoveToNextBeltIfFree(Vector2 position, Belt belt)
+    {
+        var nextPosition = position + belt.GetNextPosition();
+        if (!belts.TryGetValue(nextPosition, out var nextBelt) || nextBelt.Item != null)
+        {
+            return;
+        }
+
+        belt.Item.Progress -= 1;
+        nextBelt.Item = belt.Item;
+        belt.Item = null;
+    }
+
+    private static void MoveOnBelt(Vector2 position, Belt belt, float delta)
+    {
+        belt.Item.Progress += delta * belt.Speed;
+        var localPosition = belt.GetInterpolatedPosition(belt.Item.Progress);
+        belt.Item.Sprite.Position = (position + localPosition) * PixelsPerTile;
     }
 
     private void DrawBelts()
     {
-        foreach (var (position, belt) in belts)
+        foreach (var (position, _) in belts)
         {
             var tileId = 0;
             tileMap.SetCell((int)position.x, (int)position.y, tileId);
@@ -74,36 +99,25 @@ public class SimulationManager : Node
 
     private void DrawItems()
     {
-        foreach (var (position, belt) in belts)
+        foreach (var item in items)
         {
-            if (belt.Item == Item.Empty)
+            var sprite = new Sprite
             {
-                continue;
-            }
+                Name = item.Type.ToString(),
+                Texture = GetTextureForItem(item.Type),
+            };
 
-            Sprite sprite;
-            if (!itemLayer.HasNode(position.ToString()))
-            {
-                sprite = new Sprite { Name = position.ToString() };
-                itemLayer.AddChild(sprite);
-            }
-            else
-            {
-                sprite = itemLayer.GetNode<Sprite>(position.ToString());
-            }
-
-            sprite.Position = position * 8;
-            sprite.Texture = GetTextureForItem(belt.Item);
-            GD.Print("Texture position: " + sprite.Position);
+            item.Sprite = sprite;
+            itemLayer.AddChild(sprite);
         }
     }
 
-    private static Texture GetTextureForItem(Item item)
+    private static Texture GetTextureForItem(ItemType item)
     {
         return item switch
         {
-            Item.O => GD.Load<Texture>("res://assets/oxygen.png"),
-            Item.H => GD.Load<Texture>("res://assets/hydrogen.png"),
+            ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
+            ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
             _ => null
         };
     }

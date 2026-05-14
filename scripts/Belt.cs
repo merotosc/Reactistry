@@ -1,21 +1,23 @@
-﻿using System;
+﻿using ChemFactory.scripts;
 using Godot;
 
 public class Belt
 {
     public Item Item { get; set; }
 
-    public Direction Direction { get; set; }
+    public Direction InputDirection { get; set; } = Direction.Left;
+
+    public Direction OutputDirection { get; set; }
+
+    public int Speed { get; set; } = 3;
 
     public Vector2 GetNextPosition()
+        => OutputDirection.ToVector();
+
+    public Vector2 GetInterpolatedPosition(float t)
     {
-        return Direction switch
-        {
-            Direction.Up => Vector2.Up,
-            Direction.Down => Vector2.Down,
-            Direction.Left => Vector2.Left,
-            Direction.Right => Vector2.Right,
-            _ => throw new NotImplementedException($"Direction not recognized"),
-        };
+        var start = InputDirection.ToVector() / 2;
+        var end = OutputDirection.ToVector() / 2;
+        return start.LinearInterpolate(end, t);
     }
 }

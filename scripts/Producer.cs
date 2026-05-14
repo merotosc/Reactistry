@@ -2,7 +2,7 @@
 
 namespace ChemFactory.scripts;
 
-public class Producer
+public class Producer : IBuilding
 {
     private const float ProductionRate = 2;
     private float elapsedTime = 0;
@@ -26,4 +26,7 @@ public class Producer
             elapsedTime -= ProductionRate;
         }
     }
+
+    public bool TryConsumeItem(Item item, Direction inputDirection)
+        => false;
 }

@@ -2,7 +2,7 @@
 
 namespace ChemFactory.scripts;
 
-public class Belt
+public class Belt : IEntity
 {
     public Item Item { get; set; }
 
@@ -20,5 +20,21 @@ public class Belt
         var start = InputDirection.ToVector() / 2;
         var end = OutputDirection.ToVector() / 2;
         return start.LinearInterpolate(end, t);
+    }
+
+    public bool TryConsumeItem(Item item, Direction inputDirection)
+    {
+        if (Item != null)
+        {
+            return false;
+        }
+
+        if (inputDirection != InputDirection)
+        {
+            return false;
+        }
+
+        this.Item = item;
+        return true;
     }
 }

@@ -8,7 +8,7 @@ public class World
 {
     public Dictionary<Vector2, Belt> Belts { get; set; } = [];
 
-    public Dictionary<Vector2, Producer> Producers { get; set; } = [];
+    public Dictionary<Vector2, IBuilding> Buildings { get; set; } = [];
 
     public List<Item> Items { get; set; } = [];
 
@@ -20,34 +20,34 @@ public class World
         Belts.Add(new Vector2(3, 0), new Belt { OutputDirection = Direction.Right });
         Belts.Add(new Vector2(4, 0), new Belt { OutputDirection = Direction.Right });
 
-        Producers.Add(new Vector2(-1, 0), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Right });
+        Buildings.Add(new Vector2(-1, 0), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Right });
+        Buildings.Add(new Vector2(5, 0), new Consumer { InputDirection = Direction.Left });
     }
 
     public void Tick(float delta)
     {
         UpdateBeltItems(delta);
-        UpdateProducers(delta);
+        UpdateBuildings(delta);
     }
 
     public bool CreateItem(ItemType itemType, Vector2 outputPosition, Direction outputDirection)
     {
-        // TODO: use common method to check next belt
         var tilePosition = outputPosition + outputDirection.ToVector();
-        if (!Belts.TryGetValue(tilePosition, out var belt) || belt.Item != null || belt.InputDirection != outputDirection.ReverseDirection())
-        {
-            return false;
-        }
 
         var item = new Item
         {
             Type = itemType,
             TilePosition = tilePosition,
+            Visible = true,
         };
 
-        belt.Item = item;
-        Items.Add(item);
+        var created = TryMoveItemToEntity(item, tilePosition, outputDirection);
+        if (created)
+        {
+            Items.Add(item);
+        }
 
-        return true;
+        return created;
     }
 
     private void UpdateBeltItems(float delta)
@@ -60,7 +60,7 @@ public class World
         {
             if (belt.Item.Progress >= 1)
             {
-                MoveToNextBeltIfFree(position, belt);
+                TryMoveToNextTile(position, belt);
             }
             else
             {
@@ -69,26 +69,38 @@ public class World
         }
     }
 
-    private void UpdateProducers(float delta)
+    private void UpdateBuildings(float delta)
     {
-        foreach (var (position, producer) in Producers)
+        foreach (var (position, building) in Buildings)
         {
-            producer.Update(position, this, delta);
+            building.Update(position, this, delta);
         }
     }
 
-    private void MoveToNextBeltIfFree(Vector2 position, Belt belt)
+    private void TryMoveToNextTile(Vector2 position, Belt belt)
     {
-        var nextPosition = position + belt.OutputPosition();
-        if (!Belts.TryGetValue(nextPosition, out var nextBelt) || nextBelt.Item != null)
+        var tilePosition = position + belt.OutputPosition();
+        var moved = TryMoveItemToEntity(belt.Item, tilePosition, belt.OutputDirection);
+        if (moved)
         {
-            return;
+            belt.Item = null;
         }
+    }
 
-        belt.Item.Progress -= 1;
-        belt.Item.TilePosition = nextPosition;
-        nextBelt.Item = belt.Item;
-        belt.Item = null;
+    private bool TryMoveItemToEntity(Item item, Vector2 position, Direction outputDirection)
+    {
+        var moved = TryMoveItemToEntity(item, position, outputDirection, Belts)
+            || TryMoveItemToEntity(item, position, outputDirection, Buildings);
+
+        item.Progress = item.Progress > 1 ? item.Progress - 1 : 0;
+        item.TilePosition = position;
+        return moved;
+    }
+
+    private static bool TryMoveItemToEntity<T>(Item item, Vector2 position, Direction outputDirection, Dictionary<Vector2, T> entities)
+        where T : IEntity
+    {
+        return entities.TryGetValue(position, out var entity) && entity.TryConsumeItem(item, outputDirection.ReverseDirection());
     }
 
     private static void MoveOnBelt(Vector2 position, Belt belt, float delta)

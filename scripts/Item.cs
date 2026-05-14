@@ -9,4 +9,6 @@ public class Item
     public Vector2 TilePosition { get; set; }
 
     public float Progress { get; set; }
+
+    public bool Visible { get; set; } = true;
 }

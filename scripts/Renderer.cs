@@ -6,8 +6,8 @@ namespace ChemFactory.scripts;
 
 public class Renderer : Node
 {
+    private readonly Dictionary<Item, Sprite> itemSprites = [];
     private World world;
-    private Dictionary<Item, Sprite> itemSprites = [];
     private TileMap tileMap;
     private Node2D itemLayer;
 
@@ -18,7 +18,7 @@ public class Renderer : Node
         itemLayer = GetNode<Node2D>("/root/Game/Items");
 
         InitBelts();
-        InitProducers();
+        InitBuildings();
     }
 
     public override void _Process(float delta)
@@ -36,18 +36,19 @@ public class Renderer : Node
         }
     }
 
-    private void InitProducers()
+    private void InitBuildings()
     {
-        foreach (var (position, _) in world.Producers)
+        foreach (var (position, building) in world.Buildings)
         {
-            tileMap.SetCell((int)position.x, (int)position.y, tile: 0, autotileCoord: new Vector2(0, 1));
+            var tileCoord = GetTileForBuilding(building);
+            tileMap.SetCell((int)position.x, (int)position.y, tile: 0, autotileCoord: tileCoord);
         }
     }
 
     private void AddCreatedItems()
     {
         var itemsToAdd = world.Items
-            .Where(i => !itemSprites.ContainsKey(i))
+            .Where(x => x.Visible && !itemSprites.ContainsKey(x))
             .ToList();
 
         foreach (var item in itemsToAdd)
@@ -59,7 +60,7 @@ public class Renderer : Node
     private void RemoveDeletedItems()
     {
         var itemsToRemove = itemSprites.Keys
-            .Where(i => !world.Items.Contains(i))
+            .Where(x => !x.Visible || !world.Items.Contains(x))
             .ToList();
 
         foreach (var item in itemsToRemove)
@@ -89,13 +90,23 @@ public class Renderer : Node
             var beltExists = world.Belts.TryGetValue(item.TilePosition, out var belt);
             if (!beltExists)
             {
-                GD.PrintErr("Belt does not exist at item tile position");
+                GD.PrintErr("Belt does not exist at item tile position: " + item.TilePosition);
                 continue;
             }
 
             var localPosition = belt.GetInterpolatedPosition(item.Progress);
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
+    }
+
+    private static Vector2 GetTileForBuilding(IBuilding building)
+    {
+        return building switch
+        {
+            Producer => new Vector2(0, 1),
+            Consumer => new Vector2(1, 1),
+            _ => Vector2.Zero,
+        };
     }
 
     private static Texture GetTextureForItem(ItemType item)

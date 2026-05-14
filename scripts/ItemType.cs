@@ -5,4 +5,5 @@ public enum ItemType
     H,
     O,
     C,
+    HO,
 }

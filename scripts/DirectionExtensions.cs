@@ -27,4 +27,28 @@ public static class DirectionExtensions
             _ => Direction.Unknown,
         };
     }
+
+    public static Direction PreviousDirection(this Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => Direction.Left,
+            Direction.Down => Direction.Right,
+            Direction.Left => Direction.Down,
+            Direction.Right => Direction.Up,
+            _ => Direction.Unknown,
+        };
+    }
+
+    public static Direction NextDirection(this Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => Direction.Right,
+            Direction.Down => Direction.Left,
+            Direction.Left => Direction.Up,
+            Direction.Right => Direction.Down,
+            _ => Direction.Unknown,
+        };
+    }
 }

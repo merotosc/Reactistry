@@ -18,15 +18,13 @@ public class Producer : IBuilding
     {
         elapsedTime += delta;
 
-        while (elapsedTime >= ProductionRate)
+        if (elapsedTime >= ProductionRate)
         {
             var created = world.CreateItem(ItemType, position, OutputDirection);
-            if (!created)
+            if (created)
             {
-                break;
+                elapsedTime -= ProductionRate;
             }
-
-            elapsedTime -= ProductionRate;
         }
     }
 

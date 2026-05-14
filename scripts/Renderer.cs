@@ -112,6 +112,7 @@ public class Renderer : Node
         {
             Producer => new Vector2(0, 1),
             Consumer => new Vector2(1, 1),
+            Merger => new Vector2(2, 1),
             _ => Vector2.Zero,
         };
     }
@@ -122,6 +123,7 @@ public class Renderer : Node
         {
             ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
             ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
+            ItemType.HO => GD.Load<Texture>("res://assets/ho.png"),
             _ => null
         };
     }

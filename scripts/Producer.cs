@@ -11,6 +11,9 @@ public class Producer : IBuilding
 
     public Direction OutputDirection { get; set; }
 
+    public Direction GetDirection()
+        => OutputDirection;
+
     public void Update(Vector2 position, World world, float delta)
     {
         elapsedTime += delta;

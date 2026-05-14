@@ -4,7 +4,7 @@ namespace ChemFactory.scripts;
 
 public class Game : Node
 {
-    private World world = new();
+    private readonly World world = new();
 
     public override void _Ready()
     {

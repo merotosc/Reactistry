@@ -6,7 +6,7 @@ public class Belt : IEntity
 {
     public Item Item { get; set; }
 
-    public Direction InputDirection { get; set; } = Direction.Left;
+    public Direction InputDirection { get; set; }
 
     public Direction OutputDirection { get; set; }
 

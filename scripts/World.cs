@@ -14,13 +14,18 @@ public class World
 
     public World()
     {
-        Belts.Add(new Vector2(0, 0), new Belt { OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(1, 0), new Belt { OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(2, 0), new Belt { OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(3, 0), new Belt { OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(4, 0), new Belt { OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(0, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(1, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(2, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(3, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(4, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+
+        Belts.Add(new Vector2(5, -3), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
+        Belts.Add(new Vector2(5, -2), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
+        Belts.Add(new Vector2(5, -1), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
 
         Buildings.Add(new Vector2(-1, 0), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Right });
+        Buildings.Add(new Vector2(5, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
         Buildings.Add(new Vector2(5, 0), new Consumer { InputDirection = Direction.Left });
     }
 
@@ -92,8 +97,12 @@ public class World
         var moved = TryMoveItemToEntity(item, position, outputDirection, Belts)
             || TryMoveItemToEntity(item, position, outputDirection, Buildings);
 
-        item.Progress = item.Progress > 1 ? item.Progress - 1 : 0;
-        item.TilePosition = position;
+        if (moved)
+        {
+            item.Progress = item.Progress > 1 ? item.Progress - 1 : 0;
+            item.TilePosition = position;
+        }
+
         return moved;
     }
 

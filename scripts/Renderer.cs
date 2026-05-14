@@ -30,9 +30,9 @@ public class Renderer : Node
 
     private void InitBelts()
     {
-        foreach (var (position, _) in world.Belts)
+        foreach (var (position, belt) in world.Belts)
         {
-            tileMap.SetCell((int)position.x, (int)position.y, tile: 0, autotileCoord: new Vector2(0, 0));
+            SetTile(position, belt.OutputDirection, new Vector2(0, 0));
         }
     }
 
@@ -41,7 +41,7 @@ public class Renderer : Node
         foreach (var (position, building) in world.Buildings)
         {
             var tileCoord = GetTileForBuilding(building);
-            tileMap.SetCell((int)position.x, (int)position.y, tile: 0, autotileCoord: tileCoord);
+            SetTile(position, building.GetDirection(), tileCoord);
         }
     }
 
@@ -77,6 +77,7 @@ public class Renderer : Node
         {
             Name = item.Type.ToString(),
             Texture = GetTextureForItem(item.Type),
+            ZIndex = 5,
         };
 
         itemSprites.Add(item, sprite);
@@ -99,6 +100,12 @@ public class Renderer : Node
         }
     }
 
+    private void SetTile(Vector2 position, Direction direction, Vector2 tileCoord)
+    {
+        var (mirror, rotate) = GetTileOptionsForDirection(direction);
+        tileMap.SetCellv(position, tile: 0, autotileCoord: tileCoord, flipX: mirror && !rotate, flipY: mirror && rotate, transpose: rotate);
+    }
+
     private static Vector2 GetTileForBuilding(IBuilding building)
     {
         return building switch
@@ -116,6 +123,18 @@ public class Renderer : Node
             ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
             ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
             _ => null
+        };
+    }
+
+    private static (bool Mirror, bool Transpose) GetTileOptionsForDirection(Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => (true, true),
+            Direction.Down => (false, true),
+            Direction.Left => (true, false),
+            Direction.Right => (false, false),
+            Direction.Unknown or _ => throw new System.NotImplementedException()
         };
     }
 }

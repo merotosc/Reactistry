@@ -1,5 +1,6 @@
 # Custom
 export/
+.vs/
 
 # Godot 4+ specific ignores
 .godot/

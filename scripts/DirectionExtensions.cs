@@ -15,4 +15,16 @@ public static class DirectionExtensions
             _ => Vector2.Zero,
         };
     }
+
+    public static Direction ReverseDirection(this Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => Direction.Down,
+            Direction.Down => Direction.Up,
+            Direction.Left => Direction.Right,
+            Direction.Right => Direction.Left,
+            _ => Direction.Unknown,
+        };
+    }
 }

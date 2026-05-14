@@ -1,5 +1,6 @@
-﻿using ChemFactory.scripts;
-using Godot;
+﻿using Godot;
+
+namespace ChemFactory.scripts;
 
 public class Belt
 {
@@ -11,7 +12,7 @@ public class Belt
 
     public int Speed { get; set; } = 3;
 
-    public Vector2 GetNextPosition()
+    public Vector2 OutputPosition()
         => OutputDirection.ToVector();
 
     public Vector2 GetInterpolatedPosition(float t)

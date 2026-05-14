@@ -1,4 +1,6 @@
-﻿public enum ItemType
+﻿namespace ChemFactory.scripts;
+
+public enum ItemType
 {
     H,
     O,

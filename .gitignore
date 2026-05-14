@@ -1,5 +1,6 @@
 # Custom
 export/
+.github/
 .vs/
 
 # Godot 4+ specific ignores

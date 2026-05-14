@@ -38,5 +38,7 @@ script = ExtResource( 2 )
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource( 1 )
 cell_size = Vector2( 8, 8 )
-cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
 format = 1
+
+[node name="Items" type="Node2D" parent="."]
+position = Vector2( 4, 4 )

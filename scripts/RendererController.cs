@@ -20,6 +20,7 @@ public class RendererController : Node
         itemLayer = GetNode<Node2D>("/root/Game/Items");
         this.world = world;
         this.world.EntityCreated += OnEntityCreated;
+        this.world.EntityDeleted += OnEntityDeleted;
     }
 
     public override void _Process(float delta)
@@ -29,11 +30,14 @@ public class RendererController : Node
         DrawItems();
     }
 
-    private void OnEntityCreated(Vector2 position, IEntity entity)
+    private void OnEntityCreated(IEntity entity, EntityOptions entityOptions)
     {
-        GD.PrintS("entity created");
-        var tileCoord = entity.Type.GetTileCoordForEntity();
-        SetTile(position, entity.Direction, tileCoord);
+        tileMap.DrawEntity(entity.Type, entityOptions);
+    }
+
+    private void OnEntityDeleted(Vector2 position)
+    {
+        tileMap.SetCellv(position, tile: -1);
     }
 
     private void AddCreatedItems()
@@ -89,12 +93,6 @@ public class RendererController : Node
             var localPosition = belt.GetInterpolatedPosition(item.Progress);
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
-    }
-
-    private void SetTile(Vector2 position, Direction direction, Vector2 tileCoord)
-    {
-        var (mirror, rotate) = direction.GetTileOptionsForDirection();
-        tileMap.SetCellv(position, tile: 0, autotileCoord: tileCoord, flipX: mirror && !rotate, flipY: mirror && rotate, transpose: rotate);
     }
 
     private static Texture GetTextureForItem(ItemType item)

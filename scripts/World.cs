@@ -18,7 +18,8 @@ public class World
 
     public List<Item> Items { get; set; } = [];
 
-    public event Action<Vector2, IEntity> EntityCreated;
+    public event Action<IEntity, EntityOptions> EntityCreated;
+    public event Action<Vector2> EntityDeleted;
 
     public void LoadDemo()
     {
@@ -56,12 +57,12 @@ public class World
 
         foreach (var belt in Belts)
         {
-            EntityCreated?.Invoke(belt.Key, belt.Value);
+            EntityCreated?.Invoke(belt.Value, new() { Position = belt.Key, Direction = belt.Value.Direction });
         }
 
         foreach (var building in Buildings)
         {
-            EntityCreated?.Invoke(building.Key, building.Value);
+            EntityCreated?.Invoke(building.Value, new() { Position = building.Key, Direction = building.Value.Direction });
         }
     }
 
@@ -100,7 +101,7 @@ public class World
 
         IEntity entity = entityType switch
         {
-            EntityType.Belt => new Belt { InputDirection = entityOptions.Direction.ReverseDirection(), OutputDirection = entityOptions.Direction },
+            EntityType.Belt => new Belt { InputDirection = entityOptions.Direction.ReverseDirection(), OutputDirection = Belt.GetOutputDirectionForVariant(entityOptions.Direction, entityOptions.Variant) },
             EntityType.Producer => new Producer { OutputDirection = entityOptions.Direction },
             EntityType.Consumer => new Consumer { InputDirection = entityOptions.Direction.ReverseDirection() },
             EntityType.Merger => new Merger { OutputDirection = entityOptions.Direction },
@@ -116,7 +117,35 @@ public class World
             Buildings.Add(entityOptions.Position, building);
         }
 
-        EntityCreated?.Invoke(entityOptions.Position, entity);
+        EntityCreated?.Invoke(entity, entityOptions);
+
+        return true;
+    }
+
+    public bool TryDeleteEntity(Vector2 position)
+    {
+        IBuilding building = null;
+
+        if (!Belts.TryGetValue(position, out var belt) && !Buildings.TryGetValue(position, out building))
+        {
+            return false;
+        }
+
+        if (belt != null)
+        {
+            if (belt.Item != null)
+            {
+                Items.Remove(belt.Item);
+            }
+
+            Belts.Remove(position);
+        }
+        else if (building != null)
+        {
+            Buildings.Remove(position);
+        }
+
+        EntityDeleted?.Invoke(position);
 
         return true;
     }
@@ -129,13 +158,15 @@ public class World
 
         foreach (var (position, belt) in beltsWithItems)
         {
+            MoveOnBelt(position, belt, delta);
+
             if (belt.Item.Progress >= 1)
             {
-                TryMoveToNextTile(position, belt);
-            }
-            else
-            {
-                MoveOnBelt(position, belt, delta);
+                var moved = TryMoveToNextTile(position, belt);
+                if (!moved)
+                {
+                    belt.Item.Progress = 1;
+                }
             }
         }
     }
@@ -148,7 +179,7 @@ public class World
         }
     }
 
-    private void TryMoveToNextTile(Vector2 position, Belt belt)
+    private bool TryMoveToNextTile(Vector2 position, Belt belt)
     {
         var tilePosition = position + belt.OutputPosition();
         var moved = TryMoveItemToEntity(belt.Item, tilePosition, belt.OutputDirection);
@@ -156,6 +187,8 @@ public class World
         {
             belt.Item = null;
         }
+
+        return moved;
     }
 
     private bool TryMoveItemToEntity(Item item, Vector2 position, Direction outputDirection)

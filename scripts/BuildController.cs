@@ -7,8 +7,7 @@ namespace ChemFactory.scripts;
 public class BuildController : Node2D
 {
     private World world;
-    private EntityType currentEntity;
-    private Vector2 currentEntityTileCoord;
+    private EntityType currentEntity; // TODO: store in currentEntityOptions?
     private readonly EntityOptions currentEntityOptions = new();
     private TileMap previewTileMap;
 
@@ -39,7 +38,7 @@ public class BuildController : Node2D
     {
         if (e is InputEventMouseButton mouseButton && mouseButton.Pressed)
         {
-            HandleClick();
+            HandleClick(mouseButton.ButtonIndex == (int)ButtonList.Right);
         }
 
         if (e is InputEventKey key && key.Pressed)
@@ -52,13 +51,16 @@ public class BuildController : Node2D
             {
                 RotateEntity(!key.Shift);
             }
+            else if (key.Scancode == (uint)KeyList.T)
+            {
+                ChangeEntityVariant();
+            }
         }
     }
 
     private void SelectEntity(uint keyNumber)
     {
         currentEntity = (EntityType)keyNumber;
-        currentEntityTileCoord = currentEntity.GetTileCoordForEntity();
         RedrawEntityPreview();
     }
 
@@ -70,15 +72,26 @@ public class BuildController : Node2D
         RedrawEntityPreview();
     }
 
-    private void HandleClick()
+    private void ChangeEntityVariant()
     {
-        if (currentEntity == EntityType.None)
-        {
-            return;
-        }
+        // TODO: set variant based on current type
+        currentEntityOptions.Variant = (currentEntityOptions.Variant + 1) % 3;
+        RedrawEntityPreview();
+    }
 
-        GD.PrintS("Requesting entity creation", currentEntity, "at posiiton", currentEntityOptions.Position);
-        world.TryCreateEntity(currentEntity, currentEntityOptions);
+    private void HandleClick(bool rightClick = false)
+    {
+        if (rightClick)
+        {
+            var tilePosition = GetGlobalMousePosition().ToTilePosition();
+            GD.PrintS("Requesting entity deletion at posiiton", tilePosition);
+            world.TryDeleteEntity(tilePosition);
+        }
+        else if (currentEntity != EntityType.None)
+        {
+            GD.PrintS("Requesting entity creation", currentEntity, "at posiiton", currentEntityOptions.Position);
+            world.TryCreateEntity(currentEntity, currentEntityOptions);
+        }
     }
 
     private void RedrawEntityPreview()
@@ -90,10 +103,7 @@ public class BuildController : Node2D
             return;
         }
 
-        var tilePosition = GetGlobalMousePosition().ToTilePosition();
-        currentEntityOptions.Position = tilePosition;
-        // TODO: tile map utility method
-        var (mirror, rotate) = currentEntityOptions.Direction.GetTileOptionsForDirection();
-        previewTileMap.SetCellv(tilePosition, tile: 0, autotileCoord: currentEntityTileCoord, flipX: mirror && !rotate, flipY: mirror && rotate, transpose: rotate);
+        currentEntityOptions.Position = GetGlobalMousePosition().ToTilePosition();
+        previewTileMap.DrawEntity(currentEntity, currentEntityOptions);
     }
 }

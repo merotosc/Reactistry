@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/belts.png-440c100cd98c3b7e41ff7e221301cf34.stex"
+path="res://.import/entities.png-9c8d7a7e2d883326840f865160aae000.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/belts.png"
-dest_files=[ "res://.import/belts.png-440c100cd98c3b7e41ff7e221301cf34.stex" ]
+source_file="res://assets/entities.png"
+dest_files=[ "res://.import/entities.png-9c8d7a7e2d883326840f865160aae000.stex" ]
 
 [params]
 

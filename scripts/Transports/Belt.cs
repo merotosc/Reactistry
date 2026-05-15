@@ -26,7 +26,15 @@ public class Belt : IEntity
     {
         var start = InputDirection.ToVector() / 2;
         var end = OutputDirection.ToVector() / 2;
-        return start.LinearInterpolate(end, t);
+
+        if (InputDirection == OutputDirection.ReverseDirection())
+        {
+            return start.LinearInterpolate(end, t);
+        }
+
+        return t < 0.5f
+            ? start.LinearInterpolate(Vector2.Zero, t * 2)
+            : Vector2.Zero.LinearInterpolate(end, (t - 0.5f) * 2);
     }
 
     public bool TryConsumeItem(Item item, Direction inputDirection)
@@ -43,5 +51,16 @@ public class Belt : IEntity
 
         this.Item = item;
         return true;
+    }
+
+    public static Direction GetOutputDirectionForVariant(Direction direction, int variant)
+    {
+        return variant switch
+        {
+            0 => direction,
+            1 => direction.NextDirection(),
+            2 => direction.PreviousDirection(),
+            _ => direction,
+        };
     }
 }

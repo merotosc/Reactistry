@@ -23,7 +23,6 @@ public class Consumer : IBuilding
             return false;
         }
 
-        item.Visible = false;
         items.Add(item);
         return true;
     }

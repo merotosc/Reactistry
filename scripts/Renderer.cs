@@ -48,7 +48,7 @@ public class Renderer : Node
     private void AddCreatedItems()
     {
         var itemsToAdd = world.Items
-            .Where(x => x.Visible && !itemSprites.ContainsKey(x))
+            .Where(x => !itemSprites.ContainsKey(x))
             .ToList();
 
         foreach (var item in itemsToAdd)
@@ -60,7 +60,7 @@ public class Renderer : Node
     private void RemoveDeletedItems()
     {
         var itemsToRemove = itemSprites.Keys
-            .Where(x => !x.Visible || !world.Items.Contains(x))
+            .Where(x => !world.Items.Contains(x))
             .ToList();
 
         foreach (var item in itemsToRemove)

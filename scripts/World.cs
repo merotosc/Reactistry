@@ -61,7 +61,7 @@ public class World
         {
             Type = itemType,
             TilePosition = tilePosition,
-            Visible = true,
+            Progress = 0,
         };
 
         var created = TryMoveItemToEntity(item, tilePosition, outputDirection);
@@ -112,16 +112,22 @@ public class World
 
     private bool TryMoveItemToEntity(Item item, Vector2 position, Direction outputDirection)
     {
-        var moved = TryMoveItemToEntity(item, position, outputDirection, Belts)
-            || TryMoveItemToEntity(item, position, outputDirection, Buildings);
-
-        if (moved)
+        if (TryMoveItemToEntity(item, position, outputDirection, Belts))
         {
-            item.Progress = item.Progress > 1 ? item.Progress - 1 : 0;
+            item.Progress %= 1f;
             item.TilePosition = position;
+            return true;
         }
 
-        return moved;
+        if (TryMoveItemToEntity(item, position, outputDirection, Buildings))
+        {
+            item.Progress = 0;
+            item.TilePosition = position;
+            Items.Remove(item);
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryMoveItemToEntity<T>(Item item, Vector2 position, Direction outputDirection, Dictionary<Vector2, T> entities)

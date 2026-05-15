@@ -31,7 +31,6 @@ public class Merger : IBuilding
                 elapsedTime -= MergeRate;
                 item1 = null;
                 item2 = null;
-                // TODO: request romoval of items
             }
         }
     }
@@ -44,13 +43,11 @@ public class Merger : IBuilding
         if (inputDirection == inputDirection1 && item1 == null)
         {
             item1 = item;
-            item.Visible = false; // TODO: move logic outside building
             return true;
         }
         else if (inputDirection == inputDirection2 && item2 == null)
         {
             item2 = item;
-            item.Visible = false;
             return true;
         }
 

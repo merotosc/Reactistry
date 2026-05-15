@@ -38,9 +38,22 @@ public class World
         Belts.Add(new Vector2(4, 0), new Belt(Direction.Right));
         Belts.Add(new Vector2(5, 0), new Belt(Direction.Right));
 
-        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right) { ItemType = ItemType.H });
-        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right) { ItemType = ItemType.O });
+        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right) { Molecule = new([new(AtomElement.H, 2)]) });
+        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
         AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
+
+        Belts.Add(new Vector2(-1, -5), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-1, -4), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-1, -3), new Belt(Direction.Right));
+
+        Belts.Add(new Vector2(1, -3), new Belt(Direction.Right));
+        Belts.Add(new Vector2(2, -3), new Belt(Direction.Right));
+        Belts.Add(new Vector2(3, -3), new Belt(Direction.Right));
+
+        AddBuilding(new Producer(new Vector2(-2, -5), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
+        AddBuilding(new Producer(new Vector2(-2, -4), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
+        AddBuilding(new Producer(new Vector2(-2, -3), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
+        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
 
         foreach (var (position, belt) in Belts)
         {
@@ -59,13 +72,15 @@ public class World
         UpdateBuildings(delta);
     }
 
-    public bool TryCreateItem(ItemType itemType, Vector2 outputPosition, Direction outputDirection)
+    public bool TryCreateItem(Molecule molecule, Vector2 outputPosition, Direction outputDirection)
     {
+        GD.PrintS("Requested to create molecule", molecule);
+
         var tilePosition = outputPosition + outputDirection.ToVector();
 
         var item = new Item
         {
-            Type = itemType,
+            Molecule = molecule,
             TilePosition = tilePosition,
             Progress = 0,
         };

@@ -8,6 +8,7 @@ public class GameController : Node
 
     public override void _Ready()
     {
+        ReactionRegistry.Load();
         GetNode<RendererController>("RendererController").Init(world);
         GetNode<SimulationController>("SimulationController").Init(world);
         GetNode<BuildController>("BuildController").Init(world);

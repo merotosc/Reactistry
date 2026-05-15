@@ -71,8 +71,8 @@ public class RendererController : Node
     {
         var sprite = new Sprite
         {
-            Name = item.Type.ToString(),
-            Texture = GetTextureForItem(item.Type),
+            Name = item.Molecule.ToString(),
+            Texture = GetTextureForMolecule(item.Molecule),
             ZIndex = 5,
         };
 
@@ -96,14 +96,15 @@ public class RendererController : Node
         }
     }
 
-    private static Texture GetTextureForItem(ItemType item)
+    private static Texture GetTextureForMolecule(Molecule item)
     {
         return item switch
         {
-            ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
-            ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
-            ItemType.HO => GD.Load<Texture>("res://assets/ho.png"),
-            _ => null
+            //ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
+            //ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
+            //ItemType.HO => GD.Load<Texture>("res://assets/ho.png"),
+            //_ => null
+            _ => GD.Load<Texture>("res://assets/oxygen.png"),
         };
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
@@ -9,11 +10,14 @@ namespace ChemFactory.scripts.Buildings;
 public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
     : Building(anchorPosition, direction)
 {
-    private const float MergeRate = 1;
+    private const float ReactionRate = 1;
     private float elapsedTime = 0;
+    private readonly Direction inputsDirection = direction.ReverseDirection();
     private readonly Item[] items = new Item[inputsCount];
     private readonly int inputsCount = inputsCount;
-    private readonly Direction inputsDirection = direction.ReverseDirection();
+    private bool validReaction;
+    private bool outputReady;
+    private List<Molecule> outputMolecules;
 
     public override EntityType Type => EntityType.Reactor;
 
@@ -27,14 +31,24 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
             elapsedTime += delta;
         }
 
-        if (elapsedTime >= MergeRate)
+        if (outputReady)
         {
-            var created = world.TryCreateItem(ItemType.HO, AnchorPosition, Direction);
+            var molecule = validReaction
+                ? outputMolecules.First()
+                : Molecule.InvalidMolecule;
+
+            var created = world.TryCreateItem(molecule, AnchorPosition, Direction);
             if (created)
             {
-                elapsedTime -= MergeRate;
+                elapsedTime = 0;
                 ClearItems();
+                outputReady = false;
             }
+        }
+        else if (elapsedTime >= ReactionRate)
+        {
+            (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. items.Select(x => x.Molecule)]);
+            outputReady = true;
         }
     }
 

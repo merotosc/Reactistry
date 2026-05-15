@@ -10,7 +10,7 @@ public class Producer(Vector2 anchorPosition, Direction direction)
     private const float ProductionRate = 2;
     private float elapsedTime = 0;
 
-    public ItemType ItemType { get; set; }
+    public Molecule Molecule { get; set; }
 
     public override EntityType Type => EntityType.Producer;
 
@@ -20,7 +20,7 @@ public class Producer(Vector2 anchorPosition, Direction direction)
 
         if (elapsedTime >= ProductionRate)
         {
-            var created = world.TryCreateItem(ItemType, AnchorPosition, Direction);
+            var created = world.TryCreateItem(Molecule, AnchorPosition, Direction);
             if (created)
             {
                 elapsedTime -= ProductionRate;

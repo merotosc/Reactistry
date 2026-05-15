@@ -15,8 +15,9 @@ public class Belt : IEntity
 
     public int Speed { get; set; } = 3;
 
-    public Direction GetDirection()
-        => InputDirection.ReverseDirection();
+    public EntityType Type => EntityType.Belt;
+
+    public Direction Direction => InputDirection.ReverseDirection();
 
     public Vector2 OutputPosition()
         => OutputDirection.ToVector();

@@ -4,7 +4,9 @@ namespace ChemFactory.scripts.Models;
 
 public interface IEntity
 {
-    Direction GetDirection();
+    EntityType Type { get; }
+
+    Direction Direction { get; }
 
     bool TryConsumeItem(Item item, Direction inputDirection);
 }

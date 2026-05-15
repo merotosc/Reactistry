@@ -12,8 +12,9 @@ public class Consumer : IBuilding
 
     public Direction InputDirection { get; set; }
 
-    public Direction GetDirection()
-        => InputDirection.ReverseDirection();
+    public EntityType Type => EntityType.Consumer;
+
+    public Direction Direction => InputDirection.ReverseDirection();
 
     public void Update(Vector2 position, World world, float delta)
     {

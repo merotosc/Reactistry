@@ -16,14 +16,16 @@
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] scroll and zoom map
+- [ ] display shortcut hints
+- [ ] display tutorial hints
 - [ ] improve graphic
 
 ## Editor
 
-- [ ] position belts
+- [x] position belts
 - [ ] auto-detect belt directions
-- [ ] position buildings
-- [ ] rotate buildings
+- [x] position buildings
+- [x] rotate buildings
 - [ ] remove entities
 - [ ] entity options (reactor inputs count)
-- [ ] shortcuts (entity type, rotation)
+- [x] shortcuts (entity type, rotation)

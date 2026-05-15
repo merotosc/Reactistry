@@ -15,8 +15,9 @@ public class Merger : IBuilding
 
     public Direction OutputDirection { get; set; }
 
-    public Direction GetDirection()
-        => OutputDirection;
+    public EntityType Type => EntityType.Merger;
+
+    public Direction Direction => OutputDirection;
 
     public void Update(Vector2 position, World world, float delta)
     {

@@ -52,4 +52,16 @@ public static class DirectionExtensions
             _ => Direction.Unknown,
         };
     }
+
+    public static (bool Mirror, bool Transpose) GetTileOptionsForDirection(this Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => (true, true),
+            Direction.Down => (false, true),
+            Direction.Left => (true, false),
+            Direction.Right => (false, false),
+            Direction.Unknown or _ => throw new System.NotImplementedException()
+        };
+    }
 }

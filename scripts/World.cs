@@ -18,9 +18,9 @@ public class World
 
     public List<Item> Items { get; set; } = [];
 
-    public event Action<IEntity, Vector2> EntityCreated;
+    public event Action<Vector2, IEntity> EntityCreated;
 
-    public World()
+    public void LoadDemo()
     {
         //Belts.Add(new Vector2(0, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
         //Belts.Add(new Vector2(1, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
@@ -53,6 +53,16 @@ public class World
         Buildings.Add(new Vector2(0, 4), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Up });
         Buildings.Add(new Vector2(0, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
         Buildings.Add(new Vector2(0, 0), new Merger { OutputDirection = Direction.Right });
+
+        foreach (var belt in Belts)
+        {
+            EntityCreated?.Invoke(belt.Key, belt.Value);
+        }
+
+        foreach (var building in Buildings)
+        {
+            EntityCreated?.Invoke(building.Key, building.Value);
+        }
     }
 
     public void Tick(float delta)
@@ -81,26 +91,32 @@ public class World
         return created;
     }
 
-    public bool TryCreateEntity(EntityType entityType, Vector2 position)
+    public bool TryCreateEntity(EntityType entityType, EntityOptions entityOptions)
     {
-        if (Belts.ContainsKey(position) || Buildings.ContainsKey(position))
+        if (Belts.ContainsKey(entityOptions.Position) || Buildings.ContainsKey(entityOptions.Position))
         {
             return false;
         }
 
-        if (entityType == EntityType.Belt)
+        IEntity entity = entityType switch
         {
-            var belt = new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right };
-            Belts.Add(position, belt);
-            EntityCreated?.Invoke(belt, position);
-        }
-        else
+            EntityType.Belt => new Belt { InputDirection = entityOptions.Direction.ReverseDirection(), OutputDirection = entityOptions.Direction },
+            EntityType.Producer => new Producer { OutputDirection = entityOptions.Direction },
+            EntityType.Consumer => new Consumer { InputDirection = entityOptions.Direction.ReverseDirection() },
+            EntityType.Merger => new Merger { OutputDirection = entityOptions.Direction },
+            EntityType.None or _ => null,
+        };
+
+        if (entity is Belt belt)
         {
-            // TODO: create based on entity type
-            var producer = new Producer { OutputDirection = Direction.Right };
-            Buildings.Add(position, producer);
-            EntityCreated?.Invoke(producer, position);
+            Belts.Add(entityOptions.Position, belt);
         }
+        else if (entity is IBuilding building)
+        {
+            Buildings.Add(entityOptions.Position, building);
+        }
+
+        EntityCreated?.Invoke(entityOptions.Position, entity);
 
         return true;
     }

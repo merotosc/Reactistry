@@ -11,5 +11,6 @@ public class GameController : Node
         GetNode<RendererController>("RendererController").Init(world);
         GetNode<SimulationController>("SimulationController").Init(world);
         GetNode<BuildController>("BuildController").Init(world);
+        world.LoadDemo();
     }
 }

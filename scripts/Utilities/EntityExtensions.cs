@@ -5,14 +5,15 @@ namespace ChemFactory.scripts.Utilities;
 
 public static class EntityExtensions
 {
-    public static Vector2 GetTileForEntity(this EntityType building)
+    public static Vector2 GetTileCoordForEntity(this EntityType entityType)
     {
-        return building switch
+        return entityType switch
         {
+            EntityType.Belt => new Vector2(0, 0),
             EntityType.Producer => new Vector2(0, 1),
             EntityType.Consumer => new Vector2(1, 1),
             EntityType.Merger => new Vector2(2, 1),
-            _ => Vector2.Zero,
+            EntityType.None or _ => Vector2.Zero,
         };
     }
 }

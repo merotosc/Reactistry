@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChemFactory.scripts.Buildings;
 using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Utilities;
 using Godot;
 
 namespace ChemFactory.scripts;
@@ -20,15 +20,6 @@ public class RendererController : Node
         itemLayer = GetNode<Node2D>("/root/Game/Items");
         this.world = world;
         this.world.EntityCreated += OnEntityCreated;
-
-        InitBelts();
-        InitBuildings();
-    }
-
-    private void OnEntityCreated(IEntity entity, Vector2 position)
-    {
-        var tileCoord = GetTileForBuilding(entity as IBuilding);
-        SetTile(position, entity.GetDirection(), tileCoord);
     }
 
     public override void _Process(float delta)
@@ -38,21 +29,11 @@ public class RendererController : Node
         DrawItems();
     }
 
-    private void InitBelts()
+    private void OnEntityCreated(Vector2 position, IEntity entity)
     {
-        foreach (var (position, belt) in world.Belts)
-        {
-            SetTile(position, belt.OutputDirection, new Vector2(0, 0));
-        }
-    }
-
-    private void InitBuildings()
-    {
-        foreach (var (position, building) in world.Buildings)
-        {
-            var tileCoord = GetTileForBuilding(building);
-            SetTile(position, building.GetDirection(), tileCoord);
-        }
+        GD.PrintS("entity created");
+        var tileCoord = entity.Type.GetTileCoordForEntity();
+        SetTile(position, entity.Direction, tileCoord);
     }
 
     private void AddCreatedItems()
@@ -112,19 +93,8 @@ public class RendererController : Node
 
     private void SetTile(Vector2 position, Direction direction, Vector2 tileCoord)
     {
-        var (mirror, rotate) = GetTileOptionsForDirection(direction);
+        var (mirror, rotate) = direction.GetTileOptionsForDirection();
         tileMap.SetCellv(position, tile: 0, autotileCoord: tileCoord, flipX: mirror && !rotate, flipY: mirror && rotate, transpose: rotate);
-    }
-
-    private static Vector2 GetTileForBuilding(IBuilding building)
-    {
-        return building switch
-        {
-            Producer => new Vector2(0, 1),
-            Consumer => new Vector2(1, 1),
-            Merger => new Vector2(2, 1),
-            _ => Vector2.Zero,
-        };
     }
 
     private static Texture GetTextureForItem(ItemType item)
@@ -135,18 +105,6 @@ public class RendererController : Node
             ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
             ItemType.HO => GD.Load<Texture>("res://assets/ho.png"),
             _ => null
-        };
-    }
-
-    private static (bool Mirror, bool Transpose) GetTileOptionsForDirection(Direction direction)
-    {
-        return direction switch
-        {
-            Direction.Up => (true, true),
-            Direction.Down => (false, true),
-            Direction.Left => (true, false),
-            Direction.Right => (false, false),
-            Direction.Unknown or _ => throw new System.NotImplementedException()
         };
     }
 }

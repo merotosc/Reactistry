@@ -2,17 +2,23 @@
 
 ## General
 
+- [ ] fix reactor errors directly after producer
 - [ ] combine molecule in reactor based on recipes
 - [ ] decide if use delta seconds or tick rate for entities speed
-- [ ] buildings bigger than one tile
+- [ ] extractor validation
+- [ ] reactor inputs
 - [ ] splitter
 - [ ] merger
 - [ ] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem
 - [ ] use TryMoveItemToEntity for splitter merge to avoid new item creation
-- [ ] level tasks
+- [ ] level tasks and consumer
+- [ ] level extractors
+- [ ] use sprite pooling or other batching improvements for items
+- [x] buildings bigger than one tile
 
 ## UI
 
+- [ ] display invalid build positions
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] scroll and zoom map
@@ -26,6 +32,6 @@
 - [ ] auto-detect belt directions
 - [x] position buildings
 - [x] rotate buildings
-- [ ] remove entities
+- [x] remove entities
 - [ ] entity options (reactor inputs count)
 - [x] shortcuts (entity type, rotation)

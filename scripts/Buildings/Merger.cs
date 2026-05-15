@@ -15,9 +15,13 @@ public class Merger : IBuilding
 
     public Direction OutputDirection { get; set; }
 
+    public int InputsCount { get; set; } = 2;
+
     public EntityType Type => EntityType.Merger;
 
     public Direction Direction => OutputDirection;
+
+    public Vector2 Size => Type.GetSizeForEntity(InputsCount - 2);
 
     public void Update(Vector2 position, World world, float delta)
     {

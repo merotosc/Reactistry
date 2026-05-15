@@ -9,4 +9,6 @@ public class EntityOptions
     public Direction Direction { get; set; } = Direction.Right;
 
     public int Variant { get; set; } = 0;
+
+    public int Size { get; set; } = 1;
 }

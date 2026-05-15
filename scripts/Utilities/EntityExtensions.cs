@@ -13,7 +13,19 @@ public static class EntityExtensions
             EntityType.Producer => new Vector2(0, Constants.TileSet.Buildings),
             EntityType.Consumer => new Vector2(1, Constants.TileSet.Buildings),
             EntityType.Merger => new Vector2(2, Constants.TileSet.Buildings),
-            EntityType.None or _ => Vector2.Zero,
+            _ => Vector2.Zero,
+        };
+    }
+
+    public static Vector2 GetSizeForEntity(this EntityType entityType, int variant = 0)
+    {
+        return entityType switch
+        {
+            EntityType.Belt => Vector2.One,
+            EntityType.Producer => Vector2.One,
+            EntityType.Consumer => Vector2.One,
+            EntityType.Merger => new Vector2(1, 2 + variant),
+            _ => Vector2.One,
         };
     }
 }

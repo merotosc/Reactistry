@@ -25,6 +25,7 @@ public class RendererController : Node
 
     public override void _Process(float delta)
     {
+        // TODO: also pass added/removed items using event callback?
         AddCreatedItems();
         RemoveDeletedItems();
         DrawItems();

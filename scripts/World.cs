@@ -14,6 +14,8 @@ public class World
 {
     public Dictionary<Vector2, Belt> Belts { get; set; } = [];
 
+    public Dictionary<Vector2, IBuilding> BuildingTiles { get; set; } = [];
+
     public Dictionary<Vector2, IBuilding> Buildings { get; set; } = [];
 
     public List<Item> Items { get; set; } = [];
@@ -51,18 +53,19 @@ public class World
         Belts.Add(new Vector2(4, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
         Belts.Add(new Vector2(5, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
 
-        Buildings.Add(new Vector2(0, 4), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Up });
-        Buildings.Add(new Vector2(0, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
-        Buildings.Add(new Vector2(0, 0), new Merger { OutputDirection = Direction.Right });
+        BuildingTiles.Add(new Vector2(0, 4), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Up });
+        BuildingTiles.Add(new Vector2(0, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
+        BuildingTiles.Add(new Vector2(0, 0), new Merger { OutputDirection = Direction.Right });
 
-        foreach (var belt in Belts)
+        foreach (var (position, belt) in Belts)
         {
-            EntityCreated?.Invoke(belt.Value, new() { Position = belt.Key, Direction = belt.Value.Direction });
+            EntityCreated?.Invoke(belt, new() { Position = position, Direction = belt.Direction });
         }
 
-        foreach (var building in Buildings)
+        foreach (var (position, building) in BuildingTiles)
         {
-            EntityCreated?.Invoke(building.Value, new() { Position = building.Key, Direction = building.Value.Direction });
+            Buildings.Add(position, building);
+            EntityCreated?.Invoke(building, new() { Position = position, Direction = building.Direction });
         }
     }
 
@@ -94,9 +97,12 @@ public class World
 
     public bool TryCreateEntity(EntityType entityType, EntityOptions entityOptions)
     {
-        if (Belts.ContainsKey(entityOptions.Position) || Buildings.ContainsKey(entityOptions.Position))
+        foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, entityType.GetSizeForEntity(entityOptions.Variant)))
         {
-            return false;
+            if (Belts.ContainsKey(tilePosition) || BuildingTiles.ContainsKey(tilePosition))
+            {
+                return false;
+            }
         }
 
         IEntity entity = entityType switch
@@ -104,8 +110,8 @@ public class World
             EntityType.Belt => new Belt { InputDirection = entityOptions.Direction.ReverseDirection(), OutputDirection = Belt.GetOutputDirectionForVariant(entityOptions.Direction, entityOptions.Variant) },
             EntityType.Producer => new Producer { OutputDirection = entityOptions.Direction },
             EntityType.Consumer => new Consumer { InputDirection = entityOptions.Direction.ReverseDirection() },
-            EntityType.Merger => new Merger { OutputDirection = entityOptions.Direction },
-            EntityType.None or _ => null,
+            EntityType.Merger => new Merger { OutputDirection = entityOptions.Direction, InputsCount = entityOptions.Variant + 2 },
+            _ => null,
         };
 
         if (entity is Belt belt)
@@ -115,6 +121,11 @@ public class World
         else if (entity is IBuilding building)
         {
             Buildings.Add(entityOptions.Position, building);
+
+            foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, building.Size))
+            {
+                BuildingTiles.Add(tilePosition, building);
+            }
         }
 
         EntityCreated?.Invoke(entity, entityOptions);
@@ -126,7 +137,7 @@ public class World
     {
         IBuilding building = null;
 
-        if (!Belts.TryGetValue(position, out var belt) && !Buildings.TryGetValue(position, out building))
+        if (!Belts.TryGetValue(position, out var belt) && !BuildingTiles.TryGetValue(position, out building))
         {
             return false;
         }
@@ -139,13 +150,19 @@ public class World
             }
 
             Belts.Remove(position);
+            EntityDeleted?.Invoke(position);
         }
         else if (building != null)
         {
-            Buildings.Remove(position);
-        }
+            var anchorPosition = Buildings.FirstOrDefault(x => x.Value == building).Key;
+            Buildings.Remove(anchorPosition);
 
-        EntityDeleted?.Invoke(position);
+            foreach (var tilePosition in anchorPosition.EnumeratePositions(building.Direction, building.Size))
+            {
+                BuildingTiles.Remove(tilePosition);
+                EntityDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
+            }
+        }
 
         return true;
     }
@@ -200,7 +217,7 @@ public class World
             return true;
         }
 
-        if (TryMoveItemToEntity(item, position, outputDirection, Buildings))
+        if (TryMoveItemToEntity(item, position, outputDirection, BuildingTiles))
         {
             item.Progress = 0;
             item.TilePosition = position;

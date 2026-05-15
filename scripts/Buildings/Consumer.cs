@@ -16,6 +16,8 @@ public class Consumer : IBuilding
 
     public Direction Direction => InputDirection.ReverseDirection();
 
+    public Vector2 Size => Type.GetSizeForEntity();
+
     public void Update(Vector2 position, World world, float delta)
     {
     }

@@ -1,5 +1,6 @@
 ﻿using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Utilities;
 using Godot;
 
 namespace ChemFactory.scripts.Buildings;
@@ -16,6 +17,8 @@ public class Producer : IBuilding
     public EntityType Type => EntityType.Producer;
 
     public Direction Direction => OutputDirection;
+
+    public Vector2 Size => Type.GetSizeForEntity();
 
     public void Update(Vector2 position, World world, float delta)
     {

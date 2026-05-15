@@ -1,4 +1,5 @@
 ﻿using ChemFactory.scripts.Items;
+using Godot;
 
 namespace ChemFactory.scripts.Models;
 
@@ -8,5 +9,5 @@ public interface IEntity
 
     Direction Direction { get; }
 
-    bool TryConsumeItem(Item item, Direction inputDirection);
+    bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection);
 }

@@ -5,7 +5,9 @@ namespace ChemFactory.scripts.Buildings;
 
 public interface IBuilding : IEntity
 {
+    public Vector2 AnchorPosition { get; }
+
     public Vector2 Size { get; }
 
-    void Update(Vector2 position, World world, float delta);
+    void Update(World world, float delta);
 }

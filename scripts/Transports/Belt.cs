@@ -5,22 +5,19 @@ using Godot;
 
 namespace ChemFactory.scripts.Transports;
 
-public class Belt : IEntity
+public class Belt(Direction direction, BeltVariant variant = BeltVariant.Forward) : IEntity
 {
-    public Item Item { get; set; }
-
-    public Direction InputDirection { get; set; }
-
-    public Direction OutputDirection { get; set; }
-
-    public int Speed { get; set; } = 3;
-
     public EntityType Type => EntityType.Belt;
 
-    public Direction Direction => InputDirection.ReverseDirection();
+    public Item Item { get; set; }
 
-    public Vector2 OutputPosition()
-        => OutputDirection.ToVector();
+    public Direction Direction { get; } = direction;
+
+    public Direction InputDirection { get; } = direction.ReverseDirection();
+
+    public Direction OutputDirection { get; } = GetOutputDirectionForVariant(direction, variant);
+
+    public int Speed { get; } = 3;
 
     public Vector2 GetInterpolatedPosition(float t)
     {
@@ -37,7 +34,7 @@ public class Belt : IEntity
             : Vector2.Zero.LinearInterpolate(end, (t - 0.5f) * 2);
     }
 
-    public bool TryConsumeItem(Item item, Direction inputDirection)
+    public bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
     {
         if (Item != null)
         {
@@ -53,13 +50,13 @@ public class Belt : IEntity
         return true;
     }
 
-    public static Direction GetOutputDirectionForVariant(Direction direction, int variant)
+    private static Direction GetOutputDirectionForVariant(Direction direction, BeltVariant variant)
     {
         return variant switch
         {
-            0 => direction,
-            1 => direction.NextDirection(),
-            2 => direction.PreviousDirection(),
+            BeltVariant.Forward => direction,
+            BeltVariant.Right => direction.NextDirection(),
+            BeltVariant.Left => direction.PreviousDirection(),
             _ => direction,
         };
     }

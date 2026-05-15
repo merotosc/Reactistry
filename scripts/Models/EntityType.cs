@@ -6,5 +6,5 @@ public enum EntityType
     Belt,
     Producer,
     Consumer,
-    Merger,
+    Reactor,
 }

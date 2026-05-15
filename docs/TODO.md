@@ -2,11 +2,11 @@
 
 ## General
 
+- [ ] instantiate preview entity object to avoid messy entity options code
 - [ ] fix reactor errors directly after producer
 - [ ] combine molecule in reactor based on recipes
 - [ ] decide if use delta seconds or tick rate for entities speed
 - [ ] extractor validation
-- [ ] reactor inputs
 - [ ] splitter
 - [ ] merger
 - [ ] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem
@@ -14,6 +14,7 @@
 - [ ] level tasks and consumer
 - [ ] level extractors
 - [ ] use sprite pooling or other batching improvements for items
+- [x] reactor with multiple inputs
 - [x] buildings bigger than one tile
 
 ## UI

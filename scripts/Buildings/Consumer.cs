@@ -6,25 +6,17 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public class Consumer : IBuilding
+public class Consumer(Vector2 anchorPosition, Direction direction)
+    : Building(anchorPosition, direction)
 {
     private readonly List<Item> items = [];
+    private readonly Direction inputDirection = direction.ReverseDirection();
 
-    public Direction InputDirection { get; set; }
+    public override EntityType Type => EntityType.Consumer;
 
-    public EntityType Type => EntityType.Consumer;
-
-    public Direction Direction => InputDirection.ReverseDirection();
-
-    public Vector2 Size => Type.GetSizeForEntity();
-
-    public void Update(Vector2 position, World world, float delta)
+    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
     {
-    }
-
-    public bool TryConsumeItem(Item item, Direction inputDirection)
-    {
-        if (inputDirection != InputDirection)
+        if (inputDirection != this.inputDirection)
         {
             return false;
         }

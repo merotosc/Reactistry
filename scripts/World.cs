@@ -16,7 +16,7 @@ public class World
 
     public Dictionary<Vector2, IBuilding> BuildingTiles { get; set; } = [];
 
-    public Dictionary<Vector2, IBuilding> Buildings { get; set; } = [];
+    public List<IBuilding> Buildings { get; set; } = [];
 
     public List<Item> Items { get; set; } = [];
 
@@ -25,47 +25,31 @@ public class World
 
     public void LoadDemo()
     {
-        //Belts.Add(new Vector2(0, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        //Belts.Add(new Vector2(1, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        //Belts.Add(new Vector2(2, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        //Belts.Add(new Vector2(3, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        //Belts.Add(new Vector2(4, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
+        Belts.Add(new Vector2(-1, -1), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-2, -1), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-3, -1), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-1, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-2, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(-3, 0), new Belt(Direction.Right));
 
-        //Belts.Add(new Vector2(5, -3), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
-        //Belts.Add(new Vector2(5, -2), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
-        //Belts.Add(new Vector2(5, -1), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
+        Belts.Add(new Vector2(1, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(2, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(3, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(4, 0), new Belt(Direction.Right));
+        Belts.Add(new Vector2(5, 0), new Belt(Direction.Right));
 
-        //Buildings.Add(new Vector2(-1, 0), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Right });
-        //Buildings.Add(new Vector2(5, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
-        //Buildings.Add(new Vector2(5, 0), new Consumer { InputDirection = Direction.Left });
-
-        Belts.Add(new Vector2(0, -3), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
-        Belts.Add(new Vector2(0, -2), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
-        Belts.Add(new Vector2(0, -1), new Belt { InputDirection = Direction.Up, OutputDirection = Direction.Down });
-
-        Belts.Add(new Vector2(0, 3), new Belt { InputDirection = Direction.Down, OutputDirection = Direction.Up });
-        Belts.Add(new Vector2(0, 2), new Belt { InputDirection = Direction.Down, OutputDirection = Direction.Up });
-        Belts.Add(new Vector2(0, 1), new Belt { InputDirection = Direction.Down, OutputDirection = Direction.Up });
-
-        Belts.Add(new Vector2(1, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(2, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(3, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(4, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-        Belts.Add(new Vector2(5, 0), new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right });
-
-        BuildingTiles.Add(new Vector2(0, 4), new Producer { ItemType = ItemType.O, OutputDirection = Direction.Up });
-        BuildingTiles.Add(new Vector2(0, -4), new Producer { ItemType = ItemType.H, OutputDirection = Direction.Down });
-        BuildingTiles.Add(new Vector2(0, 0), new Merger { OutputDirection = Direction.Right });
+        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right) { ItemType = ItemType.H });
+        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right) { ItemType = ItemType.O });
+        AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
 
         foreach (var (position, belt) in Belts)
         {
             EntityCreated?.Invoke(belt, new() { Position = position, Direction = belt.Direction });
         }
 
-        foreach (var (position, building) in BuildingTiles)
+        foreach (var building in Buildings)
         {
-            Buildings.Add(position, building);
-            EntityCreated?.Invoke(building, new() { Position = position, Direction = building.Direction });
+            EntityCreated?.Invoke(building, new() { Position = building.AnchorPosition, Direction = building.Direction });
         }
     }
 
@@ -75,7 +59,7 @@ public class World
         UpdateBuildings(delta);
     }
 
-    public bool CreateItem(ItemType itemType, Vector2 outputPosition, Direction outputDirection)
+    public bool TryCreateItem(ItemType itemType, Vector2 outputPosition, Direction outputDirection)
     {
         var tilePosition = outputPosition + outputDirection.ToVector();
 
@@ -107,10 +91,10 @@ public class World
 
         IEntity entity = entityType switch
         {
-            EntityType.Belt => new Belt { InputDirection = entityOptions.Direction.ReverseDirection(), OutputDirection = Belt.GetOutputDirectionForVariant(entityOptions.Direction, entityOptions.Variant) },
-            EntityType.Producer => new Producer { OutputDirection = entityOptions.Direction },
-            EntityType.Consumer => new Consumer { InputDirection = entityOptions.Direction.ReverseDirection() },
-            EntityType.Merger => new Merger { OutputDirection = entityOptions.Direction, InputsCount = entityOptions.Variant + 2 },
+            EntityType.Belt => new Belt(entityOptions.Direction, (BeltVariant)entityOptions.Variant),
+            EntityType.Producer => new Producer(entityOptions.Position, entityOptions.Direction),
+            EntityType.Consumer => new Consumer(entityOptions.Position, entityOptions.Direction),
+            EntityType.Reactor => new Reactor(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
             _ => null,
         };
 
@@ -120,12 +104,7 @@ public class World
         }
         else if (entity is IBuilding building)
         {
-            Buildings.Add(entityOptions.Position, building);
-
-            foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, building.Size))
-            {
-                BuildingTiles.Add(tilePosition, building);
-            }
+            AddBuilding(building);
         }
 
         EntityCreated?.Invoke(entity, entityOptions);
@@ -154,10 +133,10 @@ public class World
         }
         else if (building != null)
         {
-            var anchorPosition = Buildings.FirstOrDefault(x => x.Value == building).Key;
-            Buildings.Remove(anchorPosition);
+            // TODO: create separate method RemoveBuilding as for AddBuilding
+            Buildings.Remove(building);
 
-            foreach (var tilePosition in anchorPosition.EnumeratePositions(building.Direction, building.Size))
+            foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
             {
                 BuildingTiles.Remove(tilePosition);
                 EntityDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
@@ -188,17 +167,27 @@ public class World
         }
     }
 
+    private void AddBuilding(IBuilding building)
+    {
+        Buildings.Add(building);
+
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
+        {
+            BuildingTiles.Add(tilePosition, building);
+        }
+    }
+
     private void UpdateBuildings(float delta)
     {
-        foreach (var (position, building) in Buildings)
+        foreach (var building in Buildings)
         {
-            building.Update(position, this, delta);
+            building.Update(this, delta);
         }
     }
 
     private bool TryMoveToNextTile(Vector2 position, Belt belt)
     {
-        var tilePosition = position + belt.OutputPosition();
+        var tilePosition = position + belt.OutputDirection.ToVector();
         var moved = TryMoveItemToEntity(belt.Item, tilePosition, belt.OutputDirection);
         if (moved)
         {
@@ -231,7 +220,7 @@ public class World
     private static bool TryMoveItemToEntity<T>(Item item, Vector2 position, Direction outputDirection, Dictionary<Vector2, T> entities)
         where T : IEntity
     {
-        return entities.TryGetValue(position, out var entity) && entity.TryConsumeItem(item, outputDirection.ReverseDirection());
+        return entities.TryGetValue(position, out var entity) && entity.TryConsumeItem(item, position, outputDirection.ReverseDirection());
     }
 
     private static void MoveOnBelt(Vector2 position, Belt belt, float delta)

@@ -37,8 +37,6 @@ public static class Vector2Extensions
             (x0, x1) = (1 - x1, 1 - x0);
         }
 
-        GD.PrintS(x0, x1, y0, y1);
-
         for (var xi = x0; xi < x1; xi++)
         {
             for (var yi = y0; yi < y1; yi++)

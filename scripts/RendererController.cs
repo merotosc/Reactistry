@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ChemFactory.scripts.Buildings;
+using ChemFactory.scripts.Items;
+using ChemFactory.scripts.Models;
 using Godot;
 
 namespace ChemFactory.scripts;
 
-public class Renderer : Node
+public class RendererController : Node
 {
     private readonly Dictionary<Item, Sprite> itemSprites = [];
     private World world;
@@ -13,12 +16,19 @@ public class Renderer : Node
 
     public void Init(World world)
     {
-        this.world = world;
         tileMap = GetNode<TileMap>("/root/Game/TileMap");
         itemLayer = GetNode<Node2D>("/root/Game/Items");
+        this.world = world;
+        this.world.EntityCreated += OnEntityCreated;
 
         InitBelts();
         InitBuildings();
+    }
+
+    private void OnEntityCreated(IEntity entity, Vector2 position)
+    {
+        var tileCoord = GetTileForBuilding(entity as IBuilding);
+        SetTile(position, entity.GetDirection(), tileCoord);
     }
 
     public override void _Process(float delta)

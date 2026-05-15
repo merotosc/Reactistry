@@ -1,6 +1,9 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.Items;
+using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Utilities;
+using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Buildings;
 
 public class Merger : IBuilding
 {

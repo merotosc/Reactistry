@@ -1,6 +1,7 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.Models;
+using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Utilities;
 
 public static class DirectionExtensions
 {

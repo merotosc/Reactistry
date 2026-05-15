@@ -1,6 +1,9 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.Items;
+using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Utilities;
+using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Transports;
 
 public class Belt : IEntity
 {
@@ -11,6 +14,9 @@ public class Belt : IEntity
     public Direction OutputDirection { get; set; }
 
     public int Speed { get; set; } = 3;
+
+    public Direction GetDirection()
+        => InputDirection.ReverseDirection();
 
     public Vector2 OutputPosition()
         => OutputDirection.ToVector();

@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ChemFactory.scripts.Buildings;
+using ChemFactory.scripts.Items;
+using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Transports;
+using ChemFactory.scripts.Utilities;
 using Godot;
 
 namespace ChemFactory.scripts;
@@ -11,6 +17,8 @@ public class World
     public Dictionary<Vector2, IBuilding> Buildings { get; set; } = [];
 
     public List<Item> Items { get; set; } = [];
+
+    public event Action<IEntity, Vector2> EntityCreated;
 
     public World()
     {
@@ -71,6 +79,30 @@ public class World
         }
 
         return created;
+    }
+
+    public bool TryCreateEntity(EntityType entityType, Vector2 position)
+    {
+        if (Belts.ContainsKey(position) || Buildings.ContainsKey(position))
+        {
+            return false;
+        }
+
+        if (entityType == EntityType.Belt)
+        {
+            var belt = new Belt { InputDirection = Direction.Left, OutputDirection = Direction.Right };
+            Belts.Add(position, belt);
+            EntityCreated?.Invoke(belt, position);
+        }
+        else
+        {
+            // TODO: create based on entity type
+            var producer = new Producer { OutputDirection = Direction.Right };
+            Buildings.Add(position, producer);
+            EntityCreated?.Invoke(producer, position);
+        }
+
+        return true;
     }
 
     private void UpdateBeltItems(float delta)

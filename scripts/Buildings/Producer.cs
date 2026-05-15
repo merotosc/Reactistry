@@ -1,6 +1,8 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.Items;
+using ChemFactory.scripts.Models;
+using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Buildings;
 
 public class Producer : IBuilding
 {

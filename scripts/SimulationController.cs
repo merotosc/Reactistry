@@ -2,7 +2,7 @@ using Godot;
 
 namespace ChemFactory.scripts;
 
-public class SimulationManager : Node
+public class SimulationController : Node
 {
     private World world;
     private float elapsedTime;

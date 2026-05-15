@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Items;
 
 public class Item
 {

@@ -1,10 +1,9 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.Models;
+using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.Buildings;
 
 public interface IBuilding : IEntity
 {
-    Direction GetDirection();
-
     void Update(Vector2 position, World world, float delta);
 }

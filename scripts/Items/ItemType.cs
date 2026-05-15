@@ -1,4 +1,4 @@
-﻿namespace ChemFactory.scripts;
+﻿namespace ChemFactory.scripts.Items;
 
 public enum ItemType
 {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using Godot;
 
@@ -31,11 +30,6 @@ public class Producer(Vector2 anchorPosition, Direction direction)
 
     public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
         => false;
-
-    public override Vector2 GetInterpolatedPosition(float progress)
-    {
-        return Vector2.Zero;
-    }
 
     public override IEnumerable<Item> GetItems()
         => [];

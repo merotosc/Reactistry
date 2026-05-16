@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChemFactory.scripts.Entities;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -52,37 +51,32 @@ public class World
         AddEntity(new Producer(new Vector2(-2, -3), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
         AddEntity(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
 
-        foreach (var (position, belt) in EntityTiles)
+        foreach (var entity in Entities)
         {
-            EntityCreated?.Invoke(belt, new() { Position = position, Direction = belt.Direction });
-        }
-
-        foreach (var building in Entities)
-        {
-            EntityCreated?.Invoke(building, new() { Position = building.AnchorPosition, Direction = building.Direction });
+            EntityCreated?.Invoke(entity, new() { Position = entity.AnchorPosition, Direction = entity.Direction });
         }
     }
 
     public void Tick(float delta)
     {
         UpdateEntities(delta);
-        UpdateItems();
+        UpdateItems(delta);
     }
 
-    public bool TryCreateItem(Molecule molecule, Vector2 outputPosition, Direction outputDirection)
+    public bool TryCreateItem(Molecule molecule, Vector2 sourcePosition, Direction outputDirection)
     {
         GD.PrintS("Requested to create molecule", molecule);
 
-        var tilePosition = outputPosition + outputDirection.ToVector();
+        var targetPosition = sourcePosition + outputDirection.ToVector();
 
+        // TODO: avoid allocation every request
         var item = new Item
         {
             Molecule = molecule,
-            TilePosition = tilePosition,
-            Progress = 0,
+            TilePosition = targetPosition,
         };
 
-        var created = TryMoveItemToEntity(item, tilePosition, outputDirection);
+        var created = TryMoveItem(item, targetPosition, outputDirection.Reverse());
         if (created)
         {
             Items.Add(item);
@@ -103,6 +97,21 @@ public class World
         return allRemoved;
     }
 
+    public bool TryMoveItem(Item item, Vector2 targetPosition, Direction fromDirection)
+    {
+        if (EntityTiles.TryGetValue(targetPosition, out var entity)
+            && entity.TryConsumeItem(item, targetPosition, fromDirection))
+        {
+            var overshoot = item.DistanceOvershoot;
+            item.TilePosition = targetPosition;
+            item.Path = entity.GetItemPath(item.TilePosition);
+            item.DistanceOnPath = overshoot;
+            return true;
+        }
+
+        return false;
+    }
+
     public bool TryCreateEntity(EntityType entityType, EntityOptions entityOptions)
     {
         foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, entityType.GetSizeForEntity(entityOptions.Variant)))
@@ -119,8 +128,15 @@ public class World
             EntityType.Producer => new Producer(entityOptions.Position, entityOptions.Direction),
             EntityType.Consumer => new Consumer(entityOptions.Position, entityOptions.Direction),
             EntityType.Reactor => new Reactor(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
+            EntityType.Merger => new Merger(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
             _ => null,
         };
+
+        if (entity == null)
+        {
+            GD.PrintErr("Entity to create not found", entityType);
+            return false;
+        }
 
         AddEntity(entity);
         EntityCreated?.Invoke(entity, entityOptions);
@@ -159,18 +175,13 @@ public class World
         }
     }
 
-    private void UpdateItems()
+    private void UpdateItems(float delta)
     {
-        foreach (var (position, entity) in EntityTiles)
+        foreach (var entity in Entities)
         {
-            // TODO: move logic in belt update?
-            if (entity is Belt belt && belt.Item?.Progress >= 1)
+            foreach (var item in entity.GetItems())
             {
-                var moved = TryMoveToNextTile(position, belt);
-                if (!moved)
-                {
-                    belt.Item.Progress = 1;
-                }
+                item?.TravelDistance(delta * Constants.ItemSpeed);
             }
         }
     }
@@ -181,36 +192,5 @@ public class World
         {
             entity.Update(this, delta);
         }
-    }
-
-    private bool TryMoveToNextTile(Vector2 position, Belt belt)
-    {
-        var tilePosition = position + belt.OutputDirection.ToVector();
-        var moved = TryMoveItemToEntity(belt.Item, tilePosition, belt.OutputDirection);
-        if (moved)
-        {
-            belt.Item = null;
-        }
-
-        return moved;
-    }
-
-    private bool TryMoveItemToEntity(Item item, Vector2 position, Direction outputDirection)
-    {
-        if (TryMoveItemToEntity(item, position, outputDirection, EntityTiles))
-        {
-            item.Progress %= 1f;
-            item.TilePosition = position;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryMoveItemToEntity<T>(Item item, Vector2 position, Direction outputDirection, Dictionary<Vector2, T> entities)
-        where T : IEntity
-    {
-        return entities.TryGetValue(position, out var entity)
-            && entity.TryConsumeItem(item, position, outputDirection.ReverseDirection());
     }
 }

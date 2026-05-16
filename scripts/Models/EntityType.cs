@@ -7,4 +7,5 @@ public enum EntityType
     Producer,
     Consumer,
     Reactor,
+    Merger,
 }

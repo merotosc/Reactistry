@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -84,14 +83,14 @@ public class RendererController : Node
     {
         foreach (var (item, sprite) in itemSprites)
         {
-            var beltExists = world.EntityTiles.TryGetValue(item.TilePosition, out var entity);
-            if (!beltExists)
+            var entityExists = world.EntityTiles.TryGetValue(item.TilePosition, out var _);
+            if (!entityExists)
             {
-                GD.PrintErr("Belt does not exist at item tile position: " + item.TilePosition);
+                GD.PrintErr("Entity does not exist at item tile position: " + item.TilePosition);
                 continue;
             }
 
-            var localPosition = entity.GetInterpolatedPosition(item.Progress);
+            var localPosition = item.GetPositionOnPath();
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
     }

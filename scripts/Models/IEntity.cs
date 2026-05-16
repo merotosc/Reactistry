@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Items;
 using Godot;
 
 namespace ChemFactory.scripts.Models;
@@ -18,7 +17,7 @@ public interface IEntity
 
     bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection);
 
-    Vector2 GetInterpolatedPosition(float progress);
-
     IEnumerable<Item> GetItems();
+
+    ItemPath GetItemPath(Vector2 tilePosition);
 }

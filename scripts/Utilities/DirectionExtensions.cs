@@ -17,7 +17,7 @@ public static class DirectionExtensions
         };
     }
 
-    public static Direction ReverseDirection(this Direction direction)
+    public static Direction Reverse(this Direction direction)
     {
         return direction switch
         {
@@ -29,7 +29,7 @@ public static class DirectionExtensions
         };
     }
 
-    public static Direction PreviousDirection(this Direction direction)
+    public static Direction Previous(this Direction direction)
     {
         return direction switch
         {
@@ -41,7 +41,7 @@ public static class DirectionExtensions
         };
     }
 
-    public static Direction NextDirection(this Direction direction)
+    public static Direction Next(this Direction direction)
     {
         return direction switch
         {

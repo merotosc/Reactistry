@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -12,9 +11,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
 {
     private const float ReactionRate = 1;
     private float elapsedTime = 0;
-    private readonly Direction inputsDirection = direction.ReverseDirection();
-    private readonly Item[] items = new Item[inputsCount];
+    private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = inputsCount;
+    private readonly Item[] items = new Item[inputsCount];
     private bool validReaction;
     private bool outputReady;
     private List<Molecule> outputMolecules;
@@ -70,11 +69,6 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
         }
 
         return false;
-    }
-
-    public override Vector2 GetInterpolatedPosition(float progress)
-    {
-        return Vector2.Zero;
     }
 
     public override IEnumerable<Item> GetItems()

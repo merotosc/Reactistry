@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -10,7 +9,7 @@ public class Consumer(Vector2 anchorPosition, Direction direction)
     : Entity(anchorPosition, direction)
 {
     private readonly List<Item> items = [];
-    private readonly Direction inputDirection = direction.ReverseDirection();
+    private readonly Direction inputDirection = direction.Reverse();
 
     public override EntityType Type => EntityType.Consumer;
 
@@ -23,11 +22,6 @@ public class Consumer(Vector2 anchorPosition, Direction direction)
 
         items.Add(item);
         return true;
-    }
-
-    public override Vector2 GetInterpolatedPosition(float progress)
-    {
-        return Vector2.Zero;
     }
 
     public override IEnumerable<Item> GetItems()

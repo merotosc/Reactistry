@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -9,19 +8,26 @@ namespace ChemFactory.scripts.Entities;
 public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant variant = BeltVariant.Forward)
     : Entity(anchorPosition, direction)
 {
+    private ItemPath[] itemPaths;
+
     public override EntityType Type => EntityType.Belt;
 
     public Item Item { get; set; }
 
-    public Direction InputDirection { get; } = direction.ReverseDirection();
+    public Direction InputDirection { get; } = direction.Reverse();
 
     public Direction OutputDirection { get; } = GetOutputDirectionForVariant(direction, variant);
 
-    public int Speed { get; } = 3;
-
     public override void Update(World world, float delta)
     {
-        Item?.Progress += delta * Speed;
+        if (Item?.PathEndReached ?? false)
+        {
+            var moved = world.TryMoveItem(Item, AnchorPosition + OutputDirection.ToVector(), OutputDirection.Reverse());
+            if (moved)
+            {
+                Item = null;
+            }
+        }
     }
 
     public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
@@ -36,23 +42,8 @@ public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant varia
             return false;
         }
 
-        this.Item = item;
+        Item = item;
         return true;
-    }
-
-    public override Vector2 GetInterpolatedPosition(float t)
-    {
-        var start = InputDirection.ToVector() / 2;
-        var end = OutputDirection.ToVector() / 2;
-
-        if (InputDirection == OutputDirection.ReverseDirection())
-        {
-            return start.LinearInterpolate(end, t);
-        }
-
-        return t < 0.5f
-            ? start.LinearInterpolate(Vector2.Zero, t * 2)
-            : Vector2.Zero.LinearInterpolate(end, (t - 0.5f) * 2);
     }
 
     private static Direction GetOutputDirectionForVariant(Direction direction, BeltVariant variant)
@@ -60,12 +51,31 @@ public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant varia
         return variant switch
         {
             BeltVariant.Forward => direction,
-            BeltVariant.Right => direction.NextDirection(),
-            BeltVariant.Left => direction.PreviousDirection(),
+            BeltVariant.Right => direction.Next(),
+            BeltVariant.Left => direction.Previous(),
             _ => direction,
         };
     }
 
     public override IEnumerable<Item> GetItems()
        => [Item];
+
+    public override ItemPath GetItemPath(Vector2 tilePosition)
+    {
+        if (itemPaths == null)
+        {
+            itemPaths = new ItemPath[3];
+
+            var right = Direction.ToVector() / 2;
+            var left = -right;
+            var down = Direction.Next().ToVector() / 2;
+            var up = -down;
+
+            itemPaths[0] = new ItemPath(left, right);
+            itemPaths[1] = new ItemPath(left, Vector2.Zero, down);
+            itemPaths[2] = new ItemPath(left, Vector2.Zero, up);
+        }
+
+        return itemPaths[(int)variant];
+    }
 }

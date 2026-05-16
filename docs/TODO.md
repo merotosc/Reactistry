@@ -2,6 +2,9 @@
 
 ## General
 
+- [ ] check properties that can become fields or private setter
+- [ ] pause/run simulation
+- [ ] rename entity to building
 - [ ] keep moving items inside buildings
 - [ ] instantiate preview entity object to avoid messy entity options code
 - [ ] fix reactor errors directly after producer

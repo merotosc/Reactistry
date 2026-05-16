@@ -67,8 +67,8 @@ public class BuildController : Node2D
     private void RotateEntity(bool clockwise)
     {
         currentEntityOptions.Direction = clockwise
-            ? currentEntityOptions.Direction.NextDirection()
-            : currentEntityOptions.Direction.PreviousDirection();
+            ? currentEntityOptions.Direction.Next()
+            : currentEntityOptions.Direction.Previous();
         RedrawEntityPreview();
     }
 

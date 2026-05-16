@@ -13,9 +13,10 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     private float elapsedTime = 0;
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = inputsCount;
-    private readonly Item[] items = new Item[inputsCount];
+    private readonly Item[] inputItems = new Item[inputsCount];
+    private Item outputItem;
+    private ItemPath itemOutputPath;
     private bool validReaction;
-    private bool outputReady;
     private List<Molecule> outputMolecules;
 
     public override EntityType Type => EntityType.Reactor;
@@ -25,32 +26,35 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     public override void Update(World world, float delta)
     {
         // TODO: create helper to make timer
-        if (items.All(x => x != null))
+        if (elapsedTime < ReactionRate && inputItems.All(x => x != null))
         {
             elapsedTime += delta;
         }
 
-        if (outputReady)
+        if (outputItem?.PathEndReached ?? false)
         {
+            if (world.TryMoveItem(outputItem, AnchorPosition + Direction.ToVector(), Direction.Reverse()))
+            {
+                outputItem = null;
+                elapsedTime = 0;
+            }
+        }
+
+        else if (elapsedTime >= ReactionRate && outputItem == null)
+        {
+            (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. inputItems.Select(x => x.Molecule)]);
+
             // TODO: support multiple output molecules
             var molecule = validReaction
                 ? outputMolecules.First()
                 : Molecule.InvalidMolecule;
 
             // TODO: output molecules count as separate molecules
-            var created = world.TryCreateItem(molecule, AnchorPosition, Direction);
-            if (created)
-            {
-                outputReady = false;
-                elapsedTime = 0;
-                world.TryDeleteItems(items);
-                ClearItems();
-            }
-        }
-        else if (elapsedTime >= ReactionRate)
-        {
-            (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. items.Select(x => x.Molecule)]);
-            outputReady = true;
+            outputItem = new Item(molecule, AnchorPosition, GetItemOutputPath());
+            world.AddItems([outputItem]);
+            world.TryDeleteItems(inputItems);
+            ClearItems();
+            elapsedTime -= ReactionRate;
         }
     }
 
@@ -62,9 +66,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
         }
 
         var inputNumber = Mathf.RoundToInt(AnchorPosition.DistanceTo(position));
-        if (items[inputNumber] == null)
+        if (inputItems[inputNumber] == null)
         {
-            items[inputNumber] = item;
+            inputItems[inputNumber] = item;
             return true;
         }
 
@@ -72,13 +76,18 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     }
 
     public override IEnumerable<Item> GetItems()
-        => [.. items.Where(x => x != null)];
+        => [.. inputItems.Append(outputItem).Where(x => x != null)];
 
     private void ClearItems()
     {
-        for (var i = 0; i < items.Length; i++)
+        for (var i = 0; i < inputItems.Length; i++)
         {
-            items[i] = null;
+            inputItems[i] = null;
         }
+    }
+
+    private ItemPath GetItemOutputPath()
+    {
+        return itemOutputPath ??= new ItemPath(Vector2.Zero, Direction.ToVector() / 2);
     }
 }

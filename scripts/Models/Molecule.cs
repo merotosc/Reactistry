@@ -9,9 +9,9 @@ public class Molecule(List<Atom> atoms, int count = 1)
 {
     private static readonly Regex FormulaRegex = new(@"([A-Z][a-z]*)(\d*)", RegexOptions.Compiled);
 
-    public List<Atom> Atoms { get; set; } = atoms;
+    public List<Atom> Atoms { get; } = atoms;
 
-    public int Count { get; set; } = count;
+    public int Count { get; } = count;
 
     public static Molecule InvalidMolecule
         => new([new(AtomElement.Invalid)]);

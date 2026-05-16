@@ -2,13 +2,13 @@
 
 namespace ChemFactory.scripts.Models;
 
-public class Item
+public class Item(Molecule molecule, Vector2 tilePosition, ItemPath path)
 {
-    public Molecule Molecule { get; set; }
+    public Molecule Molecule { get; } = molecule;
 
-    public Vector2 TilePosition { get; set; }
+    public Vector2 TilePosition { get; set; } = tilePosition;
 
-    public ItemPath Path { get; set; }
+    public ItemPath Path { get; set; } = path;
 
     public float DistanceOnPath { get; set; }
 

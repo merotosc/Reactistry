@@ -2,9 +2,9 @@
 
 public class Atom(AtomElement element, int count = 1)
 {
-    public AtomElement Element { get; set; } = element;
+    public AtomElement Element { get; } = element;
 
-    public int Count { get; set; } = count;
+    public int Count { get; } = count;
 
     public override string ToString()
         => Count > 1

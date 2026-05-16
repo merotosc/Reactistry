@@ -68,11 +68,13 @@ public class RendererController : Node
 
     private void CreateItemSprite(Item item)
     {
+        var name = item.Molecule.ToString();
         var sprite = new Sprite
         {
-            Name = item.Molecule.ToString(),
-            Texture = GetTextureForMolecule(item.Molecule),
+            Name = name,
+            Texture = GD.Load<Texture>("res://assets/molecule.png"),
             ZIndex = 5,
+            Modulate = name.ColorHash(),
         };
 
         itemSprites.Add(item, sprite);
@@ -93,17 +95,5 @@ public class RendererController : Node
             var localPosition = item.GetPositionOnPath();
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
-    }
-
-    private static Texture GetTextureForMolecule(Molecule item)
-    {
-        return item switch
-        {
-            //ItemType.O => GD.Load<Texture>("res://assets/oxygen.png"),
-            //ItemType.H => GD.Load<Texture>("res://assets/hydrogen.png"),
-            //ItemType.HO => GD.Load<Texture>("res://assets/ho.png"),
-            //_ => null
-            _ => GD.Load<Texture>("res://assets/oxygen.png"),
-        };
     }
 }

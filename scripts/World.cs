@@ -63,26 +63,9 @@ public class World
         UpdateItems(delta);
     }
 
-    public bool TryCreateItem(Molecule molecule, Vector2 sourcePosition, Direction outputDirection)
+    public void AddItems(IEnumerable<Item> items)
     {
-        GD.PrintS("Requested to create molecule", molecule);
-
-        var targetPosition = sourcePosition + outputDirection.ToVector();
-
-        // TODO: avoid allocation every request
-        var item = new Item
-        {
-            Molecule = molecule,
-            TilePosition = targetPosition,
-        };
-
-        var created = TryMoveItem(item, targetPosition, outputDirection.Reverse());
-        if (created)
-        {
-            Items.Add(item);
-        }
-
-        return created;
+        Items.AddRange(items);
     }
 
     public bool TryDeleteItems(IEnumerable<Item> items)
@@ -177,13 +160,19 @@ public class World
 
     private void UpdateItems(float delta)
     {
-        foreach (var entity in Entities)
+        foreach (var item in Items)
         {
-            foreach (var item in entity.GetItems())
-            {
-                item?.TravelDistance(delta * Constants.ItemSpeed);
-            }
+            item.TravelDistance(delta * Constants.ItemSpeed);
         }
+
+        // TODO: delete?
+        //foreach (var entity in Entities)
+        //{
+        //    foreach (var item in entity.GetItems())
+        //    {
+        //        item?.TravelDistance(delta * Constants.ItemSpeed);
+        //    }
+        //}
     }
 
     private void UpdateEntities(float delta)

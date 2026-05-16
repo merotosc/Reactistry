@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] use state machine for buildings update loop
 - [ ] check properties that can become fields or private setter
 - [ ] pause/run simulation
 - [ ] rename entity to building

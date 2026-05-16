@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/oxygen.png-daf0d3d410773a16fdc0390d0de66ca8.stex"
+path="res://.import/molecule.png-391b162e0e077c994b9a763a7e5f5315.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/oxygen.png"
-dest_files=[ "res://.import/oxygen.png-daf0d3d410773a16fdc0390d0de66ca8.stex" ]
+source_file="res://assets/molecule.png"
+dest_files=[ "res://.import/molecule.png-391b162e0e077c994b9a763a7e5f5315.stex" ]
 
 [params]
 

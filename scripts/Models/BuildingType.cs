@@ -7,5 +7,6 @@ public enum BuildingType
     Producer,
     Consumer,
     Reactor,
+    Splitter,
     Merger,
 }

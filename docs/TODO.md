@@ -2,25 +2,27 @@
 
 ## General
 
+- [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] save and load game data
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
-- [ ] check properties that can become fields or private setter
 - [ ] pause/run simulation
-- [ ] rename entity to building
-- [ ] keep moving items inside buildings
 - [ ] instantiate preview entity object to avoid messy entity options code
-- [ ] fix reactor errors directly after producer
-- [ ] combine molecule in reactor based on recipes
+- [ ] check if buildings side by side without belts do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
 - [ ] extractor validation
-- [ ] splitter
-- [ ] merger
-- [ ] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem
+- [ ] merger round robin
 - [ ] use TryMoveItemToEntity for splitter merge to avoid new item creation
 - [ ] level tasks and consumer
 - [ ] level extractors
 - [ ] use sprite pooling or other batching improvements for items
+- [x] splitter
+- [x] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem -> updated item creation logic
+- [x] merger
+- [x] combine molecule in reactor based on recipes
+- [x] keep moving items inside buildings
+- [x] rename entity to building
+- [x] check properties that can become fields or private setter
 - [x] reactor with multiple inputs
 - [x] buildings bigger than one tile
 

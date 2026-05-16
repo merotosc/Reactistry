@@ -6,17 +6,18 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
+public class Splitter(Vector2 anchorPosition, Direction direction, int outputsCount = 2)
     : Building(anchorPosition, direction)
 {
-    private readonly Direction inputsDirection = direction.Reverse();
-    private readonly int inputsCount = inputsCount;
-    private readonly Item[] items = new Item[inputsCount];
+    private readonly Direction inputDirection = direction.Reverse();
+    private readonly int outputsCount = outputsCount;
+    private readonly Item[] items = new Item[outputsCount];
     private ItemPath[] itemPaths;
+    private int roundRobin;
 
-    public override BuildingType Type => BuildingType.Merger;
+    public override BuildingType Type => BuildingType.Splitter;
 
-    public override Vector2 Size => Type.GetSizeForBuilding(inputsCount - 2);
+    public override Vector2 Size => Type.GetSizeForBuilding(outputsCount - 2);
 
     public override void Update(World world, float delta)
     {
@@ -25,7 +26,8 @@ public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount
             var item = items[i];
             if (item?.PathEndReached ?? false)
             {
-                if (world.TryMoveItem(item, AnchorPosition + Direction.ToVector(), Direction.Reverse()))
+                var itemPosition = AnchorPosition + Direction.Previous().ToVector() * i;
+                if (world.TryMoveItem(item, itemPosition + Direction.ToVector(), Direction.Reverse()))
                 {
                     items[i] = null;
                 }
@@ -35,18 +37,18 @@ public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount
 
     public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
     {
-        if (inputDirection != inputsDirection)
+        if (inputDirection != this.inputDirection || position != AnchorPosition)
         {
             return false;
         }
 
-        var inputNumber = DistanceFromAnchor(position);
-        if (items[inputNumber] != null)
+        if (items[roundRobin] != null)
         {
             return false;
         }
 
-        items[inputNumber] = item;
+        items[roundRobin] = item;
+
         return true;
     }
 
@@ -62,17 +64,19 @@ public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount
             var right = Direction.ToVector() / 2;
             var left = -right;
             var center = Vector2.Zero;
-            var down = Direction.Next().ToVector();
+            var up = Direction.Previous().ToVector();
 
             for (var i = 0; i < items.Length; i++)
             {
-                var bottomCenter = down * i;
-                var bottomRight = bottomCenter + right;
-                itemPaths[i] = new ItemPath(left, center, bottomCenter, bottomRight);
+                var topCenter = up * i;
+                var topRight = topCenter + right;
+                itemPaths[i] = new ItemPath(left, center, topCenter, topRight);
             }
         }
 
-        var inputNumber = DistanceFromAnchor(tilePosition);
-        return itemPaths[inputNumber];
+        var path = itemPaths[roundRobin];
+        roundRobin++;
+        roundRobin %= outputsCount;
+        return path;
     }
 }

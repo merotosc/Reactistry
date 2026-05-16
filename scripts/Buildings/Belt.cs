@@ -55,7 +55,7 @@ public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant varia
     }
 
     public override IEnumerable<Item> GetItems()
-       => [Item];
+       => Item != null ? [Item] : [];
 
     public override ItemPath GetItemPath(Vector2 tilePosition)
     {

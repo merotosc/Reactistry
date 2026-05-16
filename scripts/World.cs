@@ -89,7 +89,7 @@ public class World
         {
             var overshoot = item.DistanceOvershoot;
             item.TilePosition = targetPosition;
-            item.Path = building.GetItemPath(item.TilePosition);
+            item.Path = building.GetItemPath(item.TilePosition); // TODO: set item path inside building directly?
             item.DistanceOnPath = overshoot;
             return true;
         }
@@ -113,6 +113,7 @@ public class World
             BuildingType.Producer => new Producer(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
             BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
             BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
+            BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
             BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
             _ => null,
         };

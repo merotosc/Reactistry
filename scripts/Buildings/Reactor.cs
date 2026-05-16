@@ -14,7 +14,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = inputsCount;
     private readonly Item[] inputItems = new Item[inputsCount];
-    private Item outputItem;
+    private readonly Queue<Item> outputItems = [];
     private ItemPath itemOutputPath;
     private bool validReaction;
     private List<Molecule> outputMolecules;
@@ -31,16 +31,16 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
             elapsedTime += delta;
         }
 
-        if (outputItem?.PathEndReached ?? false)
+        if (outputItems.TryPeek(out var item) && item.PathEndReached)
         {
-            if (world.TryMoveItem(outputItem, AnchorPosition + Direction.ToVector(), Direction.Reverse()))
+            if (world.TryMoveItem(outputItems.Peek(), AnchorPosition + Direction.ToVector(), Direction.Reverse()))
             {
-                outputItem = null;
+                outputItems.Dequeue();
                 elapsedTime = 0;
             }
         }
 
-        else if (elapsedTime >= ReactionRate && outputItem == null)
+        else if (elapsedTime >= ReactionRate && outputItems.Count == 0)
         {
             (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. inputItems.Select(x => x.Molecule)]);
 
@@ -49,9 +49,12 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
                 ? outputMolecules.First()
                 : Molecule.InvalidMolecule;
 
-            // TODO: output molecules count as separate molecules
-            outputItem = new Item(molecule, AnchorPosition, GetItemOutputPath());
-            world.AddItems([outputItem]);
+            for (var i = 0; i < molecule.Count; i++)
+            {
+                outputItems.Enqueue(new Item(molecule, AnchorPosition, GetItemOutputPath()));
+            }
+
+            world.AddItems(outputItems);
             world.TryDeleteItems(inputItems);
             ClearItems();
             elapsedTime -= ReactionRate;
@@ -76,7 +79,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     }
 
     public override IEnumerable<Item> GetItems()
-        => [.. inputItems.Append(outputItem).Where(x => x != null)];
+        => [.. inputItems.Concat(outputItems).Where(x => x != null)];
 
     private void ClearItems()
     {

@@ -84,14 +84,14 @@ public class RendererController : Node
     {
         foreach (var (item, sprite) in itemSprites)
         {
-            var beltExists = world.Belts.TryGetValue(item.TilePosition, out var belt);
+            var beltExists = world.EntityTiles.TryGetValue(item.TilePosition, out var entity);
             if (!beltExists)
             {
                 GD.PrintErr("Belt does not exist at item tile position: " + item.TilePosition);
                 continue;
             }
 
-            var localPosition = belt.GetInterpolatedPosition(item.Progress);
+            var localPosition = entity.GetInterpolatedPosition(item.Progress);
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
     }

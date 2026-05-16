@@ -5,10 +5,10 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Buildings;
+namespace ChemFactory.scripts.Entities;
 
 public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
-    : Building(anchorPosition, direction)
+    : Entity(anchorPosition, direction)
 {
     private const float ReactionRate = 1;
     private float elapsedTime = 0;
@@ -42,9 +42,10 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
             var created = world.TryCreateItem(molecule, AnchorPosition, Direction);
             if (created)
             {
-                elapsedTime = 0;
-                ClearItems();
                 outputReady = false;
+                elapsedTime = 0;
+                world.TryDeleteItems(items);
+                ClearItems();
             }
         }
         else if (elapsedTime >= ReactionRate)
@@ -70,6 +71,14 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
 
         return false;
     }
+
+    public override Vector2 GetInterpolatedPosition(float progress)
+    {
+        return Vector2.Zero;
+    }
+
+    public override IEnumerable<Item> GetItems()
+        => [.. items.Where(x => x != null)];
 
     private void ClearItems()
     {

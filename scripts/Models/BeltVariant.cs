@@ -1,4 +1,4 @@
-﻿namespace ChemFactory.scripts.Transports;
+﻿namespace ChemFactory.scripts.Models;
 
 public enum BeltVariant
 {

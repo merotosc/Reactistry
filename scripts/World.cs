@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using ChemFactory.scripts.Buildings;
+using ChemFactory.scripts.Entities;
 using ChemFactory.scripts.Items;
 using ChemFactory.scripts.Models;
-using ChemFactory.scripts.Transports;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
@@ -12,11 +10,10 @@ namespace ChemFactory.scripts;
 
 public class World
 {
-    public Dictionary<Vector2, Belt> Belts { get; set; } = [];
+    // TODO: make private?
+    public Dictionary<Vector2, IEntity> EntityTiles { get; set; } = [];
 
-    public Dictionary<Vector2, IBuilding> BuildingTiles { get; set; } = [];
-
-    public List<IBuilding> Buildings { get; set; } = [];
+    public List<IEntity> Entities { get; set; } = [];
 
     public List<Item> Items { get; set; } = [];
 
@@ -25,42 +22,42 @@ public class World
 
     public void LoadDemo()
     {
-        Belts.Add(new Vector2(-1, -1), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-2, -1), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-3, -1), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-1, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-2, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-3, 0), new Belt(Direction.Right));
+        AddEntity(new Belt(new Vector2(-1, -1), Direction.Right));
+        AddEntity(new Belt(new Vector2(-2, -1), Direction.Right));
+        AddEntity(new Belt(new Vector2(-3, -1), Direction.Right));
+        AddEntity(new Belt(new Vector2(-1, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(-2, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(-3, 0), Direction.Right));
 
-        Belts.Add(new Vector2(1, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(2, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(3, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(4, 0), new Belt(Direction.Right));
-        Belts.Add(new Vector2(5, 0), new Belt(Direction.Right));
+        AddEntity(new Belt(new Vector2(1, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(2, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(3, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(4, 0), Direction.Right));
+        AddEntity(new Belt(new Vector2(5, 0), Direction.Right));
 
-        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right) { Molecule = new([new(AtomElement.H, 2)]) });
-        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
-        AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
+        AddEntity(new Producer(new Vector2(-4, -1), Direction.Right) { Molecule = new([new(AtomElement.H, 2)]) });
+        AddEntity(new Producer(new Vector2(-4, 0), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
+        AddEntity(new Reactor(new Vector2(0, 0), Direction.Right));
 
-        Belts.Add(new Vector2(-1, -5), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-1, -4), new Belt(Direction.Right));
-        Belts.Add(new Vector2(-1, -3), new Belt(Direction.Right));
+        AddEntity(new Belt(new Vector2(-1, -5), Direction.Right));
+        AddEntity(new Belt(new Vector2(-1, -4), Direction.Right));
+        AddEntity(new Belt(new Vector2(-1, -3), Direction.Right));
 
-        Belts.Add(new Vector2(1, -3), new Belt(Direction.Right));
-        Belts.Add(new Vector2(2, -3), new Belt(Direction.Right));
-        Belts.Add(new Vector2(3, -3), new Belt(Direction.Right));
+        AddEntity(new Belt(new Vector2(1, -3), Direction.Right));
+        AddEntity(new Belt(new Vector2(2, -3), Direction.Right));
+        AddEntity(new Belt(new Vector2(3, -3), Direction.Right));
 
-        AddBuilding(new Producer(new Vector2(-2, -5), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
-        AddBuilding(new Producer(new Vector2(-2, -4), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
-        AddBuilding(new Producer(new Vector2(-2, -3), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
-        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
+        AddEntity(new Producer(new Vector2(-2, -5), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
+        AddEntity(new Producer(new Vector2(-2, -4), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
+        AddEntity(new Producer(new Vector2(-2, -3), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
+        AddEntity(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
 
-        foreach (var (position, belt) in Belts)
+        foreach (var (position, belt) in EntityTiles)
         {
             EntityCreated?.Invoke(belt, new() { Position = position, Direction = belt.Direction });
         }
 
-        foreach (var building in Buildings)
+        foreach (var building in Entities)
         {
             EntityCreated?.Invoke(building, new() { Position = building.AnchorPosition, Direction = building.Direction });
         }
@@ -68,8 +65,8 @@ public class World
 
     public void Tick(float delta)
     {
-        UpdateBeltItems(delta);
-        UpdateBuildings(delta);
+        UpdateEntities(delta);
+        UpdateItems();
     }
 
     public bool TryCreateItem(Molecule molecule, Vector2 outputPosition, Direction outputDirection)
@@ -94,11 +91,23 @@ public class World
         return created;
     }
 
+    public bool TryDeleteItems(IEnumerable<Item> items)
+    {
+        var allRemoved = true;
+
+        foreach (var item in items)
+        {
+            allRemoved &= Items.Remove(item);
+        }
+
+        return allRemoved;
+    }
+
     public bool TryCreateEntity(EntityType entityType, EntityOptions entityOptions)
     {
         foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, entityType.GetSizeForEntity(entityOptions.Variant)))
         {
-            if (Belts.ContainsKey(tilePosition) || BuildingTiles.ContainsKey(tilePosition))
+            if (EntityTiles.ContainsKey(tilePosition))
             {
                 return false;
             }
@@ -106,22 +115,14 @@ public class World
 
         IEntity entity = entityType switch
         {
-            EntityType.Belt => new Belt(entityOptions.Direction, (BeltVariant)entityOptions.Variant),
+            EntityType.Belt => new Belt(entityOptions.Position, entityOptions.Direction, (BeltVariant)entityOptions.Variant),
             EntityType.Producer => new Producer(entityOptions.Position, entityOptions.Direction),
             EntityType.Consumer => new Consumer(entityOptions.Position, entityOptions.Direction),
             EntityType.Reactor => new Reactor(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
             _ => null,
         };
 
-        if (entity is Belt belt)
-        {
-            Belts.Add(entityOptions.Position, belt);
-        }
-        else if (entity is IBuilding building)
-        {
-            AddBuilding(building);
-        }
-
+        AddEntity(entity);
         EntityCreated?.Invoke(entity, entityOptions);
 
         return true;
@@ -129,49 +130,41 @@ public class World
 
     public bool TryDeleteEntity(Vector2 position)
     {
-        IBuilding building = null;
-
-        if (!Belts.TryGetValue(position, out var belt) && !BuildingTiles.TryGetValue(position, out building))
+        if (!EntityTiles.TryGetValue(position, out var entity))
         {
             return false;
         }
 
-        if (belt != null)
-        {
-            if (belt.Item != null)
-            {
-                Items.Remove(belt.Item);
-            }
+        TryDeleteItems(entity.GetItems());
 
-            Belts.Remove(position);
-            EntityDeleted?.Invoke(position);
-        }
-        else if (building != null)
-        {
-            // TODO: create separate method RemoveBuilding as for AddBuilding
-            Buildings.Remove(building);
+        // TODO: create separate method RemoveBuilding as for AddBuilding
+        Entities.Remove(entity);
 
-            foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
-            {
-                BuildingTiles.Remove(tilePosition);
-                EntityDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
-            }
+        foreach (var tilePosition in entity.AnchorPosition.EnumeratePositions(entity.Direction, entity.Size))
+        {
+            EntityTiles.Remove(tilePosition);
+            EntityDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
         }
 
         return true;
     }
 
-    private void UpdateBeltItems(float delta)
+    private void AddEntity(IEntity entity)
     {
-        var beltsWithItems = Belts
-            .Where(x => x.Value.Item != null)
-            .ToList();
+        Entities.Add(entity);
 
-        foreach (var (position, belt) in beltsWithItems)
+        foreach (var tilePosition in entity.AnchorPosition.EnumeratePositions(entity.Direction, entity.Size))
         {
-            MoveOnBelt(position, belt, delta);
+            EntityTiles.Add(tilePosition, entity);
+        }
+    }
 
-            if (belt.Item.Progress >= 1)
+    private void UpdateItems()
+    {
+        foreach (var (position, entity) in EntityTiles)
+        {
+            // TODO: move logic in belt update?
+            if (entity is Belt belt && belt.Item?.Progress >= 1)
             {
                 var moved = TryMoveToNextTile(position, belt);
                 if (!moved)
@@ -182,21 +175,11 @@ public class World
         }
     }
 
-    private void AddBuilding(IBuilding building)
+    private void UpdateEntities(float delta)
     {
-        Buildings.Add(building);
-
-        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
+        foreach (var entity in Entities)
         {
-            BuildingTiles.Add(tilePosition, building);
-        }
-    }
-
-    private void UpdateBuildings(float delta)
-    {
-        foreach (var building in Buildings)
-        {
-            building.Update(this, delta);
+            entity.Update(this, delta);
         }
     }
 
@@ -214,18 +197,10 @@ public class World
 
     private bool TryMoveItemToEntity(Item item, Vector2 position, Direction outputDirection)
     {
-        if (TryMoveItemToEntity(item, position, outputDirection, Belts))
+        if (TryMoveItemToEntity(item, position, outputDirection, EntityTiles))
         {
             item.Progress %= 1f;
             item.TilePosition = position;
-            return true;
-        }
-
-        if (TryMoveItemToEntity(item, position, outputDirection, BuildingTiles))
-        {
-            item.Progress = 0;
-            item.TilePosition = position;
-            Items.Remove(item);
             return true;
         }
 
@@ -235,11 +210,7 @@ public class World
     private static bool TryMoveItemToEntity<T>(Item item, Vector2 position, Direction outputDirection, Dictionary<Vector2, T> entities)
         where T : IEntity
     {
-        return entities.TryGetValue(position, out var entity) && entity.TryConsumeItem(item, position, outputDirection.ReverseDirection());
-    }
-
-    private static void MoveOnBelt(Vector2 position, Belt belt, float delta)
-    {
-        belt.Item.Progress += delta * belt.Speed;
+        return entities.TryGetValue(position, out var entity)
+            && entity.TryConsumeItem(item, position, outputDirection.ReverseDirection());
     }
 }

@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] rename belt to pipe
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] save and load game data
 - [ ] mirror option for buildings
@@ -28,13 +29,16 @@
 
 ## UI
 
+- [ ] display tile grid
+- [ ] display building progress
 - [ ] display invalid build positions
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] scroll and zoom map
 - [ ] display shortcut hints
 - [ ] display tutorial hints
-- [ ] improve graphic (pipes instead of belts?)
+- [ ] esc to quit building mode
+- [x] improve graphic (pipes instead of belts?)
 
 ## Editor
 

@@ -9,12 +9,12 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
-            BuildingType.Belt => new Vector2(variant, Constants.TileSet.Belts),
-            BuildingType.Producer => new Vector2(0, Constants.TileSet.Buildings),
-            BuildingType.Consumer => new Vector2(1, Constants.TileSet.Buildings),
-            BuildingType.Reactor => new Vector2(2, Constants.TileSet.Buildings),
-            BuildingType.Splitter => new Vector2(3, Constants.TileSet.Buildings),
-            BuildingType.Merger => new Vector2(4, Constants.TileSet.Buildings),
+            BuildingType.Belt => new Vector2(variant, Constants.TileSet.PipesYOffset),
+            BuildingType.Producer => new Vector2(0, Constants.TileSet.BuildingsYOffset),
+            BuildingType.Consumer => new Vector2(1, Constants.TileSet.BuildingsYOffset),
+            BuildingType.Reactor => new Vector2(2, Constants.TileSet.BuildingsYOffset),
+            BuildingType.Splitter => new Vector2(3, Constants.TileSet.BuildingsYOffset),
+            BuildingType.Merger => new Vector2(4, Constants.TileSet.BuildingsYOffset),
             _ => Vector2.Zero,
         };
     }

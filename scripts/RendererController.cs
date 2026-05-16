@@ -10,12 +10,14 @@ public class RendererController : Node
 {
     private readonly Dictionary<Item, Sprite> itemSprites = [];
     private World world;
-    private TileMap tileMap;
+    private TileMap baseTileMap;
+    private TileMap overlayTileMap;
     private Node2D itemLayer;
 
     public void Init(World world)
     {
-        tileMap = GetNode<TileMap>("/root/Game/TileMap");
+        baseTileMap = GetNode<TileMap>("/root/Game/BaseTileMap");
+        overlayTileMap = GetNode<TileMap>("/root/Game/OverlayTileMap");
         itemLayer = GetNode<Node2D>("/root/Game/Items");
         this.world = world;
         this.world.BuildingCreated += OnBuildingCreated;
@@ -31,12 +33,13 @@ public class RendererController : Node
 
     private void OnBuildingCreated(IBuilding building, BuildingOptions buildingOptions)
     {
-        tileMap.DrawBuilding(building.Type, buildingOptions);
+        baseTileMap.DrawBuilding(building.Type, buildingOptions, overlayTileMap);
     }
 
     private void OnBuildingDeleted(Vector2 position)
     {
-        tileMap.SetCellv(position, tile: -1);
+        baseTileMap.SetCellv(position, tile: -1);
+        overlayTileMap.SetCellv(position, tile: -1);
     }
 
     private void OnItemCreated(IEnumerable<Item> itemsToAdd)

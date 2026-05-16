@@ -3,26 +3,23 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Entities;
+namespace ChemFactory.scripts.Buildings;
 
 public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant variant = BeltVariant.Forward)
-    : Entity(anchorPosition, direction)
+    : Building(anchorPosition, direction)
 {
+    private readonly Direction inputDirection = direction.Reverse();
+    private readonly Direction outputDirection = GetOutputDirectionForVariant(direction, variant);
     private ItemPath[] itemPaths;
+    private Item Item;
 
-    public override EntityType Type => EntityType.Belt;
-
-    public Item Item { get; set; }
-
-    public Direction InputDirection { get; } = direction.Reverse();
-
-    public Direction OutputDirection { get; } = GetOutputDirectionForVariant(direction, variant);
+    public override BuildingType Type => BuildingType.Belt;
 
     public override void Update(World world, float delta)
     {
         if (Item?.PathEndReached ?? false)
         {
-            var moved = world.TryMoveItem(Item, AnchorPosition + OutputDirection.ToVector(), OutputDirection.Reverse());
+            var moved = world.TryMoveItem(Item, AnchorPosition + outputDirection.ToVector(), outputDirection.Reverse());
             if (moved)
             {
                 Item = null;
@@ -37,7 +34,7 @@ public class Belt(Vector2 anchorPosition, Direction direction, BeltVariant varia
             return false;
         }
 
-        if (inputDirection != InputDirection)
+        if (inputDirection != this.inputDirection)
         {
             return false;
         }

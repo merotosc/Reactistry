@@ -2,6 +2,8 @@
 
 ## General
 
+- [ ] save and load game data
+- [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
 - [ ] check properties that can become fields or private setter
 - [ ] pause/run simulation

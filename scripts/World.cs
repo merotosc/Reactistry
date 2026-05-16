@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ChemFactory.scripts.Entities;
+using ChemFactory.scripts.Buildings;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -9,51 +9,50 @@ namespace ChemFactory.scripts;
 
 public class World
 {
-    // TODO: make private?
-    public Dictionary<Vector2, IEntity> EntityTiles { get; set; } = [];
+    private readonly Dictionary<Vector2, IBuilding> buildingTiles = [];
+    private readonly List<IBuilding> entities = [];
+    private readonly List<Item> items = [];
 
-    public List<IEntity> Entities { get; set; } = [];
-
-    public List<Item> Items { get; set; } = [];
-
-    public event Action<IEntity, EntityOptions> EntityCreated;
-    public event Action<Vector2> EntityDeleted;
+    public event Action<IBuilding, BuildingOptions> BuildingCreated;
+    public event Action<Vector2> BuildingDeleted;
+    public event Action<IEnumerable<Item>> ItemCreated;
+    public event Action<IEnumerable<Item>> ItemDeleted;
 
     public void LoadDemo()
     {
-        AddEntity(new Belt(new Vector2(-1, -1), Direction.Right));
-        AddEntity(new Belt(new Vector2(-2, -1), Direction.Right));
-        AddEntity(new Belt(new Vector2(-3, -1), Direction.Right));
-        AddEntity(new Belt(new Vector2(-1, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(-2, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(-3, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-1, -1), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-2, -1), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-3, -1), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-1, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-2, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-3, 0), Direction.Right));
 
-        AddEntity(new Belt(new Vector2(1, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(2, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(3, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(4, 0), Direction.Right));
-        AddEntity(new Belt(new Vector2(5, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(1, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(2, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(3, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(4, 0), Direction.Right));
+        AddBuilding(new Belt(new Vector2(5, 0), Direction.Right));
 
-        AddEntity(new Producer(new Vector2(-4, -1), Direction.Right) { Molecule = new([new(AtomElement.H, 2)]) });
-        AddEntity(new Producer(new Vector2(-4, 0), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
-        AddEntity(new Reactor(new Vector2(0, 0), Direction.Right));
+        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right, new([new(AtomElement.H, 2)])));
+        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right, new([new(AtomElement.O, 2)])));
+        AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
 
-        AddEntity(new Belt(new Vector2(-1, -5), Direction.Right));
-        AddEntity(new Belt(new Vector2(-1, -4), Direction.Right));
-        AddEntity(new Belt(new Vector2(-1, -3), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-1, -5), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-1, -4), Direction.Right));
+        AddBuilding(new Belt(new Vector2(-1, -3), Direction.Right));
 
-        AddEntity(new Belt(new Vector2(1, -3), Direction.Right));
-        AddEntity(new Belt(new Vector2(2, -3), Direction.Right));
-        AddEntity(new Belt(new Vector2(3, -3), Direction.Right));
+        AddBuilding(new Belt(new Vector2(1, -3), Direction.Right));
+        AddBuilding(new Belt(new Vector2(2, -3), Direction.Right));
+        AddBuilding(new Belt(new Vector2(3, -3), Direction.Right));
 
-        AddEntity(new Producer(new Vector2(-2, -5), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
-        AddEntity(new Producer(new Vector2(-2, -4), Direction.Right) { Molecule = new([new(AtomElement.C, 1)]) });
-        AddEntity(new Producer(new Vector2(-2, -3), Direction.Right) { Molecule = new([new(AtomElement.O, 2)]) });
-        AddEntity(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
+        AddBuilding(new Producer(new Vector2(-2, -5), Direction.Right, new([new(AtomElement.C, 1)])));
+        AddBuilding(new Producer(new Vector2(-2, -4), Direction.Right, new([new(AtomElement.C, 1)])));
+        AddBuilding(new Producer(new Vector2(-2, -3), Direction.Right, new([new(AtomElement.O, 2)])));
+        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
 
-        foreach (var entity in Entities)
+        foreach (var building in entities)
         {
-            EntityCreated?.Invoke(entity, new() { Position = entity.AnchorPosition, Direction = entity.Direction });
+            BuildingCreated?.Invoke(building, new() { Position = building.AnchorPosition, Direction = building.Direction });
         }
     }
 
@@ -63,31 +62,34 @@ public class World
         UpdateItems(delta);
     }
 
-    public void AddItems(IEnumerable<Item> items)
+    public void AddItems(IEnumerable<Item> itemsToAdd)
     {
-        Items.AddRange(items);
+        items.AddRange(itemsToAdd);
+        ItemCreated?.Invoke(itemsToAdd);
     }
 
-    public bool TryDeleteItems(IEnumerable<Item> items)
+    public bool TryDeleteItems(IEnumerable<Item> itemsToRemove)
     {
         var allRemoved = true;
 
-        foreach (var item in items)
+        foreach (var item in itemsToRemove)
         {
-            allRemoved &= Items.Remove(item);
+            allRemoved &= items.Remove(item);
         }
+
+        ItemDeleted?.Invoke(itemsToRemove);
 
         return allRemoved;
     }
 
     public bool TryMoveItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (EntityTiles.TryGetValue(targetPosition, out var entity)
-            && entity.TryConsumeItem(item, targetPosition, fromDirection))
+        if (buildingTiles.TryGetValue(targetPosition, out var building)
+            && building.TryConsumeItem(item, targetPosition, fromDirection))
         {
             var overshoot = item.DistanceOvershoot;
             item.TilePosition = targetPosition;
-            item.Path = entity.GetItemPath(item.TilePosition);
+            item.Path = building.GetItemPath(item.TilePosition);
             item.DistanceOnPath = overshoot;
             return true;
         }
@@ -95,91 +97,82 @@ public class World
         return false;
     }
 
-    public bool TryCreateEntity(EntityType entityType, EntityOptions entityOptions)
+    public bool TryCreateBuilding(BuildingType buildingType, BuildingOptions buildingOptions)
     {
-        foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, entityType.GetSizeForEntity(entityOptions.Variant)))
+        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingType.GetSizeForBuilding(buildingOptions.Variant)))
         {
-            if (EntityTiles.ContainsKey(tilePosition))
+            if (buildingTiles.ContainsKey(tilePosition))
             {
                 return false;
             }
         }
 
-        IEntity entity = entityType switch
+        IBuilding building = buildingType switch
         {
-            EntityType.Belt => new Belt(entityOptions.Position, entityOptions.Direction, (BeltVariant)entityOptions.Variant),
-            EntityType.Producer => new Producer(entityOptions.Position, entityOptions.Direction),
-            EntityType.Consumer => new Consumer(entityOptions.Position, entityOptions.Direction),
-            EntityType.Reactor => new Reactor(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
-            EntityType.Merger => new Merger(entityOptions.Position, entityOptions.Direction, entityOptions.Variant + 2),
+            BuildingType.Belt => new Belt(buildingOptions.Position, buildingOptions.Direction, (BeltVariant)buildingOptions.Variant),
+            BuildingType.Producer => new Producer(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
+            BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
+            BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
+            BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
             _ => null,
         };
 
-        if (entity == null)
+        if (building == null)
         {
-            GD.PrintErr("Entity to create not found", entityType);
+            GD.PrintErr("Building to create not found", buildingType);
             return false;
         }
 
-        AddEntity(entity);
-        EntityCreated?.Invoke(entity, entityOptions);
+        AddBuilding(building);
+        BuildingCreated?.Invoke(building, buildingOptions); // TODO: move to AddBuilding method
 
         return true;
     }
 
-    public bool TryDeleteEntity(Vector2 position)
+    public bool TryDeleteBuilding(Vector2 position)
     {
-        if (!EntityTiles.TryGetValue(position, out var entity))
+        if (!buildingTiles.TryGetValue(position, out var building))
         {
             return false;
         }
 
-        TryDeleteItems(entity.GetItems());
+        TryDeleteItems(building.GetItems());
 
         // TODO: create separate method RemoveBuilding as for AddBuilding
-        Entities.Remove(entity);
+        entities.Remove(building);
 
-        foreach (var tilePosition in entity.AnchorPosition.EnumeratePositions(entity.Direction, entity.Size))
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
         {
-            EntityTiles.Remove(tilePosition);
-            EntityDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
+            buildingTiles.Remove(tilePosition);
+            BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
         }
 
         return true;
     }
 
-    private void AddEntity(IEntity entity)
+    private void AddBuilding(IBuilding building)
     {
-        Entities.Add(entity);
+        entities.Add(building);
 
-        foreach (var tilePosition in entity.AnchorPosition.EnumeratePositions(entity.Direction, entity.Size))
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
         {
-            EntityTiles.Add(tilePosition, entity);
+            buildingTiles.Add(tilePosition, building);
         }
     }
 
     private void UpdateItems(float delta)
     {
-        foreach (var item in Items)
+        foreach (var item in items)
         {
             item.TravelDistance(delta * Constants.ItemSpeed);
         }
-
-        // TODO: delete?
-        //foreach (var entity in Entities)
-        //{
-        //    foreach (var item in entity.GetItems())
-        //    {
-        //        item?.TravelDistance(delta * Constants.ItemSpeed);
-        //    }
-        //}
     }
 
     private void UpdateEntities(float delta)
     {
-        foreach (var entity in Entities)
+        foreach (var building in entities)
         {
-            entity.Update(this, delta);
+            building.Update(this, delta);
         }
     }
 }

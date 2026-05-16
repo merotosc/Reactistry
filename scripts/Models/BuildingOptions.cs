@@ -2,7 +2,7 @@
 
 namespace ChemFactory.scripts.Models;
 
-public class EntityOptions
+public class BuildingOptions
 {
     public Vector2 Position { get; set; }
 

@@ -4,10 +4,10 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Entities;
+namespace ChemFactory.scripts.Buildings;
 
 public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
-    : Entity(anchorPosition, direction)
+    : Building(anchorPosition, direction)
 {
     private const float ReactionRate = 1;
     private float elapsedTime = 0;
@@ -19,9 +19,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
     private bool validReaction;
     private List<Molecule> outputMolecules;
 
-    public override EntityType Type => EntityType.Reactor;
+    public override BuildingType Type => BuildingType.Reactor;
 
-    public override Vector2 Size => Type.GetSizeForEntity(inputsCount - 2);
+    public override Vector2 Size => Type.GetSizeForBuilding(inputsCount - 2);
 
     public override void Update(World world, float delta)
     {

@@ -3,9 +3,9 @@ using Godot;
 
 namespace ChemFactory.scripts.Models;
 
-public interface IEntity
+public interface IBuilding
 {
-    EntityType Type { get; }
+    BuildingType Type { get; }
 
     Vector2 AnchorPosition { get; }
 

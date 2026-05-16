@@ -18,46 +18,37 @@ public class RendererController : Node
         tileMap = GetNode<TileMap>("/root/Game/TileMap");
         itemLayer = GetNode<Node2D>("/root/Game/Items");
         this.world = world;
-        this.world.EntityCreated += OnEntityCreated;
-        this.world.EntityDeleted += OnEntityDeleted;
+        this.world.BuildingCreated += OnBuildingCreated;
+        this.world.BuildingDeleted += OnBuildingDeleted;
+        this.world.ItemCreated += OnItemCreated;
+        this.world.ItemDeleted += OnItemDeleted;
     }
 
     public override void _Process(float delta)
     {
-        // TODO: also pass added/removed items using event callback?
-        AddCreatedItems();
-        RemoveDeletedItems();
         DrawItems();
     }
 
-    private void OnEntityCreated(IEntity entity, EntityOptions entityOptions)
+    private void OnBuildingCreated(IBuilding building, BuildingOptions buildingOptions)
     {
-        tileMap.DrawEntity(entity.Type, entityOptions);
+        tileMap.DrawBuilding(building.Type, buildingOptions);
     }
 
-    private void OnEntityDeleted(Vector2 position)
+    private void OnBuildingDeleted(Vector2 position)
     {
         tileMap.SetCellv(position, tile: -1);
     }
 
-    private void AddCreatedItems()
+    private void OnItemCreated(IEnumerable<Item> itemsToAdd)
     {
-        var itemsToAdd = world.Items
-            .Where(x => !itemSprites.ContainsKey(x))
-            .ToList();
-
         foreach (var item in itemsToAdd)
         {
             CreateItemSprite(item);
         }
     }
 
-    private void RemoveDeletedItems()
+    private void OnItemDeleted(IEnumerable<Item> itemsToRemove)
     {
-        var itemsToRemove = itemSprites.Keys
-            .Where(x => !world.Items.Contains(x))
-            .ToList();
-
         foreach (var item in itemsToRemove)
         {
             var sprite = itemSprites[item];
@@ -85,13 +76,6 @@ public class RendererController : Node
     {
         foreach (var (item, sprite) in itemSprites)
         {
-            var entityExists = world.EntityTiles.TryGetValue(item.TilePosition, out var _);
-            if (!entityExists)
-            {
-                GD.PrintErr("Entity does not exist at item tile position: " + item.TilePosition);
-                continue;
-            }
-
             var localPosition = item.GetPositionOnPath();
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }

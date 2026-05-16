@@ -1,6 +1,6 @@
 ﻿namespace ChemFactory.scripts.Models;
 
-public enum EntityType
+public enum BuildingType
 {
     None,
     Belt,

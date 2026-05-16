@@ -4,19 +4,19 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Entities;
+namespace ChemFactory.scripts.Buildings;
 
 public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
-    : Entity(anchorPosition, direction)
+    : Building(anchorPosition, direction)
 {
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = inputsCount;
     private readonly Item[] items = new Item[inputsCount];
     private ItemPath[] itemPaths;
 
-    public override EntityType Type => EntityType.Merger;
+    public override BuildingType Type => BuildingType.Merger;
 
-    public override Vector2 Size => Type.GetSizeForEntity(inputsCount - 2);
+    public override Vector2 Size => Type.GetSizeForBuilding(inputsCount - 2);
 
     public override void Update(World world, float delta)
     {

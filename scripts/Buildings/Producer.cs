@@ -3,19 +3,18 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Entities;
+namespace ChemFactory.scripts.Buildings;
 
-public class Producer(Vector2 anchorPosition, Direction direction)
-    : Entity(anchorPosition, direction)
+public class Producer(Vector2 anchorPosition, Direction direction, Molecule molecule)
+    : Building(anchorPosition, direction)
 {
     private const float ProductionRate = 2;
     private float elapsedTime = 0;
-    private Item outputItem;
+    private readonly Molecule molecule = molecule;
     private ItemPath itemOutputPath;
+    private Item outputItem;
 
-    public override EntityType Type => EntityType.Producer;
-
-    public Molecule Molecule { get; set; } = Molecule.InvalidMolecule;
+    public override BuildingType Type => BuildingType.Producer;
 
     public override void Update(World world, float delta)
     {
@@ -34,7 +33,7 @@ public class Producer(Vector2 anchorPosition, Direction direction)
 
         if (elapsedTime >= ProductionRate && outputItem == null)
         {
-            outputItem = new Item(Molecule, AnchorPosition, GetItemOutputPath());
+            outputItem = new Item(molecule, AnchorPosition, GetItemOutputPath());
             world.AddItems([outputItem]);
             elapsedTime -= ProductionRate;
         }

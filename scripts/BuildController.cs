@@ -7,8 +7,8 @@ namespace ChemFactory.scripts;
 public class BuildController : Node2D
 {
     private World world;
-    private EntityType currentEntity; // TODO: store in currentEntityOptions?
-    private readonly EntityOptions currentEntityOptions = new();
+    private BuildingType currentBuilding; // TODO: store in currentBuildingOptions?
+    private readonly BuildingOptions currentBuildingOptions = new();
     private TileMap previewTileMap;
 
     public void Init(World world)
@@ -24,12 +24,12 @@ public class BuildController : Node2D
 
     public override void _Process(float delta)
     {
-        if (currentEntity != EntityType.None)
+        if (currentBuilding != BuildingType.None)
         {
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
-            if (tilePosition != currentEntityOptions.Position)
+            if (tilePosition != currentBuildingOptions.Position)
             {
-                RedrawEntityPreview();
+                RedrawBuildingPreview();
             }
         }
     }
@@ -45,38 +45,38 @@ public class BuildController : Node2D
         {
             if (key.Scancode is >= (uint)KeyList.Key0 and <= (uint)KeyList.Key9)
             {
-                SelectEntity(key.Scancode - (uint)KeyList.Key0);
+                SelectBuilding(key.Scancode - (uint)KeyList.Key0);
             }
             else if (key.Scancode == (uint)KeyList.R)
             {
-                RotateEntity(!key.Shift);
+                RotateBuilding(!key.Shift);
             }
             else if (key.Scancode == (uint)KeyList.T)
             {
-                ChangeEntityVariant();
+                ChangeBuildingVariant();
             }
         }
     }
 
-    private void SelectEntity(uint keyNumber)
+    private void SelectBuilding(uint keyNumber)
     {
-        currentEntity = (EntityType)keyNumber;
-        RedrawEntityPreview();
+        currentBuilding = (BuildingType)keyNumber;
+        RedrawBuildingPreview();
     }
 
-    private void RotateEntity(bool clockwise)
+    private void RotateBuilding(bool clockwise)
     {
-        currentEntityOptions.Direction = clockwise
-            ? currentEntityOptions.Direction.Next()
-            : currentEntityOptions.Direction.Previous();
-        RedrawEntityPreview();
+        currentBuildingOptions.Direction = clockwise
+            ? currentBuildingOptions.Direction.Next()
+            : currentBuildingOptions.Direction.Previous();
+        RedrawBuildingPreview();
     }
 
-    private void ChangeEntityVariant()
+    private void ChangeBuildingVariant()
     {
         // TODO: set variant based on current type
-        currentEntityOptions.Variant = (currentEntityOptions.Variant + 1) % 3;
-        RedrawEntityPreview();
+        currentBuildingOptions.Variant = (currentBuildingOptions.Variant + 1) % 3;
+        RedrawBuildingPreview();
     }
 
     private void HandleClick(bool rightClick = false)
@@ -84,26 +84,26 @@ public class BuildController : Node2D
         if (rightClick)
         {
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
-            GD.PrintS("Requesting entity deletion at posiiton", tilePosition);
-            world.TryDeleteEntity(tilePosition);
+            GD.PrintS("Requesting building deletion at posiiton", tilePosition);
+            world.TryDeleteBuilding(tilePosition);
         }
-        else if (currentEntity != EntityType.None)
+        else if (currentBuilding != BuildingType.None)
         {
-            GD.PrintS("Requesting entity creation", currentEntity, "at posiiton", currentEntityOptions.Position);
-            world.TryCreateEntity(currentEntity, currentEntityOptions);
+            GD.PrintS("Requesting building creation", currentBuilding, "at posiiton", currentBuildingOptions.Position);
+            world.TryCreateBuilding(currentBuilding, currentBuildingOptions);
         }
     }
 
-    private void RedrawEntityPreview()
+    private void RedrawBuildingPreview()
     {
         previewTileMap.Clear();
 
-        if (currentEntity == EntityType.None)
+        if (currentBuilding == BuildingType.None)
         {
             return;
         }
 
-        currentEntityOptions.Position = GetGlobalMousePosition().ToTilePosition();
-        previewTileMap.DrawEntity(currentEntity, currentEntityOptions);
+        currentBuildingOptions.Position = GetGlobalMousePosition().ToTilePosition();
+        previewTileMap.DrawBuilding(currentBuilding, currentBuildingOptions);
     }
 }

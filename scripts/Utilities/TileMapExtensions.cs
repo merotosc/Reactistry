@@ -5,13 +5,13 @@ namespace ChemFactory.scripts.Utilities;
 
 public static class TileMapExtensions
 {
-    public static void DrawEntity(this TileMap tileMap, EntityType entityType, EntityOptions entityOptions)
+    public static void DrawBuilding(this TileMap tileMap, BuildingType buildingType, BuildingOptions buildingOptions)
     {
-        var tileCoord = entityType.GetTileCoordForEntity(entityOptions.Variant);
-        var size = entityType.GetSizeForEntity(entityOptions.Variant);
-        var (flipX, flipY, transpose) = entityOptions.Direction.GetTileTransform();
+        var tileCoord = buildingType.GetTileCoordForBuilding(buildingOptions.Variant);
+        var size = buildingType.GetSizeForBuilding(buildingOptions.Variant);
+        var (flipX, flipY, transpose) = buildingOptions.Direction.GetTileTransform();
 
-        foreach (var tilePosition in entityOptions.Position.EnumeratePositions(entityOptions.Direction, size))
+        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, size))
         {
             tileMap.SetCellv(
                 tilePosition,

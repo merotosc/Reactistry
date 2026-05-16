@@ -5,11 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace ChemFactory.scripts.Models;
 
-public class Molecule(List<Atom> atoms)
+public class Molecule(List<Atom> atoms, int count = 1)
 {
     private static readonly Regex FormulaRegex = new(@"([A-Z][a-z]*)(\d*)", RegexOptions.Compiled);
 
     public List<Atom> Atoms { get; set; } = atoms;
+
+    public int Count { get; set; } = count;
 
     public static Molecule InvalidMolecule
         => new([new(AtomElement.Invalid)]);
@@ -34,7 +36,16 @@ public class Molecule(List<Atom> atoms)
     }
 
     public override string ToString()
-        => string.Join("", Atoms
+    {
+        var atoms = Atoms
             .OrderBy(x => x.Element)
-            .Select(x => x.ToString()));
+            .Select(x => x.ToString())
+            .ToArray();
+
+        var formula = string.Join("", atoms);
+
+        return Count > 1
+            ? $"{Count}{formula}"
+            : formula;
+    }
 }

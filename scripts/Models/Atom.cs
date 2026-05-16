@@ -7,5 +7,7 @@ public class Atom(AtomElement element, int count = 1)
     public int Count { get; set; } = count;
 
     public override string ToString()
-        => $"{Element}{Count}";
+        => Count > 1
+            ? $"{Element}{Count}"
+            : $"{Element}";
 }

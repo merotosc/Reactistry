@@ -33,10 +33,12 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
 
         if (outputReady)
         {
+            // TODO: support multiple output molecules
             var molecule = validReaction
                 ? outputMolecules.First()
                 : Molecule.InvalidMolecule;
 
+            // TODO: output molecules count as separate molecules
             var created = world.TryCreateItem(molecule, AnchorPosition, Direction);
             if (created)
             {

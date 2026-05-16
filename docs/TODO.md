@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] keep moving items inside buildings
 - [ ] instantiate preview entity object to avoid messy entity options code
 - [ ] fix reactor errors directly after producer
 - [ ] combine molecule in reactor based on recipes
@@ -25,7 +26,7 @@
 - [ ] scroll and zoom map
 - [ ] display shortcut hints
 - [ ] display tutorial hints
-- [ ] improve graphic
+- [ ] improve graphic (pipes instead of belts?)
 
 ## Editor
 

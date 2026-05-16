@@ -9,7 +9,7 @@ namespace ChemFactory.scripts;
 public static class ReactionRegistry
 {
     private const string ReactionsFile = "res://assets/reactions.csv";
-    private static readonly List<Reaction> reactions = [];
+    private static readonly Dictionary<string, Reaction> reactions = [];
 
     public static void Load()
     {
@@ -67,24 +67,24 @@ public static class ReactionRegistry
                         }
 
                         var molecule = molecules[column - 1];
+                        var newMolecule = new Molecule(molecule.Atoms, Math.Abs(value));
+
                         if (value < 0)
                         {
-                            // TODO: add count to molecule instead of separate ones?
-                            for (i = 0; i < Math.Abs(value); i++)
-                                reaction.InputMolecules.Add(molecule);
+                            reaction.InputMolecules.Add(newMolecule);
                         }
                         else
                         {
-                            for (i = 0; i < value; i++)
-                                reaction.OutputMolecules.Add(molecule);
+                            reaction.OutputMolecules.Add(newMolecule);
                         }
                     }
                 }
 
                 if (reaction.InputMolecules.Any() && reaction.OutputMolecules.Any())
                 {
-                    reactions.Add(reaction);
-                    GD.PrintS("Registered reaction", reaction.ToString());
+                    var formula = GetStableFormula(reaction.InputMolecules);
+                    reactions.Add(formula, reaction);
+                    GD.PrintT("Registered reaction", reaction.Name, formula);
                 }
             }
 
@@ -96,11 +96,10 @@ public static class ReactionRegistry
 
     public static (bool Valid, List<Molecule> OutputMolecules) CreateReaction(List<Molecule> molecules)
     {
-        var moleculesName = GetFormula(molecules);
-        GD.PrintS("Requested reaction with following molecules", moleculesName);
+        var formula = GetStableFormula(molecules);
+        GD.PrintS("Requested reaction with following molecules", formula);
 
-        var reaction = reactions.FirstOrDefault(x => x.ToString() == moleculesName);
-        if (reaction == null)
+        if (!reactions.TryGetValue(formula, out var reaction))
         {
             return (false, null);
         }
@@ -109,7 +108,29 @@ public static class ReactionRegistry
     }
 
     public static string GetFormula(List<Molecule> molecules)
-        => string.Join("", molecules
-            .Select(x => x.ToString())
-            .OrderBy(x => x));
+        => string.Join("+", molecules
+            .OrderBy(m => m.ToString())
+            .Select(m => m.ToString()));
+
+    public static string GetStableFormula(List<Molecule> molecules)
+    {
+        var atoms = new Dictionary<AtomElement, int>();
+
+        foreach (var molecule in molecules)
+        {
+            foreach (var atom in molecule.Atoms)
+            {
+                if (!atoms.ContainsKey(atom.Element))
+                {
+                    atoms[atom.Element] = 0;
+                }
+
+                atoms[atom.Element] += atom.Count * molecule.Count;
+            }
+        }
+
+        return string.Join(":", atoms
+            .OrderBy(x => x.Key)
+            .Select(x => $"{x.Key}{x.Value}"));
+    }
 }

@@ -9,7 +9,4 @@ public class Reaction
     public List<Molecule> InputMolecules { get; set; } = [];
 
     public List<Molecule> OutputMolecules { get; set; } = [];
-
-    public override string ToString()
-        => ReactionRegistry.GetFormula(InputMolecules);
 }

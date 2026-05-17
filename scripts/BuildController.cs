@@ -13,9 +13,10 @@ public class BuildController : Node2D
     private TileMap previewOverlayTileMap;
     private World world;
     private readonly BuildingOptions currentBuilding = new();
-    private readonly Stack<BuildingOptions> pipes = new();
-    private bool isDragging;
+    private readonly Stack<BuildingOptions> draggedBuildings = new();
+    private readonly List<Vector2> draggedTiles = [];
     private Vector2? lastDragTile;
+    private MouseButton pressedButton;
 
     public void Init(World world)
     {
@@ -47,12 +48,12 @@ public class BuildController : Node2D
     {
         if (e is InputEventMouseButton mouseButton)
         {
-            HandleMouseButton(mouseButton.Pressed, (ButtonList)mouseButton.ButtonIndex);
+            HandleMouseButton(mouseButton.Pressed, (MouseButton)mouseButton.ButtonIndex);
         }
 
-        if (e is InputEventMouseMotion && isDragging)
+        if (e is InputEventMouseMotion && pressedButton != MouseButton.None)
         {
-            UpdateDrag();
+            HandleMouseDrag();
         }
 
         if (e is InputEventKey key && key.Pressed)
@@ -78,23 +79,18 @@ public class BuildController : Node2D
         }
     }
 
-    private void HandleMouseButton(bool pressed, ButtonList button)
+    private void HandleMouseButton(bool pressed, MouseButton button)
     {
-        if (!pressed)
+        if (pressed && pressedButton == MouseButton.None)
         {
-            HandleMouseReleased(button == ButtonList.Right);
+            pressedButton = button;
+            HandleMouseDown();
         }
 
-        if (button == ButtonList.Left)
+        if (!pressed)
         {
-            if (pressed)
-            {
-                StartDrag();
-            }
-            else
-            {
-                EndDrag();
-            }
+            HandleMouseReleased();
+            pressedButton = MouseButton.None;
         }
     }
 
@@ -126,56 +122,14 @@ public class BuildController : Node2D
         RedrawBuildingPreview();
     }
 
-    private void HandleMouseReleased(bool rightClick = false)
+    private void HandleMouseDown()
     {
-        if (rightClick)
-        {
-            var tilePosition = GetGlobalMousePosition().ToTilePosition();
-            GD.PrintS("Requesting building deletion at posiiton", tilePosition);
-            world.TryDeleteBuilding(tilePosition);
-        }
-        else if (currentBuilding.Type == BuildingType.Pipe && pipes.Count > 1)
-        {
-            var buildedPipes = new HashSet<Vector2>();
-
-            foreach (var pipe in pipes)
-            {
-                if (!buildedPipes.Add(pipe.Position))
-                {
-                    continue;
-                }
-
-                world.TryCreateBuilding(pipe);
-            }
-        }
-        else if (currentBuilding.Type != BuildingType.None)
-        {
-            GD.PrintS("Requesting building creation", currentBuilding.Type, "at posiiton", currentBuilding.Position);
-            world.TryCreateBuilding(currentBuilding);
-        }
-    }
-
-    private void StartDrag()
-    {
-        if (currentBuilding.Type != BuildingType.Pipe)
-        {
-            return;
-        }
-
-        isDragging = true;
-        pipes.Clear();
         lastDragTile = null;
-
-        UpdateDrag();
+        HandleMouseDrag();
     }
 
-    private void UpdateDrag()
+    private void HandleMouseDrag()
     {
-        if (currentBuilding.Type != BuildingType.Pipe)
-        {
-            return;
-        }
-
         var tilePosition = GetGlobalMousePosition().ToTilePosition();
         if (tilePosition == lastDragTile)
         {
@@ -184,17 +138,52 @@ public class BuildController : Node2D
 
         lastDragTile = tilePosition;
 
-        var pipeExists = pipes.TryPeek(out var previousPipe);
-        var direction = Direction.Right;
+        if (pressedButton == MouseButton.Right)
+        {
+            UpdateDeletionDrag(tilePosition);
+        }
+        else if (pressedButton == MouseButton.Left)
+        {
+            if (currentBuilding.Type == BuildingType.Pipe)
+            {
+                UpdatePipesDrag(tilePosition);
+            }
+            else if (currentBuilding.Type != BuildingType.None)
+            {
+                UpdateBuildingDrag(tilePosition);
+            }
+        }
+    }
+
+    private void HandleMouseReleased()
+    {
+        if (pressedButton == MouseButton.Right)
+        {
+            EndDeletionDrag();
+        }
+        else if (pressedButton == MouseButton.Left)
+        {
+            EndBuildingDrag();
+        }
+    }
+
+    private void UpdatePipesDrag(Vector2 tilePosition)
+    {
+        var pipeExists = draggedBuildings.TryPeek(out var previousPipe);
+        var direction = currentBuilding.Direction;
+        var variant = currentBuilding.Variant;
 
         if (pipeExists)
         {
+            variant = (int)PipeVariant.Forward;
+
             var delta = tilePosition - previousPipe.Position;
             direction = delta.ToDirection();
 
-            if (pipes.Count == 1)
+            if (draggedBuildings.Count == 1)
             {
                 previousPipe.Direction = direction;
+                previousPipe.Variant = (int)PipeVariant.Forward;
             }
             else if (direction != previousPipe.Direction)
             {
@@ -209,22 +198,63 @@ public class BuildController : Node2D
             Type = BuildingType.Pipe,
             Position = tilePosition,
             Direction = direction,
-            Variant = (int)PipeVariant.Forward,
+            Variant = variant,
         };
 
-        pipes.Push(pipe);
+        draggedBuildings.Push(pipe);
         RedrawBuildingPreview();
     }
 
-    private void EndDrag()
+    private void UpdateBuildingDrag(Vector2 tilePosition)
     {
-        if (currentBuilding.Type != BuildingType.Pipe)
+        var building = new BuildingOptions
+        {
+            Type = currentBuilding.Type,
+            Position = tilePosition,
+            Direction = currentBuilding.Direction,
+            Variant = currentBuilding.Variant,
+        };
+
+        draggedBuildings.Push(building);
+    }
+
+    private void EndBuildingDrag()
+    {
+        if (draggedBuildings.Count == 0)
         {
             return;
         }
 
-        isDragging = false;
-        pipes.Clear();
+        var alreadyBuilded = new HashSet<Vector2>();
+
+        foreach (var building in draggedBuildings)
+        {
+            if (!alreadyBuilded.Add(building.Position))
+            {
+                continue;
+            }
+
+            world.TryCreateBuilding(building);
+        }
+
+        draggedBuildings.Clear();
+        RedrawBuildingPreview();
+    }
+
+    private void UpdateDeletionDrag(Vector2 tilePosition)
+    {
+        draggedTiles.Add(tilePosition);
+        RedrawBuildingPreview();
+    }
+
+    private void EndDeletionDrag()
+    {
+        foreach (var tilePosition in draggedTiles)
+        {
+            world.TryDeleteBuilding(tilePosition);
+        }
+
+        draggedTiles.Clear();
         RedrawBuildingPreview();
     }
 
@@ -240,11 +270,11 @@ public class BuildController : Node2D
 
         previewBaseTileMap.DrawBuilding(currentBuilding, previewOverlayTileMap);
 
-        if (pipes.Count > 1)
+        if (draggedBuildings.Count > 1)
         {
-            foreach (var pipe in pipes.Reverse())
+            foreach (var building in draggedBuildings.Reverse())
             {
-                previewBaseTileMap.DrawBuilding(pipe, previewOverlayTileMap);
+                previewBaseTileMap.DrawBuilding(building, previewOverlayTileMap);
             }
         }
     }

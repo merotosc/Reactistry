@@ -35,6 +35,7 @@
 - [ ] display tile grid
 - [ ] display building progress
 - [ ] display invalid build positions
+- [ ] display deletion outline on right-click hold
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] display warning for non-wired inputs/outputs
@@ -48,9 +49,10 @@
 
 - [ ] orthogonal mode for pipes
 - [ ] fix gaps when dragging pipes
-- [ ] remove multiple on drag
 - [ ] entity options (reactor inputs count)
-- [ ] position multiple pipes on hold
+- [x] remove multiple on drag
+- [x] position multiple buildings on hold
+- [x] position multiple pipes on hold
 - [x] position pipes
 - [x] auto-detect pipe directions
 - [x] position buildings

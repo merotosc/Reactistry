@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -7,10 +9,13 @@ namespace ChemFactory.scripts;
 
 public class BuildController : Node2D
 {
-    private World world;
-    private readonly BuildingOptions currentBuilding = new();
     private TileMap previewBaseTileMap;
     private TileMap previewOverlayTileMap;
+    private World world;
+    private readonly BuildingOptions currentBuilding = new();
+    private readonly Stack<BuildingOptions> pipes = new();
+    private bool isDragging;
+    private Vector2? lastDragTile;
 
     public void Init(World world)
     {
@@ -32,6 +37,7 @@ public class BuildController : Node2D
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
             if (tilePosition != currentBuilding.Position)
             {
+                currentBuilding.Position = tilePosition;
                 RedrawBuildingPreview();
             }
         }
@@ -39,29 +45,55 @@ public class BuildController : Node2D
 
     public override void _Input(InputEvent e)
     {
-        if (e is InputEventMouseButton mouseButton && mouseButton.Pressed)
+        if (e is InputEventMouseButton mouseButton)
         {
-            HandleClick(mouseButton.ButtonIndex == (int)ButtonList.Right);
+            HandleMouseButton(mouseButton.Pressed, (ButtonList)mouseButton.ButtonIndex);
+        }
+
+        if (e is InputEventMouseMotion && isDragging)
+        {
+            UpdateDrag();
         }
 
         if (e is InputEventKey key && key.Pressed)
         {
-            if (key.Scancode is >= (uint)KeyList.Key0 and <= (uint)KeyList.Key9)
+            switch (key.Scancode)
             {
-                var keyNumber = key.Scancode - (uint)KeyList.Key0;
-                SelectBuilding((BuildingType)keyNumber);
+                case >= (uint)KeyList.Key0 and <= (uint)KeyList.Key9:
+                    {
+                        var keyNumber = key.Scancode - (uint)KeyList.Key0;
+                        SelectBuilding((BuildingType)keyNumber);
+                        break;
+                    }
+                case (uint)KeyList.R:
+                    RotateBuilding(!key.Shift);
+                    break;
+                case (uint)KeyList.T:
+                    ChangeBuildingVariant(key.Shift);
+                    break;
+                case (uint)KeyList.Escape:
+                    SelectBuilding(BuildingType.None);
+                    break;
             }
-            else if (key.Scancode == (uint)KeyList.R)
+        }
+    }
+
+    private void HandleMouseButton(bool pressed, ButtonList button)
+    {
+        if (!pressed)
+        {
+            HandleMouseReleased(button == ButtonList.Right);
+        }
+
+        if (button == ButtonList.Left)
+        {
+            if (pressed)
             {
-                RotateBuilding(!key.Shift);
+                StartDrag();
             }
-            else if (key.Scancode == (uint)KeyList.T)
+            else
             {
-                ChangeBuildingVariant(key.Shift);
-            }
-            else if (key.Scancode == (uint)KeyList.Escape)
-            {
-                SelectBuilding((uint)BuildingType.None);
+                EndDrag();
             }
         }
     }
@@ -94,7 +126,7 @@ public class BuildController : Node2D
         RedrawBuildingPreview();
     }
 
-    private void HandleClick(bool rightClick = false)
+    private void HandleMouseReleased(bool rightClick = false)
     {
         if (rightClick)
         {
@@ -102,11 +134,98 @@ public class BuildController : Node2D
             GD.PrintS("Requesting building deletion at posiiton", tilePosition);
             world.TryDeleteBuilding(tilePosition);
         }
+        else if (currentBuilding.Type == BuildingType.Pipe && pipes.Count > 1)
+        {
+            var buildedPipes = new HashSet<Vector2>();
+
+            foreach (var pipe in pipes)
+            {
+                if (!buildedPipes.Add(pipe.Position))
+                {
+                    continue;
+                }
+
+                world.TryCreateBuilding(pipe);
+            }
+        }
         else if (currentBuilding.Type != BuildingType.None)
         {
             GD.PrintS("Requesting building creation", currentBuilding.Type, "at posiiton", currentBuilding.Position);
             world.TryCreateBuilding(currentBuilding);
         }
+    }
+
+    private void StartDrag()
+    {
+        if (currentBuilding.Type != BuildingType.Pipe)
+        {
+            return;
+        }
+
+        isDragging = true;
+        pipes.Clear();
+        lastDragTile = null;
+
+        UpdateDrag();
+    }
+
+    private void UpdateDrag()
+    {
+        if (currentBuilding.Type != BuildingType.Pipe)
+        {
+            return;
+        }
+
+        var tilePosition = GetGlobalMousePosition().ToTilePosition();
+        if (tilePosition == lastDragTile)
+        {
+            return;
+        }
+
+        lastDragTile = tilePosition;
+
+        var pipeExists = pipes.TryPeek(out var previousPipe);
+        var direction = Direction.Right;
+
+        if (pipeExists)
+        {
+            var delta = tilePosition - previousPipe.Position;
+            direction = delta.ToDirection();
+
+            if (pipes.Count == 1)
+            {
+                previousPipe.Direction = direction;
+            }
+            else if (direction != previousPipe.Direction)
+            {
+                previousPipe.Variant = previousPipe.Direction.Next() == direction
+                    ? (int)PipeVariant.Right
+                    : (int)PipeVariant.Left;
+            }
+        }
+
+        var pipe = new BuildingOptions
+        {
+            Type = BuildingType.Pipe,
+            Position = tilePosition,
+            Direction = direction,
+            Variant = (int)PipeVariant.Forward,
+        };
+
+        pipes.Push(pipe);
+        RedrawBuildingPreview();
+    }
+
+    private void EndDrag()
+    {
+        if (currentBuilding.Type != BuildingType.Pipe)
+        {
+            return;
+        }
+
+        isDragging = false;
+        pipes.Clear();
+        RedrawBuildingPreview();
     }
 
     private void RedrawBuildingPreview()
@@ -119,7 +238,14 @@ public class BuildController : Node2D
             return;
         }
 
-        currentBuilding.Position = GetGlobalMousePosition().ToTilePosition();
         previewBaseTileMap.DrawBuilding(currentBuilding, previewOverlayTileMap);
+
+        if (pipes.Count > 1)
+        {
+            foreach (var pipe in pipes.Reverse())
+            {
+                previewBaseTileMap.DrawBuilding(pipe, previewOverlayTileMap);
+            }
+        }
     }
 }

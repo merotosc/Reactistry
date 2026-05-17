@@ -15,6 +15,15 @@ public static class Vector2Extensions
         );
     }
 
+    public static Direction ToDirection(this Vector2 vector)
+    {
+        if (vector.x > 0.5f) return Direction.Right;
+        if (vector.x < -0.5f) return Direction.Left;
+        if (vector.y > 0.5f) return Direction.Down;
+        if (vector.y < -0.5f) return Direction.Up;
+        return Direction.Right;
+    }
+
     public static IEnumerable<Vector2> EnumeratePositions(this Vector2 anchorPosition, Direction direction, Vector2 size)
     {
         var x0 = 0;

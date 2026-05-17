@@ -8,11 +8,11 @@ namespace ChemFactory.scripts;
 
 public class RendererController : Node
 {
-    private readonly Dictionary<Item, Sprite> itemSprites = [];
-    private World world;
     private TileMap baseTileMap;
     private TileMap overlayTileMap;
     private Node2D itemLayer;
+    private World world;
+    private readonly Dictionary<Item, Sprite> itemSprites = [];
 
     public void Init(World world)
     {

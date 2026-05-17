@@ -25,7 +25,7 @@ public static class DirectionExtensions
             Direction.Down => Direction.Up,
             Direction.Left => Direction.Right,
             Direction.Right => Direction.Left,
-            _ => Direction.Unknown,
+            _ => Direction.Right,
         };
     }
 
@@ -37,7 +37,7 @@ public static class DirectionExtensions
             Direction.Down => Direction.Right,
             Direction.Left => Direction.Down,
             Direction.Right => Direction.Up,
-            _ => Direction.Unknown,
+            _ => Direction.Right,
         };
     }
 
@@ -49,7 +49,7 @@ public static class DirectionExtensions
             Direction.Down => Direction.Left,
             Direction.Left => Direction.Up,
             Direction.Right => Direction.Down,
-            _ => Direction.Unknown,
+            _ => Direction.Right,
         };
     }
 

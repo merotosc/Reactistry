@@ -3,14 +3,14 @@
 ## General
 
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
-- [ ] rename belt to pipe
+- [ ] rename pipe to pipe
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] save and load game data
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
 - [ ] pause/run simulation
 - [ ] instantiate preview entity object to avoid messy entity options code
-- [ ] check if buildings side by side without belts do not create errors
+- [ ] check if buildings side by side without pipes do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
 - [ ] extractor validation
 - [ ] merger round robin
@@ -46,10 +46,14 @@
 
 ## Editor
 
-- [x] position belts
-- [ ] auto-detect belt directions
+- [ ] orthogonal mode for pipes
+- [ ] fix gaps when dragging pipes
+- [ ] remove multiple on drag
+- [ ] entity options (reactor inputs count)
+- [ ] position multiple pipes on hold
+- [x] position pipes
+- [x] auto-detect pipe directions
 - [x] position buildings
 - [x] rotate buildings
 - [x] remove entities
-- [ ] entity options (reactor inputs count)
 - [x] shortcuts (entity type, rotation)

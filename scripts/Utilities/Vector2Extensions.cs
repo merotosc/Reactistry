@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ChemFactory.scripts.Models;
 using Godot;
 
@@ -53,5 +55,40 @@ public static class Vector2Extensions
                 yield return anchorPosition + new Vector2(xi, -yi);
             }
         }
+    }
+
+    public static IEnumerable<Vector2> EnumerateOrthogonalLinePositions(this Vector2 start, Vector2 end)
+    {
+        var corner = new Vector2(start.x, end.y);
+        var line1 = start.EnumerateLinePositions(corner);
+        var line2 = corner.EnumerateLinePositions(end);
+        return line1.Concat(line2).Distinct().Where(x => x != start && x != end);
+    }
+
+    public static IEnumerable<Vector2> EnumerateLinePositions(this Vector2 start, Vector2 end)
+    {
+        if (start == end)
+        {
+            yield break;
+        }
+
+        if (start.x == end.x)
+        {
+            var step = Math.Sign(end.y - start.y);
+            for (var y = (int)start.y; y != (int)end.y; y += step)
+            {
+                yield return new Vector2(start.x, y);
+            }
+        }
+        else
+        {
+            var step = Math.Sign(end.x - start.x);
+            for (var x = (int)start.x; x != (int)end.x; x += step)
+            {
+                yield return new Vector2(x, start.y);
+            }
+        }
+
+        yield return end;
     }
 }

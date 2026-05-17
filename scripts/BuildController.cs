@@ -14,7 +14,7 @@ public class BuildController : Node2D
     private World world;
     private readonly BuildingOptions currentBuilding = new();
     private readonly Stack<BuildingOptions> draggedBuildings = new();
-    private readonly List<Vector2> draggedTiles = [];
+    private readonly HashSet<Vector2> draggedTiles = [];
     private Vector2? lastDragTile;
     private MouseButton pressedButton;
 
@@ -33,13 +33,14 @@ public class BuildController : Node2D
 
     public override void _Process(float delta)
     {
-        if (currentBuilding.Type != BuildingType.None)
+        if (currentBuilding.Type != BuildingType.None) // TODO: remove and use move to UpdateBuildingDrag?
         {
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
             if (tilePosition != currentBuilding.Position)
             {
+                GD.PrintS("new position", tilePosition);
                 currentBuilding.Position = tilePosition;
-                RedrawBuildingPreview();
+                RedrawPreview();
             }
         }
     }
@@ -87,7 +88,7 @@ public class BuildController : Node2D
             HandleMouseDown();
         }
 
-        if (!pressed)
+        if (!pressed && pressedButton == button)
         {
             HandleMouseReleased();
             pressedButton = MouseButton.None;
@@ -103,7 +104,7 @@ public class BuildController : Node2D
 
         currentBuilding.Type = buildingType;
         currentBuilding.Variant = 0;
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
     private void RotateBuilding(bool clockwise)
@@ -111,7 +112,7 @@ public class BuildController : Node2D
         currentBuilding.Direction = clockwise
             ? currentBuilding.Direction.Next()
             : currentBuilding.Direction.Previous();
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
     private void ChangeBuildingVariant(bool reverse)
@@ -119,7 +120,7 @@ public class BuildController : Node2D
         var variantsCount = currentBuilding.Type.GetVariantsCountForBuilding();
         var offset = reverse ? -1 : 1;
         currentBuilding.Variant = (currentBuilding.Variant + offset + variantsCount) % currentBuilding.Type.GetVariantsCountForBuilding();
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
     private void HandleMouseDown()
@@ -140,16 +141,19 @@ public class BuildController : Node2D
 
         if (pressedButton == MouseButton.Right)
         {
+            AddMissingDragTiles(tilePosition, UpdateDeletionDrag);
             UpdateDeletionDrag(tilePosition);
         }
         else if (pressedButton == MouseButton.Left)
         {
             if (currentBuilding.Type == BuildingType.Pipe)
             {
+                AddMissingDragBuildings(tilePosition, UpdatePipesDrag);
                 UpdatePipesDrag(tilePosition);
             }
             else if (currentBuilding.Type != BuildingType.None)
             {
+                AddMissingDragBuildings(tilePosition, UpdateBuildingDrag);
                 UpdateBuildingDrag(tilePosition);
             }
         }
@@ -167,6 +171,32 @@ public class BuildController : Node2D
         }
     }
 
+    private void AddMissingDragBuildings(Vector2 tilePosition, Action<Vector2> action)
+    {
+        if (!draggedBuildings.TryPeek(out var previousBuilding))
+        {
+            return;
+        }
+
+        foreach (var position in previousBuilding.Position.EnumerateOrthogonalLinePositions(tilePosition))
+        {
+            action(position);
+        }
+    }
+
+    private void AddMissingDragTiles(Vector2 tilePosition, Action<Vector2> action)
+    {
+        if (draggedTiles.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var position in draggedTiles.Last().EnumerateOrthogonalLinePositions(tilePosition))
+        {
+            action(position);
+        }
+    }
+
     private void UpdatePipesDrag(Vector2 tilePosition)
     {
         var pipeExists = draggedBuildings.TryPeek(out var previousPipe);
@@ -175,6 +205,11 @@ public class BuildController : Node2D
 
         if (pipeExists)
         {
+            if (previousPipe.Position == tilePosition)
+            {
+                return;
+            }
+
             variant = (int)PipeVariant.Forward;
 
             var delta = tilePosition - previousPipe.Position;
@@ -202,7 +237,6 @@ public class BuildController : Node2D
         };
 
         draggedBuildings.Push(pipe);
-        RedrawBuildingPreview();
     }
 
     private void UpdateBuildingDrag(Vector2 tilePosition)
@@ -238,13 +272,13 @@ public class BuildController : Node2D
         }
 
         draggedBuildings.Clear();
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
     private void UpdateDeletionDrag(Vector2 tilePosition)
     {
         draggedTiles.Add(tilePosition);
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
     private void EndDeletionDrag()
@@ -255,13 +289,23 @@ public class BuildController : Node2D
         }
 
         draggedTiles.Clear();
-        RedrawBuildingPreview();
+        RedrawPreview();
     }
 
-    private void RedrawBuildingPreview()
+    private void RedrawPreview()
     {
         previewBaseTileMap.Clear();
         previewOverlayTileMap.Clear();
+
+        if (pressedButton == MouseButton.Right && draggedTiles.Count > 0)
+        {
+            foreach (var tilePosition in draggedTiles)
+            {
+                previewBaseTileMap.SetCellv(tilePosition, tile: Constants.TileSet.BaseId, autotileCoord: new Vector2(0, Constants.TileSet.GizmoYOffset));
+            }
+
+            return;
+        }
 
         if (currentBuilding.Type == BuildingType.None)
         {

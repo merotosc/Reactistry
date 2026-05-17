@@ -35,21 +35,25 @@
 - [ ] display tile grid
 - [ ] display building progress
 - [ ] display invalid build positions
-- [ ] display deletion outline on right-click hold
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] display warning for non-wired inputs/outputs
 - [ ] scroll and zoom map
 - [ ] display shortcut hints
 - [ ] display tutorial hints
-- [ ] esc to quit building mode
+- [x] esc to quit building mode
+- [x] display deletion outline on right-click hold
 - [x] improve graphic (pipes instead of belts?)
 
 ## Editor
 
 - [ ] orthogonal mode for pipes
-- [ ] fix gaps when dragging pipes
 - [ ] entity options (reactor inputs count)
+- [ ] blueprints
+- [ ] clone building
+- [ ] copy-paste region selection
+- [ ] region selection for deletion
+- [x] fix gaps when dragging pipes
 - [x] remove multiple on drag
 - [x] position multiple buildings on hold
 - [x] position multiple pipes on hold

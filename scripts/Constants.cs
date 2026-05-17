@@ -13,5 +13,6 @@ public class Constants
         public const int OverlayId = 1;
         public const int PipesYOffset = 0;
         public const int BuildingsYOffset = 1;
+        public const int GizmoYOffset = 2;
     }
 }

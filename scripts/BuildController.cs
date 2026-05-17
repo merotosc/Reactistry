@@ -38,7 +38,6 @@ public class BuildController : Node2D
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
             if (tilePosition != currentBuilding.Position)
             {
-                GD.PrintS("new position", tilePosition);
                 currentBuilding.Position = tilePosition;
                 RedrawPreview();
             }

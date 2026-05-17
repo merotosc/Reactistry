@@ -9,6 +9,7 @@
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
 - [ ] pause/run simulation
+- [ ] change simulation speed (0.5x, 2x, 4x)
 - [ ] instantiate preview entity object to avoid messy entity options code
 - [ ] check if buildings side by side without pipes do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
@@ -38,9 +39,9 @@
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
 - [ ] display warning for non-wired inputs/outputs
-- [ ] scroll and zoom map
 - [ ] display shortcut hints
 - [ ] display tutorial hints
+- [x] pan and zoom map
 - [x] esc to quit building mode
 - [x] display deletion outline on right-click hold
 - [x] improve graphic (pipes instead of belts?)

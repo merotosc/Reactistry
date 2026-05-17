@@ -51,4 +51,10 @@ public class Producer(Vector2 anchorPosition, Direction direction, Molecule mole
     {
         return itemOutputPath ??= new ItemPath(Vector2.Zero, Direction.ToVector() / 2);
     }
+
+    public override BuildingInfo GetInfo()
+        => new()
+        {
+            InputItems = [outputItem],
+        };
 }

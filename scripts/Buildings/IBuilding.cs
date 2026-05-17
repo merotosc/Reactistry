@@ -24,5 +24,5 @@ public interface IBuilding
 
     ItemPath GetItemPath(Vector2 tilePosition);
 
-    string GetInfo();
+    BuildingInfo GetInfo();
 }

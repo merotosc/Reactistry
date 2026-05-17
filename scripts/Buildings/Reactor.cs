@@ -91,4 +91,11 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
     {
         return itemOutputPath ??= new ItemPath(Vector2.Zero, Direction.ToVector() / 2);
     }
+
+    public override BuildingInfo GetInfo()
+        => new()
+        {
+            InputItems = inputItems,
+            OutputItems = outputItems,
+        };
 }

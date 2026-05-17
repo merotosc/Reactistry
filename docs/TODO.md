@@ -10,15 +10,17 @@
 - [ ] use state machine for buildings update loop
 - [ ] pause/run simulation
 - [ ] change simulation speed (0.5x, 2x, 4x)
-- [ ] instantiate preview entity object to avoid messy entity options code
+- [ ] instantiate preview entity object to avoid messy entity options code -> not easy to implement since building instance is mostly immutable
 - [ ] check if buildings side by side without pipes do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
 - [ ] extractor validation
 - [ ] merger round robin
-- [ ] use TryMoveItemToEntity for splitter merge to avoid new item creation
-- [ ] level tasks and consumer
-- [ ] level extractors
+- [ ] splitter improve round robin
+- [ ] consumer/hub
+- [ ] level tasks
+- [ ] extraction sites
 - [ ] use sprite pooling or other batching improvements for items
+- [x] use TryMoveItemToEntity for splitter merge to avoid new item creation
 - [x] splitter
 - [x] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem -> updated item creation logic
 - [x] merger
@@ -31,6 +33,7 @@
 
 ## UI
 
+- [ ] show debug infos (buildings & items count, item paths, building info)
 - [ ] custom cursor
 - [ ] start/end of 1xN tiles recognizable
 - [ ] reaction, extraction and consumer animations

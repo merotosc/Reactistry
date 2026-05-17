@@ -32,9 +32,11 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
         return itemPath ??= new ItemPath(Direction.Reverse().ToVector() / 2, Vector2.Zero);
     }
 
+    public abstract BuildingInfo GetInfo();
+
     protected int DistanceFromAnchor(Vector2 position)
         => Mathf.RoundToInt(AnchorPosition.DistanceTo(position));
 
-    public virtual string GetInfo()
+    public override string ToString()
         => string.Join('\n', Type, AnchorPosition, Direction, Size, Variant);
 }

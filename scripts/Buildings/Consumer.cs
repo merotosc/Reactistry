@@ -26,4 +26,10 @@ public class Consumer(Vector2 anchorPosition, Direction direction)
 
     public override IEnumerable<Item> GetItems()
         => [];
+
+    public override BuildingInfo GetInfo()
+        => new()
+        {
+            InputItems = items,
+        };
 }

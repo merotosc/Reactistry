@@ -1,16 +1,21 @@
-﻿using ChemFactory.scripts.Utilities;
+﻿using ChemFactory.scripts.Models;
+using ChemFactory.scripts.Utilities;
 using Godot;
 
 namespace ChemFactory.scripts;
 
 public class TooltipPanel : Control
 {
-    private const float TooltipDelay = 0.5f;
-    private Camera2D camera;
+    private const float TooltipDelay = 0.35f;
     private World world;
+    private Control contentContainer;
     private Label label;
+    private Control inputsContainer;
+    private Control outputsContainer;
+    private PackedScene itemUi;
     private Vector2 hoveredTile;
     private float hoverTime;
+    private bool tooltipShown;
 
     public void Init(World world)
     {
@@ -19,8 +24,12 @@ public class TooltipPanel : Control
 
     public override void _Ready()
     {
-        camera = GetNode<Camera2D>("/root/Game/Camera2D");
-        label = GetNode<Label>("Panel/MarginContainer/VBoxContainer/Label");
+        contentContainer = GetNode<Control>("Panel/MarginContainer/ContentContainer");
+        label = contentContainer.GetNode<Label>("Name");
+        inputsContainer = contentContainer.GetNode<Container>("Items/Inputs");
+        outputsContainer = contentContainer.GetNode<Container>("Items/Outputs");
+        itemUi = GD.Load<PackedScene>("res://scenes/item_ui.tscn");
+
         HideTooltip();
     }
 
@@ -32,13 +41,17 @@ public class TooltipPanel : Control
             hoveredTile = tilePosition;
             hoverTime = 0;
             HideTooltip();
+            tooltipShown = false;
             return;
         }
 
+        //if (tooltipShown) return;
+
         hoverTime += delta;
-        if (hoverTime >= TooltipDelay)
+        if (hoverTime >= TooltipDelay) // TODO: ignore delay if tooltip is already displayed (when switching to near building)
         {
             ShowTooltipForTile(tilePosition);
+            tooltipShown = true;
         }
     }
 
@@ -49,14 +62,35 @@ public class TooltipPanel : Control
             return;
         }
 
-        var text = building.GetInfo();
-        ShowTooltip(text);
+        var info = building.GetInfo();
+
+        label.Text = building.Type.ToString();
+
+        foreach (Node child in inputsContainer.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        foreach (Node child in outputsContainer.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        foreach (var item in info.InputItems)
+        {
+            AddItemElement(inputsContainer, item);
+        }
+
+        foreach (var item in info.OutputItems)
+        {
+            AddItemElement(outputsContainer, item);
+        }
+
+        ShowTooltip();
     }
 
-    public void ShowTooltip(string text)
+    private void ShowTooltip()
     {
-        label.Text = text;
-
         RectSize = GetMinimumSize();
         var offset = new Vector2(20, 0);
         var screenPosition = GetViewport().GetMousePosition();
@@ -69,9 +103,25 @@ public class TooltipPanel : Control
         Show();
     }
 
-    public void HideTooltip()
+    private void HideTooltip()
     {
         Hide();
     }
 
+    private void AddItemElement(Control container, Item item)
+    {
+        var ui = itemUi.Instance();
+        if (item != null)
+        {
+            ui.GetNode<Label>("Name").Text = item.Molecule.ToString();
+            ui.GetNode<Control>("Image").Modulate = item.Molecule.ToString().ColorHash();
+        }
+        else
+        {
+            ui.GetNode<Label>("Name").Text = string.Empty;
+            ui.GetNode<Control>("Image").Modulate = new Color(0, 0, 0, 0);
+        }
+
+        container.AddChild(ui);
+    }
 }

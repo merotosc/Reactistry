@@ -11,25 +11,25 @@ public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant varia
 	private readonly Direction inputDirection = direction.Reverse();
 	private readonly Direction outputDirection = GetOutputDirectionForVariant(direction, variant);
 	private ItemPath[] itemPaths;
-	private Item Item;
+	private Item item;
 
 	public override BuildingType Type => BuildingType.Pipe;
 
 	public override void Update(World world, float delta)
 	{
-		if (Item?.PathEndReached ?? false)
+		if (item?.PathEndReached ?? false)
 		{
-			var moved = world.TryMoveItem(Item, AnchorPosition + outputDirection.ToVector(), outputDirection.Reverse());
+			var moved = world.TryMoveItem(item, AnchorPosition + outputDirection.ToVector(), outputDirection.Reverse());
 			if (moved)
 			{
-				Item = null;
+				item = null;
 			}
 		}
 	}
 
 	public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
 	{
-		if (Item != null)
+		if (this.item != null)
 		{
 			return false;
 		}
@@ -39,7 +39,7 @@ public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant varia
 			return false;
 		}
 
-		Item = item;
+		this.item = item;
 		return true;
 	}
 
@@ -55,7 +55,7 @@ public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant varia
 	}
 
 	public override IEnumerable<Item> GetItems()
-	   => Item != null ? [Item] : [];
+	   => item != null ? [item] : [];
 
 	public override ItemPath GetItemPath(Vector2 tilePosition)
 	{
@@ -75,4 +75,10 @@ public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant varia
 
 		return itemPaths[(int)variant];
 	}
+
+	public override BuildingInfo GetInfo()
+		=> new()
+		{
+			InputItems = [item],
+		};
 }

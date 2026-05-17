@@ -73,4 +73,10 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
         var inputNumber = DistanceFromAnchor(tilePosition);
         return itemPaths[inputNumber];
     }
+
+    public override BuildingInfo GetInfo()
+        => new()
+        {
+            InputItems = items,
+        };
 }

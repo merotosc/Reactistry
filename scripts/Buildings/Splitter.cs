@@ -77,4 +77,10 @@ public class Splitter(Vector2 anchorPosition, Direction direction, int variant =
         roundRobin %= outputsCount;
         return path;
     }
+
+    public override BuildingInfo GetInfo()
+        => new()
+        {
+            InputItems = items,
+        };
 }

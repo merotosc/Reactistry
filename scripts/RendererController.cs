@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using ChemFactory.scripts.Buildings;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -16,9 +16,9 @@ public class RendererController : Node
 
     public void Init(World world)
     {
-        baseTileMap = GetNode<TileMap>("/root/Game/BaseTileMap");
-        overlayTileMap = GetNode<TileMap>("/root/Game/OverlayTileMap");
-        itemLayer = GetNode<Node2D>("/root/Game/Items");
+        baseTileMap = GetNode<TileMap>("BaseTileMap");
+        overlayTileMap = GetNode<TileMap>("OverlayTileMap");
+        itemLayer = GetNode<Node2D>("Items");
         this.world = world;
         this.world.BuildingCreated += OnBuildingCreated;
         this.world.BuildingDeleted += OnBuildingDeleted;
@@ -31,9 +31,9 @@ public class RendererController : Node
         DrawItems();
     }
 
-    private void OnBuildingCreated(IBuilding building, BuildingOptions buildingOptions)
+    private void OnBuildingCreated(IBuilding building)
     {
-        baseTileMap.DrawBuilding(building.Type, buildingOptions, overlayTileMap);
+        baseTileMap.DrawBuilding(building.ToBuildingOptions(), overlayTileMap);
     }
 
     private void OnBuildingDeleted(Vector2 position)

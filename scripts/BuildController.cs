@@ -1,3 +1,4 @@
+using System;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -7,9 +8,9 @@ namespace ChemFactory.scripts;
 public class BuildController : Node2D
 {
     private World world;
-    private BuildingType currentBuilding; // TODO: store in currentBuildingOptions?
-    private readonly BuildingOptions currentBuildingOptions = new();
-    private TileMap previewTileMap;
+    private readonly BuildingOptions currentBuilding = new();
+    private TileMap previewBaseTileMap;
+    private TileMap previewOverlayTileMap;
 
     public void Init(World world)
     {
@@ -18,16 +19,18 @@ public class BuildController : Node2D
 
     public override void _Ready()
     {
-        previewTileMap = GetNode<TileMap>("/root/Game/PreviewTileMap");
-        previewTileMap.Modulate = new Color(1, 1, 1, 0.5f);
+        previewBaseTileMap = GetNode<TileMap>("PreviewBaseTileMap");
+        previewOverlayTileMap = GetNode<TileMap>("PreviewOverlayTileMap");
+        previewBaseTileMap.Modulate = new Color(1, 1, 1, 0.5f);
+        previewOverlayTileMap.Modulate = new Color(1, 1, 1, 0.5f);
     }
 
     public override void _Process(float delta)
     {
-        if (currentBuilding != BuildingType.None)
+        if (currentBuilding.Type != BuildingType.None)
         {
             var tilePosition = GetGlobalMousePosition().ToTilePosition();
-            if (tilePosition != currentBuildingOptions.Position)
+            if (tilePosition != currentBuilding.Position)
             {
                 RedrawBuildingPreview();
             }
@@ -45,7 +48,8 @@ public class BuildController : Node2D
         {
             if (key.Scancode is >= (uint)KeyList.Key0 and <= (uint)KeyList.Key9)
             {
-                SelectBuilding(key.Scancode - (uint)KeyList.Key0);
+                var keyNumber = key.Scancode - (uint)KeyList.Key0;
+                SelectBuilding((BuildingType)keyNumber);
             }
             else if (key.Scancode == (uint)KeyList.R)
             {
@@ -53,29 +57,40 @@ public class BuildController : Node2D
             }
             else if (key.Scancode == (uint)KeyList.T)
             {
-                ChangeBuildingVariant();
+                ChangeBuildingVariant(key.Shift);
+            }
+            else if (key.Scancode == (uint)KeyList.Escape)
+            {
+                SelectBuilding((uint)BuildingType.None);
             }
         }
     }
 
-    private void SelectBuilding(uint keyNumber)
+    private void SelectBuilding(BuildingType buildingType)
     {
-        currentBuilding = (BuildingType)keyNumber;
+        if (!Enum.IsDefined(typeof(BuildingType), buildingType))
+        {
+            return;
+        }
+
+        currentBuilding.Type = buildingType;
+        currentBuilding.Variant = 0;
         RedrawBuildingPreview();
     }
 
     private void RotateBuilding(bool clockwise)
     {
-        currentBuildingOptions.Direction = clockwise
-            ? currentBuildingOptions.Direction.Next()
-            : currentBuildingOptions.Direction.Previous();
+        currentBuilding.Direction = clockwise
+            ? currentBuilding.Direction.Next()
+            : currentBuilding.Direction.Previous();
         RedrawBuildingPreview();
     }
 
-    private void ChangeBuildingVariant()
+    private void ChangeBuildingVariant(bool reverse)
     {
-        // TODO: set variant based on current type
-        currentBuildingOptions.Variant = (currentBuildingOptions.Variant + 1) % 3;
+        var variantsCount = currentBuilding.Type.GetVariantsCountForBuilding();
+        var offset = reverse ? -1 : 1;
+        currentBuilding.Variant = (currentBuilding.Variant + offset + variantsCount) % currentBuilding.Type.GetVariantsCountForBuilding();
         RedrawBuildingPreview();
     }
 
@@ -87,23 +102,24 @@ public class BuildController : Node2D
             GD.PrintS("Requesting building deletion at posiiton", tilePosition);
             world.TryDeleteBuilding(tilePosition);
         }
-        else if (currentBuilding != BuildingType.None)
+        else if (currentBuilding.Type != BuildingType.None)
         {
-            GD.PrintS("Requesting building creation", currentBuilding, "at posiiton", currentBuildingOptions.Position);
-            world.TryCreateBuilding(currentBuilding, currentBuildingOptions);
+            GD.PrintS("Requesting building creation", currentBuilding.Type, "at posiiton", currentBuilding.Position);
+            world.TryCreateBuilding(currentBuilding);
         }
     }
 
     private void RedrawBuildingPreview()
     {
-        previewTileMap.Clear();
+        previewBaseTileMap.Clear();
+        previewOverlayTileMap.Clear();
 
-        if (currentBuilding == BuildingType.None)
+        if (currentBuilding.Type == BuildingType.None)
         {
             return;
         }
 
-        currentBuildingOptions.Position = GetGlobalMousePosition().ToTilePosition();
-        previewTileMap.DrawBuilding(currentBuilding, currentBuildingOptions);
+        currentBuilding.Position = GetGlobalMousePosition().ToTilePosition();
+        previewBaseTileMap.DrawBuilding(currentBuilding, previewOverlayTileMap);
     }
 }

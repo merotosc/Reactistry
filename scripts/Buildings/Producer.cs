@@ -39,7 +39,7 @@ public class Producer(Vector2 anchorPosition, Direction direction, Molecule mole
         }
     }
 
-    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
+    public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
         => false;
 
     public override IEnumerable<Item> GetItems()

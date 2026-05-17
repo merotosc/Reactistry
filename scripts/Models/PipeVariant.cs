@@ -1,6 +1,6 @@
 ﻿namespace ChemFactory.scripts.Models;
 
-public enum BeltVariant
+public enum PipeVariant
 {
     Forward,
     Right,

@@ -5,7 +5,7 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public abstract class Building(Vector2 anchorPosition, Direction direction) : IBuilding
+public abstract class Building(Vector2 anchorPosition, Direction direction, int variant = 0) : IBuilding
 {
     private ItemPath itemPath;
 
@@ -15,13 +15,15 @@ public abstract class Building(Vector2 anchorPosition, Direction direction) : IB
 
     public Direction Direction { get; } = direction;
 
-    public virtual Vector2 Size { get => Type.GetSizeForBuilding(); }
+    public Vector2 Size { get => Type.GetSizeForBuilding(Variant); }
+
+    public int Variant { get; } = variant;
 
     public virtual void Update(World world, float delta)
     {
     }
 
-    public abstract bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection);
+    public abstract bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection);
 
     public abstract IEnumerable<Item> GetItems();
 

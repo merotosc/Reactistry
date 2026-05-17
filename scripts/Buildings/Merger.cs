@@ -6,17 +6,15 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
-    : Building(anchorPosition, direction)
+public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0)
+    : Building(anchorPosition, direction, variant)
 {
     private readonly Direction inputsDirection = direction.Reverse();
-    private readonly int inputsCount = inputsCount;
-    private readonly Item[] items = new Item[inputsCount];
+    private readonly int inputsCount = variant + 2;
+    private readonly Item[] items = new Item[variant];
     private ItemPath[] itemPaths;
 
     public override BuildingType Type => BuildingType.Merger;
-
-    public override Vector2 Size => Type.GetSizeForBuilding(inputsCount - 2);
 
     public override void Update(World world, float delta)
     {
@@ -33,14 +31,14 @@ public class Merger(Vector2 anchorPosition, Direction direction, int inputsCount
         }
     }
 
-    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
+    public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (inputDirection != inputsDirection)
+        if (fromDirection != inputsDirection)
         {
             return false;
         }
 
-        var inputNumber = DistanceFromAnchor(position);
+        var inputNumber = DistanceFromAnchor(targetPosition);
         if (items[inputNumber] != null)
         {
             return false;

@@ -3,7 +3,7 @@
 public enum BuildingType
 {
     None,
-    Belt,
+    Pipe,
     Producer,
     Consumer,
     Reactor,

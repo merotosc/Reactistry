@@ -6,18 +6,16 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public class Splitter(Vector2 anchorPosition, Direction direction, int outputsCount = 2)
-    : Building(anchorPosition, direction)
+public class Splitter(Vector2 anchorPosition, Direction direction, int variant = 0)
+    : Building(anchorPosition, direction, variant)
 {
     private readonly Direction inputDirection = direction.Reverse();
-    private readonly int outputsCount = outputsCount;
-    private readonly Item[] items = new Item[outputsCount];
+    private readonly int outputsCount = variant + 2;
+    private readonly Item[] items = new Item[variant + 2];
     private ItemPath[] itemPaths;
     private int roundRobin;
 
     public override BuildingType Type => BuildingType.Splitter;
-
-    public override Vector2 Size => Type.GetSizeForBuilding(outputsCount - 2);
 
     public override void Update(World world, float delta)
     {
@@ -35,9 +33,9 @@ public class Splitter(Vector2 anchorPosition, Direction direction, int outputsCo
         }
     }
 
-    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
+    public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (inputDirection != this.inputDirection || position != AnchorPosition)
+        if (fromDirection != this.inputDirection || targetPosition != AnchorPosition)
         {
             return false;
         }

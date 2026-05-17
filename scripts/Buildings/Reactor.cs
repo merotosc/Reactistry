@@ -6,22 +6,20 @@ using Godot;
 
 namespace ChemFactory.scripts.Buildings;
 
-public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCount = 2)
-    : Building(anchorPosition, direction)
+public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 0) // TODO: use BuildingInputsVariant?
+    : Building(anchorPosition, direction, variant)
 {
     private const float ReactionRate = 1;
     private float elapsedTime = 0;
     private readonly Direction inputsDirection = direction.Reverse();
-    private readonly int inputsCount = inputsCount;
-    private readonly Item[] inputItems = new Item[inputsCount];
+    private readonly int inputsCount = variant + 2;
+    private readonly Item[] inputItems = new Item[variant + 2];
     private readonly Queue<Item> outputItems = [];
     private ItemPath itemOutputPath;
     private bool validReaction;
     private List<Molecule> outputMolecules;
 
     public override BuildingType Type => BuildingType.Reactor;
-
-    public override Vector2 Size => Type.GetSizeForBuilding(inputsCount - 2);
 
     public override void Update(World world, float delta)
     {
@@ -61,14 +59,14 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int inputsCoun
         }
     }
 
-    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
+    public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (inputDirection != inputsDirection)
+        if (fromDirection != inputsDirection)
         {
             return false;
         }
 
-        var inputNumber = Mathf.RoundToInt(AnchorPosition.DistanceTo(position));
+        var inputNumber = Mathf.RoundToInt(AnchorPosition.DistanceTo(targetPosition));
         if (inputItems[inputNumber] == null)
         {
             inputItems[inputNumber] = item;

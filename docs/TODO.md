@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] rename belt to pipe
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] save and load game data
@@ -29,11 +30,14 @@
 
 ## UI
 
+- [ ] start/end of 1xN tiles recognizable
+- [ ] reaction, extraction and consumer animations
 - [ ] display tile grid
 - [ ] display building progress
 - [ ] display invalid build positions
 - [ ] display items inside buildings
 - [ ] display molecule info on hover/click
+- [ ] display warning for non-wired inputs/outputs
 - [ ] scroll and zoom map
 - [ ] display shortcut hints
 - [ ] display tutorial hints

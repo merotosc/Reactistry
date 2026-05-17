@@ -13,9 +13,9 @@ public class Consumer(Vector2 anchorPosition, Direction direction)
 
     public override BuildingType Type => BuildingType.Consumer;
 
-    public override bool TryConsumeItem(Item item, Vector2 position, Direction inputDirection)
+    public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (inputDirection != this.inputDirection)
+        if (fromDirection != inputDirection)
         {
             return false;
         }

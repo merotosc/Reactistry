@@ -1,4 +1,6 @@
-﻿using ChemFactory.scripts.Models;
+﻿using System;
+using ChemFactory.scripts.Buildings;
+using ChemFactory.scripts.Models;
 using Godot;
 
 namespace ChemFactory.scripts.Utilities;
@@ -9,7 +11,7 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
-            BuildingType.Belt => new Vector2(variant, Constants.TileSet.PipesYOffset),
+            BuildingType.Pipe => new Vector2(variant, Constants.TileSet.PipesYOffset),
             BuildingType.Producer => new Vector2(0, Constants.TileSet.BuildingsYOffset),
             BuildingType.Consumer => new Vector2(1, Constants.TileSet.BuildingsYOffset),
             BuildingType.Reactor => new Vector2(2, Constants.TileSet.BuildingsYOffset),
@@ -23,13 +25,38 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
-            BuildingType.Belt => Vector2.One,
+            BuildingType.Pipe => Vector2.One,
             BuildingType.Producer => Vector2.One,
             BuildingType.Consumer => Vector2.One,
             BuildingType.Reactor => new Vector2(1, 2 + variant),
             BuildingType.Splitter => new Vector2(1, 2 + variant),
             BuildingType.Merger => new Vector2(1, 2 + variant),
             _ => Vector2.One,
+        };
+    }
+
+    public static int GetVariantsCountForBuilding(this BuildingType buildingType)
+    {
+        return buildingType switch
+        {
+            BuildingType.Pipe => Enum.GetNames(typeof(PipeVariant)).Length,
+            BuildingType.Producer => 1,
+            BuildingType.Consumer => 1,
+            BuildingType.Reactor => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
+            BuildingType.Splitter => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
+            BuildingType.Merger => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
+            _ => 1,
+        };
+    }
+
+    public static BuildingOptions ToBuildingOptions(this IBuilding building)
+    {
+        return new BuildingOptions
+        {
+            Type = building.Type,
+            Position = building.AnchorPosition,
+            Direction = building.Direction,
+            Variant = building.Variant,
         };
     }
 }

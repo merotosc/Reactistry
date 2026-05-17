@@ -64,31 +64,36 @@ script = ExtResource( 2 )
 current = true
 zoom = Vector2( 0.4, 0.4 )
 
-[node name="RendererController" type="Node" parent="."]
-script = ExtResource( 4 )
-
 [node name="SimulationController" type="Node" parent="."]
 script = ExtResource( 5 )
 
-[node name="BuildController" type="Node2D" parent="."]
-script = ExtResource( 1 )
+[node name="RendererController" type="Node" parent="."]
+script = ExtResource( 4 )
 
-[node name="BaseTileMap" type="TileMap" parent="."]
+[node name="BaseTileMap" type="TileMap" parent="RendererController"]
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
-[node name="OverlayTileMap" type="TileMap" parent="."]
+[node name="OverlayTileMap" type="TileMap" parent="RendererController"]
 z_index = 10
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
-[node name="PreviewTileMap" type="TileMap" parent="."]
-z_index = 15
+[node name="Items" type="Node2D" parent="RendererController"]
+position = Vector2( 8, 8 )
+
+[node name="BuildController" type="Node2D" parent="."]
+script = ExtResource( 1 )
+
+[node name="PreviewBaseTileMap" type="TileMap" parent="BuildController"]
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
-[node name="Items" type="Node2D" parent="."]
-position = Vector2( 8, 8 )
+[node name="PreviewOverlayTileMap" type="TileMap" parent="BuildController"]
+z_index = 10
+tile_set = SubResource( 1 )
+cell_size = Vector2( 16, 16 )
+format = 1

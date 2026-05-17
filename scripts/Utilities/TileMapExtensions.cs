@@ -5,10 +5,10 @@ namespace ChemFactory.scripts.Utilities;
 
 public static class TileMapExtensions
 {
-    public static void DrawBuilding(this TileMap baseTileMap, BuildingType buildingType, BuildingOptions buildingOptions, TileMap overlayTileMap = null)
+    public static void DrawBuilding(this TileMap baseTileMap, BuildingOptions buildingOptions, TileMap overlayTileMap)
     {
-        var tileCoord = buildingType.GetTileCoordForBuilding(buildingOptions.Variant);
-        var size = buildingType.GetSizeForBuilding(buildingOptions.Variant);
+        var tileCoord = buildingOptions.Type.GetTileCoordForBuilding(buildingOptions.Variant);
+        var size = buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant);
         var (flipX, flipY, transpose) = buildingOptions.Direction.GetTileTransform();
 
         foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, size))
@@ -18,7 +18,7 @@ public static class TileMapExtensions
 
             void DrawTile(TileMap tileMap, int tileSetId)
             {
-                tileMap?.SetCellv(
+                tileMap.SetCellv(
                     tilePosition,
                     tile: tileSetId,
                     autotileCoord: tileCoord,

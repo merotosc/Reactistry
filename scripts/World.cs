@@ -13,47 +13,42 @@ public class World
     private readonly List<IBuilding> entities = [];
     private readonly List<Item> items = [];
 
-    public event Action<IBuilding, BuildingOptions> BuildingCreated;
+    public event Action<IBuilding> BuildingCreated;
     public event Action<Vector2> BuildingDeleted;
     public event Action<IEnumerable<Item>> ItemCreated;
     public event Action<IEnumerable<Item>> ItemDeleted;
 
     public void LoadDemo()
     {
-        AddBuilding(new Belt(new Vector2(-1, -1), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-2, -1), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-3, -1), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-1, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-2, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-3, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-1, -1), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-2, -1), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-3, -1), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-1, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-2, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-3, 0), Direction.Right));
 
-        AddBuilding(new Belt(new Vector2(1, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(2, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(3, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(4, 0), Direction.Right));
-        AddBuilding(new Belt(new Vector2(5, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(1, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(2, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(3, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(4, 0), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(5, 0), Direction.Right));
 
         AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right, new([new(AtomElement.H, 2)])));
         AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right, new([new(AtomElement.O, 2)])));
         AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
 
-        AddBuilding(new Belt(new Vector2(-1, -5), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-1, -4), Direction.Right));
-        AddBuilding(new Belt(new Vector2(-1, -3), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-1, -5), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-1, -4), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(-1, -3), Direction.Right));
 
-        AddBuilding(new Belt(new Vector2(1, -3), Direction.Right));
-        AddBuilding(new Belt(new Vector2(2, -3), Direction.Right));
-        AddBuilding(new Belt(new Vector2(3, -3), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(1, -3), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(2, -3), Direction.Right));
+        AddBuilding(new Pipe(new Vector2(3, -3), Direction.Right));
 
         AddBuilding(new Producer(new Vector2(-2, -5), Direction.Right, new([new(AtomElement.C, 1)])));
         AddBuilding(new Producer(new Vector2(-2, -4), Direction.Right, new([new(AtomElement.C, 1)])));
         AddBuilding(new Producer(new Vector2(-2, -3), Direction.Right, new([new(AtomElement.O, 2)])));
-        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, inputsCount: 3));
-
-        foreach (var building in entities)
-        {
-            BuildingCreated?.Invoke(building, new() { Position = building.AnchorPosition, Direction = building.Direction });
-        }
+        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, variant: 1));
     }
 
     public void Tick(float delta)
@@ -89,7 +84,7 @@ public class World
         {
             var overshoot = item.DistanceOvershoot;
             item.TilePosition = targetPosition;
-            item.Path = building.GetItemPath(item.TilePosition); // TODO: set item path inside building directly?
+            item.Path = building.GetItemPath(item.TilePosition); // TODO: set item path inside building directly or return as out param?
             item.DistanceOnPath = overshoot;
             return true;
         }
@@ -97,9 +92,9 @@ public class World
         return false;
     }
 
-    public bool TryCreateBuilding(BuildingType buildingType, BuildingOptions buildingOptions)
+    public bool TryCreateBuilding(BuildingOptions buildingOptions)
     {
-        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingType.GetSizeForBuilding(buildingOptions.Variant)))
+        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))
         {
             if (buildingTiles.ContainsKey(tilePosition))
             {
@@ -107,26 +102,24 @@ public class World
             }
         }
 
-        IBuilding building = buildingType switch
+        IBuilding building = buildingOptions.Type switch
         {
-            BuildingType.Belt => new Belt(buildingOptions.Position, buildingOptions.Direction, (BeltVariant)buildingOptions.Variant),
+            BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
             BuildingType.Producer => new Producer(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
             BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
-            BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
-            BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
-            BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant + 2),
+            BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
+            BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
+            BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
             _ => null,
         };
 
         if (building == null)
         {
-            GD.PrintErr("Building to create not found", buildingType);
+            GD.PrintErr("Building to create not found", buildingOptions.Type);
             return false;
         }
 
         AddBuilding(building);
-        BuildingCreated?.Invoke(building, buildingOptions); // TODO: move to AddBuilding method
-
         return true;
     }
 
@@ -137,17 +130,7 @@ public class World
             return false;
         }
 
-        TryDeleteItems(building.GetItems());
-
-        // TODO: create separate method RemoveBuilding as for AddBuilding
-        entities.Remove(building);
-
-        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
-        {
-            buildingTiles.Remove(tilePosition);
-            BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
-        }
-
+        RemoveBuildings(building);
         return true;
     }
 
@@ -158,6 +141,21 @@ public class World
         foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
         {
             buildingTiles.Add(tilePosition, building);
+        }
+
+        BuildingCreated?.Invoke(building);
+    }
+
+    private void RemoveBuildings(IBuilding building)
+    {
+        TryDeleteItems(building.GetItems());
+
+        entities.Remove(building);
+
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
+        {
+            buildingTiles.Remove(tilePosition);
+            BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
         }
     }
 

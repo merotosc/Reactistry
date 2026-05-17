@@ -23,4 +23,6 @@ public interface IBuilding
     IEnumerable<Item> GetItems();
 
     ItemPath GetItemPath(Vector2 tilePosition);
+
+    string GetInfo();
 }

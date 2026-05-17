@@ -123,8 +123,7 @@ public class BuildController : Node2D
             pressedButton = button;
             HandleMouseDown();
         }
-
-        if (!pressed && pressedButton == button)
+        else if (!pressed && pressedButton == button)
         {
             HandleMouseReleased();
             pressedButton = MouseButton.None;
@@ -252,7 +251,7 @@ public class BuildController : Node2D
         var building = new BuildingOptions
         {
             Type = currentBuilding.Type,
-            Position = tilePosition,
+            Position = tilePosition, // TODO: not necessary as currentBuilding can be used directly as position is set in _Process
             Direction = currentBuilding.Direction,
             Variant = currentBuilding.Variant,
         };

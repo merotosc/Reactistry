@@ -34,4 +34,7 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
 
     protected int DistanceFromAnchor(Vector2 position)
         => Mathf.RoundToInt(AnchorPosition.DistanceTo(position));
+
+    public virtual string GetInfo()
+        => string.Join('\n', Type, AnchorPosition, Direction, Size, Variant);
 }

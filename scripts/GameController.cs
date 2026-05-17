@@ -12,6 +12,7 @@ public class GameController : Node
         GetNode<RendererController>("RendererController").Init(world);
         GetNode<SimulationController>("SimulationController").Init(world);
         GetNode<BuildController>("BuildController").Init(world);
+        GetNode<TooltipPanel>("Canvas/TooltipPanel").Init(world);
         world.LoadDemo();
     }
 }

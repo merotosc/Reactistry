@@ -92,6 +92,9 @@ public class World
         return false;
     }
 
+    public bool TryGetBuilding(Vector2 position, out IBuilding building)
+        => buildingTiles.TryGetValue(position, out building);
+
     public bool TryCreateBuilding(BuildingOptions buildingOptions)
     {
         foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))

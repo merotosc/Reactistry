@@ -31,7 +31,7 @@
 
 ## UI
 
-- [ ] better deletion gizmo/outline
+- [ ] custom cursor
 - [ ] start/end of 1xN tiles recognizable
 - [ ] reaction, extraction and consumer animations
 - [ ] display building progress
@@ -41,6 +41,7 @@
 - [ ] display warning for non-wired inputs/outputs
 - [ ] display shortcut hints
 - [ ] display tutorial hints
+- [x] better deletion gizmo/outline
 - [x] tile grid smaller if far zoomed out -> removed completely if far away
 - [x] display tile grid
 - [x] pan and zoom map

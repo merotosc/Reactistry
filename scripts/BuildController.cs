@@ -73,24 +73,9 @@ public class BuildController : Node2D
                     ChangeBuildingVariant(key.Shift);
                     break;
                 case (uint)KeyList.Escape:
-                    SelectBuilding(BuildingType.None);
+                    CancelOperation();
                     break;
             }
-        }
-    }
-
-    private void HandleMouseButton(bool pressed, MouseButton button)
-    {
-        if (pressed && pressedButton == MouseButton.None)
-        {
-            pressedButton = button;
-            HandleMouseDown();
-        }
-
-        if (!pressed && pressedButton == button)
-        {
-            HandleMouseReleased();
-            pressedButton = MouseButton.None;
         }
     }
 
@@ -120,6 +105,30 @@ public class BuildController : Node2D
         var offset = reverse ? -1 : 1;
         currentBuilding.Variant = (currentBuilding.Variant + offset + variantsCount) % currentBuilding.Type.GetVariantsCountForBuilding();
         RedrawPreview();
+    }
+
+    private void CancelOperation()
+    {
+        pressedButton = MouseButton.None;
+        draggedBuildings.Clear();
+        draggedTiles.Clear();
+        lastDragTile = null;
+        SelectBuilding(BuildingType.None);
+    }
+
+    private void HandleMouseButton(bool pressed, MouseButton button)
+    {
+        if (pressed && pressedButton == MouseButton.None)
+        {
+            pressedButton = button;
+            HandleMouseDown();
+        }
+
+        if (!pressed && pressedButton == button)
+        {
+            HandleMouseReleased();
+            pressedButton = MouseButton.None;
+        }
     }
 
     private void HandleMouseDown()
@@ -300,7 +309,7 @@ public class BuildController : Node2D
         {
             foreach (var tilePosition in draggedTiles)
             {
-                previewBaseTileMap.SetCellv(tilePosition, tile: Constants.TileSet.BaseId, autotileCoord: new Vector2(0, Constants.TileSet.GizmoYOffset));
+                previewOverlayTileMap.SetCellv(tilePosition, tile: Constants.TileSet.BaseId, autotileCoord: new Vector2(0, Constants.TileSet.GizmoYOffset));
             }
 
             return;

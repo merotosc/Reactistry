@@ -31,9 +31,9 @@
 
 ## UI
 
+- [ ] better deletion gizmo/outline
 - [ ] start/end of 1xN tiles recognizable
 - [ ] reaction, extraction and consumer animations
-- [ ] display tile grid
 - [ ] display building progress
 - [ ] display invalid build positions
 - [ ] display items inside buildings
@@ -41,6 +41,8 @@
 - [ ] display warning for non-wired inputs/outputs
 - [ ] display shortcut hints
 - [ ] display tutorial hints
+- [x] tile grid smaller if far zoomed out -> removed completely if far away
+- [x] display tile grid
 - [x] pan and zoom map
 - [x] esc to quit building mode
 - [x] display deletion outline on right-click hold
@@ -48,9 +50,11 @@
 
 ## Editor
 
+- [ ] avoid switching item when dragging (messes up first building)
 - [ ] orthogonal mode for pipes
 - [ ] entity options (reactor inputs count)
 - [ ] blueprints
+- [ ] move building
 - [ ] clone building
 - [ ] copy-paste region selection
 - [ ] region selection for deletion

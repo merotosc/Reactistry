@@ -1,4 +1,5 @@
-﻿using ChemFactory.scripts.Models;
+﻿using ChemFactory.scripts.Buildings;
+using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
@@ -13,9 +14,9 @@ public class TooltipPanel : Control
     private Control inputsContainer;
     private Control outputsContainer;
     private PackedScene itemUi;
-    private Vector2 hoveredTile;
+    private Vector2 lastTilePosition;
+    private IBuilding currentBuilding;
     private float hoverTime;
-    private bool tooltipShown;
 
     public void Init(World world)
     {
@@ -24,7 +25,7 @@ public class TooltipPanel : Control
 
     public override void _Ready()
     {
-        contentContainer = GetNode<Control>("Panel/MarginContainer/ContentContainer");
+        contentContainer = GetNode<Control>("PanelContainer/ContentContainer");
         label = contentContainer.GetNode<Label>("Name");
         inputsContainer = contentContainer.GetNode<Container>("Items/Inputs");
         outputsContainer = contentContainer.GetNode<Container>("Items/Outputs");
@@ -36,35 +37,37 @@ public class TooltipPanel : Control
     public override void _Process(float delta)
     {
         var tilePosition = (GetViewport().CanvasTransform.AffineInverse() * GetViewport().GetMousePosition()).ToTilePosition();
-        if (tilePosition != hoveredTile)
+        if (tilePosition != lastTilePosition)
         {
-            hoveredTile = tilePosition;
-            hoverTime = 0;
-            HideTooltip();
-            tooltipShown = false;
+            lastTilePosition = tilePosition;
+
+            if (!world.TryGetBuilding(tilePosition, out currentBuilding))
+            {
+                hoverTime = 0;
+                HideTooltip();
+            }
+        }
+
+        if (currentBuilding == null)
+        {
             return;
         }
 
-        //if (tooltipShown) return;
-
-        hoverTime += delta;
-        if (hoverTime >= TooltipDelay) // TODO: ignore delay if tooltip is already displayed (when switching to near building)
+        if (hoverTime >= TooltipDelay)
         {
-            ShowTooltipForTile(tilePosition);
-            tooltipShown = true;
+            ShowTooltipForBuilding();
+        }
+        else
+        {
+            hoverTime += delta;
         }
     }
 
-    private void ShowTooltipForTile(Vector2 tilePosition)
+    private void ShowTooltipForBuilding()
     {
-        if (!world.TryGetBuilding(tilePosition, out var building))
-        {
-            return;
-        }
+        var info = currentBuilding.GetInfo();
 
-        var info = building.GetInfo();
-
-        label.Text = building.Type.ToString();
+        label.Text = currentBuilding.Type.ToString();
 
         foreach (Node child in inputsContainer.GetChildren())
         {
@@ -114,12 +117,12 @@ public class TooltipPanel : Control
         if (item != null)
         {
             ui.GetNode<Label>("Name").Text = item.Molecule.ToString();
-            ui.GetNode<Control>("Image").Modulate = item.Molecule.ToString().ColorHash();
+            ui.GetNode<Control>("ImageFrame/Image").Modulate = item.Molecule.ToString().ColorHash();
         }
         else
         {
             ui.GetNode<Label>("Name").Text = string.Empty;
-            ui.GetNode<Control>("Image").Modulate = new Color(0, 0, 0, 0);
+            ui.GetNode<Control>("ImageFrame/Image").Modulate = new Color(0, 0, 0, 0);
         }
 
         container.AddChild(ui);

@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] add try catch blocks to avoid game crash
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] rename pipe to pipe
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
@@ -19,6 +20,8 @@
 - [ ] consumer/hub
 - [ ] level tasks
 - [ ] extraction sites
+- [ ] upgrade system
+- [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
 - [x] use TryMoveItemToEntity for splitter merge to avoid new item creation
 - [x] splitter
@@ -33,17 +36,18 @@
 
 ## UI
 
+- [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)
 - [ ] custom cursor
 - [ ] start/end of 1xN tiles recognizable
-- [ ] reaction, extraction and consumer animations
-- [ ] display building progress
+- [ ] display more molecule information (formula, name)
+- [ ] display building info such as state, progress
 - [ ] display invalid build positions
-- [ ] display items inside buildings
-- [ ] display molecule info on hover/click
 - [ ] display warning for non-wired inputs/outputs
 - [ ] display shortcut hints
 - [ ] display tutorial hints
+- [ ] reaction, extraction and consumer animations
+- [x] display items in buildings
 - [x] better deletion gizmo/outline
 - [x] tile grid smaller if far zoomed out -> removed completely if far away
 - [x] display tile grid

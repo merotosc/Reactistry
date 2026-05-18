@@ -20,7 +20,7 @@ public interface IBuilding
 
     bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection);
 
-    IEnumerable<Item> GetItems();
+    IEnumerable<Item> GetItems(); // TODO: remove in favor of GetInfo?
 
     ItemPath GetItemPath(Vector2 tilePosition);
 

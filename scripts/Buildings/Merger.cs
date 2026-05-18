@@ -11,7 +11,7 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
 {
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = variant + 2;
-    private readonly Item[] items = new Item[variant];
+    private readonly Item[] items = new Item[variant + 2];
     private ItemPath[] itemPaths;
 
     public override BuildingType Type => BuildingType.Merger;

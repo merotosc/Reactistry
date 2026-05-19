@@ -308,7 +308,7 @@ public class BuildController : Node2D
         {
             foreach (var tilePosition in draggedTiles)
             {
-                previewOverlayTileMap.SetCellv(tilePosition, tile: Constants.TileSet.BaseId, autotileCoord: new Vector2(0, Constants.TileSet.GizmoYOffset));
+                previewOverlayTileMap.SetCellv(tilePosition, tile: Constants.TileSet.IconsId, autotileCoord: new Vector2(0, Constants.TileSet.IconsYOffset));
             }
 
             return;

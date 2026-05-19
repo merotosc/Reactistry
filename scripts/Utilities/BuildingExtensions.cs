@@ -11,6 +11,7 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
+            BuildingType.Lab => new Vector2(0, Constants.TileSet.LabYOffset),
             BuildingType.Pipe => new Vector2(variant, Constants.TileSet.PipesYOffset),
             BuildingType.Extractor => new Vector2(0, Constants.TileSet.BuildingsYOffset),
             BuildingType.Consumer => new Vector2(1, Constants.TileSet.BuildingsYOffset),
@@ -25,6 +26,7 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
+            BuildingType.Lab => new Vector2(6, 6),
             BuildingType.Pipe => Vector2.One,
             BuildingType.Extractor => Vector2.One,
             BuildingType.Consumer => Vector2.One,
@@ -39,6 +41,7 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
+            BuildingType.Lab => 1,
             BuildingType.Pipe => Enum.GetNames(typeof(PipeVariant)).Length,
             BuildingType.Extractor => 1,
             BuildingType.Consumer => 1,

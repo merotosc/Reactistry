@@ -20,6 +20,8 @@ public class World
 
     public void LoadDemo()
     {
+        AddBuilding(new Lab(new Vector2(10, 0), Direction.Right));
+
         AddBuilding(new Pipe(new Vector2(-1, -1), Direction.Right));
         AddBuilding(new Pipe(new Vector2(-2, -1), Direction.Right));
         AddBuilding(new Pipe(new Vector2(-3, -1), Direction.Right));
@@ -57,13 +59,13 @@ public class World
         UpdateItems(delta);
     }
 
-    public void AddItems(IEnumerable<Item> itemsToAdd)
+    public void AddItems(params IEnumerable<Item> itemsToAdd)
     {
         items.AddRange(itemsToAdd);
         ItemCreated?.Invoke(itemsToAdd);
     }
 
-    public void DeleteItems(IEnumerable<Item> itemsToRemove)
+    public void DeleteItems(params IEnumerable<Item> itemsToRemove)
     {
         foreach (var item in itemsToRemove)
         {
@@ -80,7 +82,7 @@ public class World
         {
             var overshoot = item.DistanceOvershoot;
             item.TilePosition = targetPosition;
-            item.Path = building.GetItemPath(item.TilePosition); // TODO: set item path inside building directly or return as out param?
+            item.Path = building.GetItemPath(item.TilePosition, fromDirection); // TODO: set item path inside building directly or return as out param?
             item.DistanceOnPath = overshoot;
             return true;
         }
@@ -124,7 +126,7 @@ public class World
 
     public bool TryDeleteBuilding(Vector2 position)
     {
-        if (!buildingTiles.TryGetValue(position, out var building))
+        if (!buildingTiles.TryGetValue(position, out var building) || building is Lab)
         {
             return false;
         }

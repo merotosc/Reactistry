@@ -23,7 +23,7 @@ public class Extractor(Vector2 anchorPosition, Direction direction, Molecule mol
         if (timer.TryTrigger(() => outputItem == null))
         {
             outputItem = new Item(molecule, AnchorPosition, GetItemOutputPath());
-            world.AddItems([outputItem]);
+            world.AddItems(outputItem);
         }
 
         if (outputItem?.PathEndReached ?? false)

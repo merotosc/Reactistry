@@ -22,7 +22,7 @@ public interface IBuilding
 
     IEnumerable<Item> GetItems(); // TODO: remove in favor of GetInfo?
 
-    ItemPath GetItemPath(Vector2 tilePosition);
+    ItemPath GetItemPath(Vector2 tilePosition, Direction fromDirection);
 
     BuildingInfo GetInfo();
 }

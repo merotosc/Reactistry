@@ -15,9 +15,9 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
 
     public Direction Direction { get; } = direction;
 
-    public Vector2 Size { get => Type.GetSizeForBuilding(Variant); }
+    public Vector2 Size => Type.GetSizeForBuilding(Variant);
 
-    public int Variant { get; } = variant;
+    public int Variant => variant;
 
     public virtual void Update(World world, float delta)
     {
@@ -28,7 +28,7 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
 
     public abstract IEnumerable<Item> GetItems();
 
-    public virtual ItemPath GetItemPath(Vector2 tilePosition)
+    public virtual ItemPath GetItemPath(Vector2 tilePosition, Direction fromDirection)
     {
         return itemPath ??= new ItemPath(Direction.Reverse().ToVector() / 2, Vector2.Zero);
     }

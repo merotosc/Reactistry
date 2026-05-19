@@ -17,14 +17,14 @@ public class Consumer(Vector2 anchorPosition, Direction direction)
     {
         if (item?.PathEndReached ?? false)
         {
-            world.DeleteItems([item]);
+            world.DeleteItems(item);
             item = null;
         }
     }
 
     public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (fromDirection != inputDirection)
+        if (fromDirection != inputDirection || this.item != null)
         {
             return false;
         }

@@ -57,7 +57,7 @@ public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant varia
 	public override IEnumerable<Item> GetItems()
 	   => item != null ? [item] : [];
 
-	public override ItemPath GetItemPath(Vector2 tilePosition)
+	public override ItemPath GetItemPath(Vector2 tilePosition, Direction fromDirection)
 	{
 		if (itemPaths == null)
 		{

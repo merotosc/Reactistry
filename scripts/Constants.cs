@@ -11,8 +11,10 @@ public class Constants
     {
         public const int BaseId = 0;
         public const int OverlayId = 1;
+        public const int IconsId = 2;
         public const int PipesYOffset = 0;
         public const int BuildingsYOffset = 1;
-        public const int GizmoYOffset = 2;
+        public const int LabYOffset = 2;
+        public const int IconsYOffset = 0;
     }
 }

@@ -2,6 +2,7 @@
 
 public enum BuildingType
 {
+    Lab = -1,
     None,
     Pipe,
     Extractor,

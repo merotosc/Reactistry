@@ -51,7 +51,7 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
     public override IEnumerable<Item> GetItems()
         => [.. items.Where(x => x != null)];
 
-    public override ItemPath GetItemPath(Vector2 tilePosition)
+    public override ItemPath GetItemPath(Vector2 tilePosition, Direction fromDirection)
     {
         if (itemPaths == null)
         {

@@ -21,37 +21,12 @@ public class World
 
     public void LoadDemo()
     {
-        AddBuilding(new Lab(new Vector2(10, 0), Direction.Right));
+        AddBuilding(new Lab(new Vector2(0, 0), Direction.Right));
 
-        AddBuilding(new Pipe(new Vector2(-1, -1), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-2, -1), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-3, -1), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-1, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-2, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-3, 0), Direction.Right));
-
-        AddBuilding(new Pipe(new Vector2(1, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(2, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(3, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(4, 0), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(5, 0), Direction.Right));
-
-        AddBuilding(new Extractor(new Vector2(-4, -1), Direction.Right, new([new(AtomElement.H, 2)])));
-        AddBuilding(new Extractor(new Vector2(-4, 0), Direction.Right, new([new(AtomElement.O, 2)])));
-        AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
-
-        AddBuilding(new Pipe(new Vector2(-1, -5), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-1, -4), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(-1, -3), Direction.Right));
-
-        AddBuilding(new Pipe(new Vector2(1, -3), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(2, -3), Direction.Right));
-        AddBuilding(new Pipe(new Vector2(3, -3), Direction.Right));
-
-        AddBuilding(new Extractor(new Vector2(-2, -5), Direction.Right, new([new(AtomElement.C, 1)])));
-        AddBuilding(new Extractor(new Vector2(-2, -4), Direction.Right, new([new(AtomElement.C, 1)])));
-        AddBuilding(new Extractor(new Vector2(-2, -3), Direction.Right, new([new(AtomElement.O, 2)])));
-        AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, variant: 1));
+        AddBuilding(new Extractor(new Vector2(-20, -10), Direction.Right, new([new(AtomElement.H, 2)])));
+        AddBuilding(new Extractor(new Vector2(-20, 5), Direction.Right, new([new(AtomElement.C, 1)])));
+        AddBuilding(new Extractor(new Vector2(-20, 0), Direction.Right, new([new(AtomElement.O, 2)])));
+        AddBuilding(new Extractor(new Vector2(-20, -5), Direction.Right, new([new(AtomElement.N, 2)])));
     }
 
     public void Tick(float delta)
@@ -138,6 +113,7 @@ public class World
 
     private void AddBuilding(IBuilding building)
     {
+        // TODO: add check to avoid duplicate buildings and key
         buildings.Add(building);
 
         foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
@@ -152,6 +128,7 @@ public class World
     {
         DeleteItems(building.GetItems());
 
+        // TODO: add check to avoid missing building and key
         buildings.Remove(building);
 
         foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))

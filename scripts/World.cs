@@ -10,9 +10,10 @@ namespace ChemFactory.scripts;
 public class World
 {
     private readonly Dictionary<Vector2, IBuilding> buildingTiles = [];
-    private readonly List<IBuilding> entities = [];
+    private readonly List<IBuilding> buildings = [];
     private readonly List<Item> items = [];
 
+    public IReadOnlyList<IBuilding> Buildings => buildings;
     public event Action<IBuilding> BuildingCreated;
     public event Action<Vector2> BuildingDeleted;
     public event Action<IEnumerable<Item>> ItemCreated;
@@ -137,7 +138,7 @@ public class World
 
     private void AddBuilding(IBuilding building)
     {
-        entities.Add(building);
+        buildings.Add(building);
 
         foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
         {
@@ -151,7 +152,7 @@ public class World
     {
         DeleteItems(building.GetItems());
 
-        entities.Remove(building);
+        buildings.Remove(building);
 
         foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
         {
@@ -170,7 +171,7 @@ public class World
 
     private void UpdateEntities(float delta)
     {
-        foreach (var building in entities)
+        foreach (var building in buildings)
         {
             building.Update(this, delta);
         }

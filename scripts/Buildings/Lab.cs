@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
@@ -8,16 +9,19 @@ namespace ChemFactory.scripts.Buildings;
 public class Lab(Vector2 anchorPosition, Direction direction)
     : Building(anchorPosition, direction)
 {
-    private Queue<Item> items = [];
+    private readonly Queue<Item> items = [];
     private Dictionary<Direction, ItemPath> itemPaths;
 
     public override BuildingType Type => BuildingType.Lab;
+
+    public event Action<Item> ItemDelivered;
 
     public override void Update(World world, float delta)
     {
         if (items.TryPeek(out var item) && item.PathEndReached)
         {
             world.DeleteItems(item);
+            ItemDelivered?.Invoke(item);
             items.Dequeue();
         }
     }

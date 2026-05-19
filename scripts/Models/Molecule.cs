@@ -35,6 +35,7 @@ public class Molecule(List<Atom> atoms, int count = 1)
         return new Molecule(atoms);
     }
 
+    // TODO: make cached property and molecule immutable?
     public override string ToString()
     {
         var atoms = Atoms
@@ -48,4 +49,20 @@ public class Molecule(List<Atom> atoms, int count = 1)
             ? $"{Count}{formula}"
             : formula;
     }
+
+    public override bool Equals(object obj)
+    {
+        return obj is Molecule molecule &&
+               EqualityComparer<List<Atom>>.Default.Equals(Atoms, molecule.Atoms) &&
+               Count == molecule.Count;
+    }
+
+    public override int GetHashCode()
+        => HashCode.Combine(Atoms, Count);
+
+    public static bool operator ==(Molecule left, Molecule right)
+        => left.ToString() == right.ToString();
+
+    public static bool operator !=(Molecule left, Molecule right)
+        => !(left == right);
 }

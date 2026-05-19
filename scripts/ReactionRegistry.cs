@@ -9,7 +9,10 @@ namespace ChemFactory.scripts;
 public static class ReactionRegistry
 {
     private const string ReactionsFile = "res://assets/reactions.csv";
+    private static readonly List<Molecule> molecules = [];
     private static readonly Dictionary<string, Reaction> reactions = [];
+
+    public static IReadOnlyList<Molecule> Molecules => molecules;
 
     public static void Load()
     {
@@ -27,7 +30,6 @@ public static class ReactionRegistry
 
         file.Open(ReactionsFile, File.ModeFlags.Read);
 
-        var molecules = new List<Molecule>();
         var i = 0;
 
         while (!file.EofReached())
@@ -97,7 +99,6 @@ public static class ReactionRegistry
     public static (bool Valid, List<Molecule> OutputMolecules) CreateReaction(List<Molecule> molecules)
     {
         var formula = GetStableFormula(molecules);
-        GD.PrintS("Requested reaction with following molecules", formula);
 
         if (!reactions.TryGetValue(formula, out var reaction))
         {

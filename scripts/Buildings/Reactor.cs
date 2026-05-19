@@ -10,7 +10,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
     : Building(anchorPosition, direction, variant)
 {
     private const float ReactionRate = 1;
-    private float elapsedTime = 0;
+    private readonly CycleTimer timer = new(ReactionRate);
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = variant + 2;
     private readonly Item[] inputItems = new Item[variant + 2];
@@ -23,10 +23,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
 
     public override void Update(World world, float delta)
     {
-        // TODO: create helper to make timer
-        if (elapsedTime < ReactionRate && inputItems.All(x => x != null))
+        if (inputItems.All(x => x != null))
         {
-            elapsedTime += delta;
+            timer.Advance(delta);
         }
 
         if (outputItems.TryPeek(out var item) && item.PathEndReached)
@@ -34,11 +33,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
             if (world.TryMoveItem(outputItems.Peek(), AnchorPosition + Direction.ToVector(), Direction.Reverse()))
             {
                 outputItems.Dequeue();
-                elapsedTime = 0;
             }
         }
-
-        else if (elapsedTime >= ReactionRate && outputItems.Count == 0)
+        else if (timer.TryTrigger(() => outputItems.Count == 0))
         {
             (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. inputItems.Select(x => x.Molecule)]);
 
@@ -53,9 +50,8 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
             }
 
             world.AddItems(outputItems);
-            world.TryDeleteItems(inputItems);
+            world.DeleteItems(inputItems);
             ClearItems();
-            elapsedTime -= ReactionRate;
         }
     }
 

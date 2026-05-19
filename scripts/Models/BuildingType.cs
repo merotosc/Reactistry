@@ -4,7 +4,7 @@ public enum BuildingType
 {
     None,
     Pipe,
-    Producer,
+    Extractor,
     Consumer,
     Reactor,
     Splitter,

@@ -33,8 +33,8 @@ public class World
         AddBuilding(new Pipe(new Vector2(4, 0), Direction.Right));
         AddBuilding(new Pipe(new Vector2(5, 0), Direction.Right));
 
-        AddBuilding(new Producer(new Vector2(-4, -1), Direction.Right, new([new(AtomElement.H, 2)])));
-        AddBuilding(new Producer(new Vector2(-4, 0), Direction.Right, new([new(AtomElement.O, 2)])));
+        AddBuilding(new Extractor(new Vector2(-4, -1), Direction.Right, new([new(AtomElement.H, 2)])));
+        AddBuilding(new Extractor(new Vector2(-4, 0), Direction.Right, new([new(AtomElement.O, 2)])));
         AddBuilding(new Reactor(new Vector2(0, 0), Direction.Right));
 
         AddBuilding(new Pipe(new Vector2(-1, -5), Direction.Right));
@@ -45,9 +45,9 @@ public class World
         AddBuilding(new Pipe(new Vector2(2, -3), Direction.Right));
         AddBuilding(new Pipe(new Vector2(3, -3), Direction.Right));
 
-        AddBuilding(new Producer(new Vector2(-2, -5), Direction.Right, new([new(AtomElement.C, 1)])));
-        AddBuilding(new Producer(new Vector2(-2, -4), Direction.Right, new([new(AtomElement.C, 1)])));
-        AddBuilding(new Producer(new Vector2(-2, -3), Direction.Right, new([new(AtomElement.O, 2)])));
+        AddBuilding(new Extractor(new Vector2(-2, -5), Direction.Right, new([new(AtomElement.C, 1)])));
+        AddBuilding(new Extractor(new Vector2(-2, -4), Direction.Right, new([new(AtomElement.C, 1)])));
+        AddBuilding(new Extractor(new Vector2(-2, -3), Direction.Right, new([new(AtomElement.O, 2)])));
         AddBuilding(new Reactor(new Vector2(0, -3), Direction.Right, variant: 1));
     }
 
@@ -63,18 +63,14 @@ public class World
         ItemCreated?.Invoke(itemsToAdd);
     }
 
-    public bool TryDeleteItems(IEnumerable<Item> itemsToRemove)
+    public void DeleteItems(IEnumerable<Item> itemsToRemove)
     {
-        var allRemoved = true;
-
         foreach (var item in itemsToRemove)
         {
-            allRemoved &= items.Remove(item);
+            items.Remove(item);
         }
 
         ItemDeleted?.Invoke(itemsToRemove);
-
-        return allRemoved;
     }
 
     public bool TryMoveItem(Item item, Vector2 targetPosition, Direction fromDirection)
@@ -108,7 +104,7 @@ public class World
         IBuilding building = buildingOptions.Type switch
         {
             BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
-            BuildingType.Producer => new Producer(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
+            BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
             BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
             BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
             BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
@@ -151,7 +147,7 @@ public class World
 
     private void RemoveBuildings(IBuilding building)
     {
-        TryDeleteItems(building.GetItems());
+        DeleteItems(building.GetItems());
 
         entities.Remove(building);
 

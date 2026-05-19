@@ -2,6 +2,8 @@
 
 ## General
 
+- [ ] remove GetItems in favor of GetInfo?
+- [ ] helper method to determine output position and direction for item in building
 - [ ] add try catch blocks to avoid game crash
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] rename pipe to pipe

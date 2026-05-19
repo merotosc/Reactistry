@@ -23,7 +23,8 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
     {
     }
 
-    public abstract bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection);
+    public virtual bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
+        => false;
 
     public abstract IEnumerable<Item> GetItems();
 

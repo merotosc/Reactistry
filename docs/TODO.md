@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] read level tasks from csv file
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
 - [ ] add try catch blocks to avoid game crash
@@ -15,14 +16,14 @@
 - [ ] instantiate preview entity object to avoid messy entity options code -> not easy to implement since building instance is mostly immutable
 - [ ] check if buildings side by side without pipes do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
-- [ ] extractor validation
 - [ ] merger round robin
 - [ ] splitter improve round robin
-- [ ] level tasks
-- [ ] extraction sites
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [x] level tasks
+- [x] extraction sites
+- [x] extractor validation
 - [x] rename belt to pipe
 - [x] consumer/hub
 - [x] use TryMoveItemToEntity for splitter merge to avoid new item creation
@@ -38,6 +39,7 @@
 
 ## UI
 
+- [ ] molecules resource icon/tile
 - [ ] atom numbers in formula in subscript
 - [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)

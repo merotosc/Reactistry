@@ -14,7 +14,29 @@ public class Molecule(List<Atom> atoms, int count = 1)
     public int Count { get; } = count;
 
     public static Molecule InvalidMolecule
-        => new([new(AtomElement.Invalid)]);
+        = new(AtomElement.Invalid);
+
+    public static Molecule H2
+        = new(AtomElement.H, 2);
+
+    public static Molecule C
+        = new(AtomElement.C, 1);
+
+    public static Molecule N2
+        = new(AtomElement.N, 2);
+
+    public static Molecule O2
+        = new(AtomElement.O, 2);
+
+    public Molecule(AtomElement atom, int count = 1)
+        : this(new(atom, count))
+    {
+    }
+
+    public Molecule(Atom atom)
+        : this([atom])
+    {
+    }
 
     public static Molecule Parse(string formula)
     {

@@ -26,6 +26,12 @@ public static class Vector2Extensions
         return Direction.Right;
     }
 
+    public static Random GetRandom(this Vector2 chunk)
+    {
+        var seed = (int)chunk.x * 73856093 ^ (int)chunk.y * 19349663;
+        return new Random(seed);
+    }
+
     public static IEnumerable<Vector2> EnumeratePositions(this Vector2 anchorPosition, Direction direction, Vector2 size)
     {
         var x0 = 0;

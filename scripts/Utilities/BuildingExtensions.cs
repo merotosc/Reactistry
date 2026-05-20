@@ -26,7 +26,7 @@ public static class BuildingExtensions
     {
         return buildingType switch
         {
-            BuildingType.Lab => new Vector2(6, 6),
+            BuildingType.Lab => new Vector2(5, 5),
             BuildingType.Pipe => Vector2.One,
             BuildingType.Extractor => Vector2.One,
             BuildingType.Consumer => Vector2.One,

@@ -9,24 +9,26 @@ namespace ChemFactory.scripts;
 
 public class World
 {
+    private readonly Dictionary<Vector2, Molecule> resourceTiles = [];
     private readonly Dictionary<Vector2, IBuilding> buildingTiles = [];
     private readonly List<IBuilding> buildings = [];
     private readonly List<Item> items = [];
 
     public IReadOnlyList<IBuilding> Buildings => buildings;
+    public event Action<Vector2, Molecule> ResourceCreated;
     public event Action<IBuilding> BuildingCreated;
     public event Action<Vector2> BuildingDeleted;
     public event Action<IEnumerable<Item>> ItemCreated;
     public event Action<IEnumerable<Item>> ItemDeleted;
 
-    public void LoadDemo()
+    public void GenerateWorld()
     {
-        AddBuilding(new Lab(new Vector2(0, 0), Direction.Right));
-
-        AddBuilding(new Extractor(new Vector2(-20, -10), Direction.Right, new([new(AtomElement.H, 2)])));
-        AddBuilding(new Extractor(new Vector2(-20, 5), Direction.Right, new([new(AtomElement.C, 1)])));
-        AddBuilding(new Extractor(new Vector2(-20, 0), Direction.Right, new([new(AtomElement.O, 2)])));
-        AddBuilding(new Extractor(new Vector2(-20, -5), Direction.Right, new([new(AtomElement.N, 2)])));
+        AddBuilding(new Lab(new Vector2(-2, 2), Direction.Right));
+        ResourcesRandomizer.SpawnResources((Vector2 position, Molecule molecule) =>
+        {
+            resourceTiles.Add(position, molecule);
+            ResourceCreated?.Invoke(position, molecule);
+        });
     }
 
     public void Tick(float delta)
@@ -71,18 +73,15 @@ public class World
 
     public bool TryCreateBuilding(BuildingOptions buildingOptions)
     {
-        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))
+        if (!ValidBuildingPosition(buildingOptions))
         {
-            if (buildingTiles.ContainsKey(tilePosition))
-            {
-                return false;
-            }
+            return false;
         }
 
         IBuilding building = buildingOptions.Type switch
         {
             BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
-            BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, Molecule.InvalidMolecule),
+            BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, resourceTiles.GetValueOrDefault(buildingOptions.Position, Molecule.InvalidMolecule)),
             BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
             BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
             BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
@@ -136,6 +135,34 @@ public class World
             buildingTiles.Remove(tilePosition);
             BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
         }
+    }
+
+    private bool ValidBuildingPosition(BuildingOptions buildingOptions)
+    {
+        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))
+        {
+            if (buildingTiles.ContainsKey(tilePosition))
+            {
+                return false;
+            }
+
+            var resourceExists = resourceTiles.ContainsKey(tilePosition);
+
+            switch (buildingOptions.Type)
+            {
+                case BuildingType.Extractor:
+                    if (!resourceExists)
+                        return false;
+                    break;
+                default:
+                    if (resourceExists)
+                        return false;
+                    break;
+            }
+
+        }
+
+        return true;
     }
 
     private void UpdateItems(float delta)

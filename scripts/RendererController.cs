@@ -8,6 +8,7 @@ namespace ChemFactory.scripts;
 
 public class RendererController : Node
 {
+    private TileMap backgroundTileMap;
     private TileMap baseTileMap;
     private TileMap overlayTileMap;
     private Node2D itemLayer;
@@ -16,10 +17,12 @@ public class RendererController : Node
 
     public void Init(World world)
     {
+        backgroundTileMap = GetNode<TileMap>("BackgroundTileMap");
         baseTileMap = GetNode<TileMap>("BaseTileMap");
         overlayTileMap = GetNode<TileMap>("OverlayTileMap");
         itemLayer = GetNode<Node2D>("Items");
         this.world = world;
+        this.world.ResourceCreated += OnResourceCreated;
         this.world.BuildingCreated += OnBuildingCreated;
         this.world.BuildingDeleted += OnBuildingDeleted;
         this.world.ItemCreated += OnItemCreated;
@@ -29,6 +32,11 @@ public class RendererController : Node
     public override void _Process(float delta)
     {
         DrawItems();
+    }
+
+    private void OnResourceCreated(Vector2 position, Molecule molecule)
+    {
+        backgroundTileMap.SetCellv(position, tile: Constants.TileSet.MoleculesId, autotileCoord: new Vector2(0, 0)); // TODO: correct molecule tile based on type
     }
 
     private void OnBuildingCreated(IBuilding building)

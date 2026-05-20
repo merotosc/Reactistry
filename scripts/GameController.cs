@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using ChemFactory.scripts.UI;
+using Godot;
 
 namespace ChemFactory.scripts;
 
@@ -10,12 +11,13 @@ public class GameController : Node
     public override void _Ready()
     {
         ReactionRegistry.Load();
-        GetNode<RendererController>("RendererController").Init(world); // Renderer must init before as it subscribes to the buildings events
-        world.LoadDemo();
-        GetNode<BuildController>("BuildController").Init(world);
         GetNode<TasksUI>("Canvas/TasksUI").Init();
-        GetNode<TasksController>("TasksController").Init(world);
-        GetNode<TooltipPanel>("Canvas/TooltipPanel").Init(world);
+        GetNode<ToolsUI>("Canvas/ToolsUI").Init();
+        GetNode<TooltipUI>("Canvas/TooltipUI").Init(world);
+        GetNode<BuildController>("BuildController").Init(world);
+        GetNode<RendererController>("RendererController").Init(world); // Renderer controller must init before as it subscribes to the buildings events
+        world.LoadDemo();
+        GetNode<TasksController>("TasksController").Init(world); // Tasks controller must init after because it requires an existing Lab building to exist in the World
     }
 
     public override void _PhysicsProcess(float delta)

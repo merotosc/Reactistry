@@ -3,9 +3,9 @@ using ChemFactory.scripts.Models;
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.UI;
 
-public class TooltipPanel : Control
+public class TooltipUI : Control
 {
     private const float TooltipDelay = 0.35f;
     private World world;

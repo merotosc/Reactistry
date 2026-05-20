@@ -14,4 +14,12 @@ Get-ChildItem $inputFolder -Filter *.aseprite | ForEach-Object {
 
         Write-Host "Exported [$group]: $outputFile"
     } 
+
+    $outputFile = Join-Path $outputFolder (
+        "{0}.png" -f $_.BaseName
+    )
+
+    & $asepritePath -b $inputFile --save-as $outputFile
+
+    Write-Host "Exported: $outputFile"
 }

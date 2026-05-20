@@ -86,7 +86,7 @@ public static class ReactionRegistry
                 {
                     var formula = GetStableFormula(reaction.InputMolecules);
                     reactions.Add(formula, reaction);
-                    GD.PrintT("Registered reaction", reaction.Name, formula);
+                    //GD.PrintT("Registered reaction", reaction.Name, formula);
                 }
             }
 

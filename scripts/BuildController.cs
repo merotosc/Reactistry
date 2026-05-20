@@ -44,7 +44,7 @@ public class BuildController : Node2D
         }
     }
 
-    public override void _Input(InputEvent e)
+    public override void _UnhandledInput(InputEvent e)
     {
         if (e is InputEventMouseButton mouseButton)
         {
@@ -79,7 +79,7 @@ public class BuildController : Node2D
         }
     }
 
-    private void SelectBuilding(BuildingType buildingType)
+    public void SelectBuilding(BuildingType buildingType)
     {
         if (!Enum.IsDefined(typeof(BuildingType), buildingType))
         {

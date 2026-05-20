@@ -6,7 +6,6 @@
 - [ ] helper method to determine output position and direction for item in building
 - [ ] add try catch blocks to avoid game crash
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
-- [ ] rename pipe to pipe
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] save and load game data
 - [ ] mirror option for buildings
@@ -19,12 +18,13 @@
 - [ ] extractor validation
 - [ ] merger round robin
 - [ ] splitter improve round robin
-- [ ] consumer/hub
 - [ ] level tasks
 - [ ] extraction sites
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [x] rename belt to pipe
+- [x] consumer/hub
 - [x] use TryMoveItemToEntity for splitter merge to avoid new item creation
 - [x] splitter
 - [x] split TryMoveItemToEntity in CanMoveToEntity and MoveToEntity to avoid item allocation in CreateItem -> updated item creation logic
@@ -38,6 +38,7 @@
 
 ## UI
 
+- [ ] atom numbers in formula in subscript
 - [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)
 - [ ] custom cursor
@@ -46,9 +47,11 @@
 - [ ] display building info such as state, progress
 - [ ] display invalid build positions
 - [ ] display warning for non-wired inputs/outputs
-- [ ] display shortcut hints
 - [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
+- [x] display shortcut hints
+- [x] better buttons ui for hover, pressed
+- [x] add transparency to ui panels
 - [x] display items in buildings
 - [x] better deletion gizmo/outline
 - [x] tile grid smaller if far zoomed out -> removed completely if far away

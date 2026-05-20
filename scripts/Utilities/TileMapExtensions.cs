@@ -13,8 +13,8 @@ public static class TileMapExtensions
 
         foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, size))
         {
-            DrawTile(baseTileMap, Constants.TileSet.BaseId);
-            DrawTile(overlayTileMap, Constants.TileSet.OverlayId);
+            DrawTile(baseTileMap, Constants.TileSet.BuildingsBaseId);
+            DrawTile(overlayTileMap, Constants.TileSet.BuildingsOverlayId);
 
             void DrawTile(TileMap tileMap, int tileSetId)
             {

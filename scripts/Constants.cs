@@ -9,8 +9,9 @@ public class Constants
 
     public static class TileSet
     {
-        public const int BaseId = 0;
-        public const int OverlayId = 1;
+        public const int BuildingsId = 3;
+        public const int BuildingsBaseId = 0;
+        public const int BuildingsOverlayId = 1;
         public const int IconsId = 2;
         public const int PipesYOffset = 0;
         public const int BuildingsYOffset = 1;

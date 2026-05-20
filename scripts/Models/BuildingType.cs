@@ -10,4 +10,5 @@ public enum BuildingType
     Splitter = 4,
     Merger = 5,
     Consumer = 6,
+    End,
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using ChemFactory.scripts.Buildings;
 using ChemFactory.scripts.Models;
+using ChemFactory.scripts.UI;
 using Godot;
 
 namespace ChemFactory.scripts;

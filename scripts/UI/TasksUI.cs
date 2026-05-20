@@ -2,7 +2,7 @@
 using ChemFactory.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts;
+namespace ChemFactory.scripts.UI;
 
 public class TasksUI : Control
 {

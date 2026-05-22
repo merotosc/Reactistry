@@ -9,10 +9,11 @@ namespace ChemFactory.scripts;
 
 public class TasksController : Node
 {
+    private const string TasksFile = "res://assets/tasks.csv";
     private World world;
     private TasksUI tasksUi;
-    private readonly Queue<LabTask> tasks = [];
-    private LabTask currentTask;
+    private readonly Queue<LevelTasks> tasks = [];
+    private LevelTasks currentTask;
 
     public void Init(World world)
     {
@@ -24,33 +25,89 @@ public class TasksController : Node
             lab.ItemDelivered += OnItemDelivered;
         }
 
-        // TODO: make configurable JSON list
-        var hardcodedTasks = ReactionRegistry.Molecules.Select(x => new LabTask(x, 10));
+        LoadTasksFromCsv();
+        GetNextTask();
+    }
 
-        foreach (var task in hardcodedTasks)
+    private void LoadTasksFromCsv()
+    {
+        var file = new File();
+        if (!file.FileExists(TasksFile))
         {
-            tasks.Enqueue(task);
+            GD.PrintErr("Tasks CSV file not found", TasksFile);
+            return;
         }
 
-        GetNextTask();
-        RefreshCurrentTask();
+        file.Open(TasksFile, File.ModeFlags.Read);
+
+        List<Molecule> molecules = [];
+        var i = 0;
+
+        while (!file.EofReached())
+        {
+            var row = file.GetCsvLine();
+
+            if (i == 0)
+            {
+                foreach (var column in row.Skip(1))
+                {
+                    var molecule = Molecule.Parse(column);
+                    molecules.Add(molecule);
+                }
+            }
+            else
+            {
+                var levelTasks = new LevelTasks();
+
+                for (var column = 0; column < row.Length; column++)
+                {
+                    var text = row[column];
+
+                    if (column == 0)
+                    {
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        continue;
+                    }
+
+                    if (!int.TryParse(text, out var value) || value == 0)
+                    {
+                        continue;
+                    }
+
+                    var molecule = molecules[column - 1];
+                    levelTasks.Add(new(molecule, value));
+                }
+
+                tasks.Enqueue(levelTasks);
+            }
+
+            i++;
+        }
+
+        file.Close();
     }
 
     private void OnItemDelivered(Item item)
     {
-        if (currentTask == null || currentTask.Molecule != item.Molecule)
+        if (currentTask == null || !currentTask.TryGetLabTask(item.Molecule, out var labTask))
         {
             return;
         }
 
-        currentTask.AmountDelivered++;
+        labTask.IncrementDeliveryCount();
 
-        if (currentTask.Completed)
+        if (currentTask.AllLabTasksCompleted())
         {
             GetNextTask();
         }
-
-        RefreshCurrentTask();
+        else
+        {
+            RefreshCurrentTask();
+        }
     }
 
     private void GetNextTask()
@@ -58,16 +115,15 @@ public class TasksController : Node
         if (tasks.TryDequeue(out var task))
         {
             currentTask = task;
+            tasksUi.CreateNewTasks(currentTask);
         }
     }
 
     private void RefreshCurrentTask()
     {
-        if (currentTask == null)
+        if (currentTask != null)
         {
-            return;
+            tasksUi.UpdateTasks(currentTask);
         }
-
-        tasksUi.UpdateTask(currentTask);
     }
 }

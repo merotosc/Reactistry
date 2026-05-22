@@ -46,7 +46,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
 
             for (var i = 0; i < molecule.Count; i++)
             {
-                outputItems.Enqueue(new Item(molecule, AnchorPosition, GetItemOutputPath()));
+                outputItems.Enqueue(new Item(new(molecule.Atoms), AnchorPosition, GetItemOutputPath()));
             }
 
             world.AddItems(outputItems);

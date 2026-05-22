@@ -6,23 +6,49 @@ namespace ChemFactory.scripts.UI;
 
 public class TasksUI : Control
 {
-    private Control contentContainer;
-    private Label amount;
-    private Label itemName;
-    private Control itemTexture;
+    private Control levelTasks;
+    private PackedScene labTaskUi;
 
     public void Init()
     {
-        contentContainer = GetNode<Control>("PanelContainer/Content");
-        amount = contentContainer.GetNode<Label>("Amount");
-        itemName = contentContainer.GetNode<Label>("Item/Name");
-        itemTexture = contentContainer.GetNode<Control>("Item/ImageFrame/Image");
+        levelTasks = GetNode<Control>("LevelTasks");
+        labTaskUi = GD.Load<PackedScene>("res://scenes/lab_task_ui.tscn");
     }
 
-    public void UpdateTask(LabTask task)
+    public void CreateNewTasks(LevelTasks tasks)
     {
-        amount.Text = $"{task.AmountDelivered}\n/{task.AmountRequired}";
-        itemName.Text = task.Molecule.ToString();
-        itemTexture.Modulate = task.Molecule.ToString().ColorHash();
+        foreach (Node child in levelTasks.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        foreach (var task in tasks)
+        {
+            var ui = labTaskUi.Instance() as Control;
+            SetTask(ui, task);
+            levelTasks.AddChild(ui);
+        }
+    }
+
+    public void UpdateTasks(LevelTasks tasks)
+    {
+        var i = 0;
+        foreach (var task in tasks)
+        {
+            var ui = levelTasks.GetChild(i++) as Control;
+            SetTask(ui, task);
+        }
+    }
+
+    private void SetTask(Control ui, LabTask task)
+    {
+        ui.GetNode<Label>("Content/Amount").Text = $"{task.AmountDelivered}\n/{task.AmountRequired}";
+        ui.GetNode<Label>("Content/Item/Name").Text = task.Molecule.ToString();
+        ui.GetNode<TextureRect>("Content/Item/ImageFrame/Image").Modulate = task.Molecule.ToString().ColorHash();
+
+        if (task.Completed)
+        {
+            ui.Modulate = new Color(0.8f, 1f, 0.75f);
+        }
     }
 }

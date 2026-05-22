@@ -30,7 +30,6 @@ public class TooltipUI : Control
         inputsContainer = contentContainer.GetNode<Container>("Items/Inputs");
         outputsContainer = contentContainer.GetNode<Container>("Items/Outputs");
         itemUi = GD.Load<PackedScene>("res://scenes/item_ui.tscn");
-
         HideTooltip();
     }
 

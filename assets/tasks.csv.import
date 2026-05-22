@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[deps]
+
+files=[ "res://assets/tasks.H2.translation", "res://assets/tasks.O2.translation", "res://assets/tasks.N2.translation", "res://assets/tasks.en.translation", "res://assets/tasks.H2O.translation", "res://assets/tasks.H2O2.translation", "res://assets/tasks.CO2.translation", "res://assets/tasks.CO.translation", "res://assets/tasks.CH4.translation", "res://assets/tasks.NH3.translation", "res://assets/tasks.NO.translation", "res://assets/tasks.N2O.translation", "res://assets/tasks.H2CO3.translation", "res://assets/tasks.CH3OH.translation", "res://assets/tasks.H2NCONH2.translation", "res://assets/tasks.NO2.translation", "res://assets/tasks.HNO3.translation", "res://assets/tasks.NH4NO3.translation" ]
+
+source_file="res://assets/tasks.csv"
+dest_files=[ "res://assets/tasks.H2.translation", "res://assets/tasks.O2.translation", "res://assets/tasks.N2.translation", "res://assets/tasks.en.translation", "res://assets/tasks.H2O.translation", "res://assets/tasks.H2O2.translation", "res://assets/tasks.CO2.translation", "res://assets/tasks.CO.translation", "res://assets/tasks.CH4.translation", "res://assets/tasks.NH3.translation", "res://assets/tasks.NO.translation", "res://assets/tasks.N2O.translation", "res://assets/tasks.H2CO3.translation", "res://assets/tasks.CH3OH.translation", "res://assets/tasks.H2NCONH2.translation", "res://assets/tasks.NO2.translation", "res://assets/tasks.HNO3.translation", "res://assets/tasks.NH4NO3.translation" ]
+
+[params]
+
+compress=true
+delimiter=0

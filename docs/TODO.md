@@ -2,7 +2,7 @@
 
 ## General
 
-- [ ] read level tasks from csv file
+- [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
 - [ ] add try catch blocks to avoid game crash
@@ -21,6 +21,7 @@
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [x] read level tasks from csv file
 - [x] level tasks
 - [x] extraction sites
 - [x] extractor validation
@@ -39,6 +40,8 @@
 
 ## UI
 
+- [ ] display level/task number
+- [ ] hint tooltip on molecule resource
 - [ ] left, middle mouse, pan, scroll in, scroll out hints
 - [ ] hide building tooltip if build tool active
 - [ ] molecules resource icon/tile

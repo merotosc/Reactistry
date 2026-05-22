@@ -16,10 +16,10 @@ public static class ReactionRegistry
 
     public static void Load()
     {
-        LoadCsv();
+        LoadReactionsFromCsv();
     }
 
-    public static void LoadCsv()
+    public static void LoadReactionsFromCsv()
     {
         var file = new File();
         if (!file.FileExists(ReactionsFile))
@@ -55,30 +55,29 @@ public static class ReactionRegistry
                     if (column == 0)
                     {
                         reaction.Name = text;
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        continue;
+                    }
+
+                    if (!int.TryParse(text, out var value) || value == 0)
+                    {
+                        continue;
+                    }
+
+                    var molecule = molecules[column - 1];
+                    var newMolecule = new Molecule(molecule.Atoms, Math.Abs(value));
+
+                    if (value < 0)
+                    {
+                        reaction.InputMolecules.Add(newMolecule);
                     }
                     else
                     {
-                        if (string.IsNullOrWhiteSpace(text))
-                        {
-                            continue;
-                        }
-
-                        if (!int.TryParse(text, out var value) || value == 0)
-                        {
-                            continue;
-                        }
-
-                        var molecule = molecules[column - 1];
-                        var newMolecule = new Molecule(molecule.Atoms, Math.Abs(value));
-
-                        if (value < 0)
-                        {
-                            reaction.InputMolecules.Add(newMolecule);
-                        }
-                        else
-                        {
-                            reaction.OutputMolecules.Add(newMolecule);
-                        }
+                        reaction.OutputMolecules.Add(newMolecule);
                     }
                 }
 

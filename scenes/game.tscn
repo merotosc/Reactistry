@@ -158,8 +158,6 @@ script = ExtResource( 8 )
 script = ExtResource( 13 )
 
 [node name="TasksUI" parent="Canvas" instance=ExtResource( 11 )]
-margin_top = 50.0
-margin_right = -100.0
 script = ExtResource( 12 )
 
 [node name="ToolsUI" parent="Canvas" instance=ExtResource( 14 )]

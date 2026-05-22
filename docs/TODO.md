@@ -39,18 +39,21 @@
 
 ## UI
 
+- [ ] left, middle mouse, pan, scroll in, scroll out hints
+- [ ] hide building tooltip if build tool active
 - [ ] molecules resource icon/tile
 - [ ] atom numbers in formula in subscript
 - [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)
-- [ ] custom cursor
+- [ ] custom cursor (default, build, deletion)
 - [ ] start/end of 1xN tiles recognizable
 - [ ] display more molecule information (formula, name)
 - [ ] display building info such as state, progress
-- [ ] display invalid build positions
 - [ ] display warning for non-wired inputs/outputs
 - [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
+- [ ] custom tile for different molecule resource
+- [x] display invalid build positions
 - [x] display shortcut hints
 - [x] better buttons ui for hover, pressed
 - [x] add transparency to ui panels

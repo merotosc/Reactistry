@@ -110,34 +110,7 @@ public class World
         return true;
     }
 
-    private void AddBuilding(IBuilding building)
-    {
-        // TODO: add check to avoid duplicate buildings and key
-        buildings.Add(building);
-
-        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
-        {
-            buildingTiles.Add(tilePosition, building);
-        }
-
-        BuildingCreated?.Invoke(building);
-    }
-
-    private void RemoveBuildings(IBuilding building)
-    {
-        DeleteItems(building.GetItems());
-
-        // TODO: add check to avoid missing building and key
-        buildings.Remove(building);
-
-        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
-        {
-            buildingTiles.Remove(tilePosition);
-            BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
-        }
-    }
-
-    private bool ValidBuildingPosition(BuildingOptions buildingOptions)
+    public bool ValidBuildingPosition(BuildingOptions buildingOptions)
     {
         foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))
         {
@@ -163,6 +136,33 @@ public class World
         }
 
         return true;
+    }
+
+    private void AddBuilding(IBuilding building)
+    {
+        // TODO: add check to avoid duplicate buildings and key
+        buildings.Add(building);
+
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
+        {
+            buildingTiles.Add(tilePosition, building);
+        }
+
+        BuildingCreated?.Invoke(building);
+    }
+
+    private void RemoveBuildings(IBuilding building)
+    {
+        DeleteItems(building.GetItems());
+
+        // TODO: add check to avoid missing building and key
+        buildings.Remove(building);
+
+        foreach (var tilePosition in building.AnchorPosition.EnumeratePositions(building.Direction, building.Size))
+        {
+            buildingTiles.Remove(tilePosition);
+            BuildingDeleted?.Invoke(tilePosition); // TODO: call once with list of positions?
+        }
     }
 
     private void UpdateItems(float delta)

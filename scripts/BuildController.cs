@@ -319,7 +319,14 @@ public class BuildController : Node2D
             return;
         }
 
-        previewBaseTileMap.DrawBuilding(currentBuilding, previewOverlayTileMap);
+        if (world.ValidBuildingPosition(currentBuilding))
+        {
+            previewBaseTileMap.DrawBuilding(currentBuilding, previewOverlayTileMap);
+        }
+        else
+        {
+            previewBaseTileMap.DrawInvalidPositionWarning(currentBuilding, previewOverlayTileMap);
+        }
 
         if (draggedBuildings.Count > 1)
         {

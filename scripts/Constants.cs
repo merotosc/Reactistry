@@ -53,4 +53,10 @@ public class Constants
             ],
         };
     }
+
+    public static class SaveData
+    {
+        public const string Path = "user://savedata.json";
+        public const int AutosaveInterval = 30;
+    }
 }

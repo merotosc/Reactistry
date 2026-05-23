@@ -21,10 +21,23 @@ public class World
     public event Action<IEnumerable<Item>> ItemsCreated;
     public event Action<IEnumerable<Item>> ItemsDeleted;
 
+    public void LoadWorld(SaveData saveData)
+    {
+        GenerateWorld();
+
+        foreach (var building in saveData.Buildings)
+        {
+            if (!TryCreateBuilding(building))
+            {
+                GD.PrintErr("Could not create building from save data: ", building.Type);
+            }
+        }
+    }
+
     public void GenerateWorld()
     {
         AddBuilding(new Lab(new Vector2(-2, 2), Direction.Right));
-        ResourcesRandomizer.SpawnResources((Vector2 position, Molecule molecule) =>
+        ResourcesRandomizer.SpawnResources((position, molecule) =>
         {
             resourceTiles.Add(position, molecule);
             ResourceCreated?.Invoke(position, molecule);

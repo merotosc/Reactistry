@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Models;
+using Reactistry.scripts.Models;
 using Godot;
 
-namespace ChemFactory.scripts;
+namespace Reactistry.scripts;
 
 public class Constants
 {

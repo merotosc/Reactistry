@@ -1,9 +1,9 @@
-﻿using ChemFactory.scripts.Buildings;
-using ChemFactory.scripts.Models;
-using ChemFactory.scripts.Utilities;
+﻿using Reactistry.scripts.Buildings;
+using Reactistry.scripts.Models;
+using Reactistry.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.UI;
+namespace Reactistry.scripts.UI;
 
 public class TooltipUI : Control
 {

@@ -1,4 +1,4 @@
-﻿namespace ChemFactory.scripts.Models;
+﻿namespace Reactistry.scripts.Models;
 
 public class Atom(AtomElement element, int count = 1)
 {

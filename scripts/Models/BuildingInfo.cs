@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ChemFactory.scripts.Models;
+namespace Reactistry.scripts.Models;
 
 public class BuildingInfo
 {

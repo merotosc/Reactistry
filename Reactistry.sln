@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChemFactory", "ChemFactory.csproj", "{1214948A-925A-480C-B417-DE189B68E0EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reactistry", "Reactistry.csproj", "{1214948A-925A-480C-B417-DE189B68E0EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

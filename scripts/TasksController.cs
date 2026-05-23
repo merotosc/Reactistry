@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChemFactory.scripts.Buildings;
-using ChemFactory.scripts.Models;
-using ChemFactory.scripts.UI;
+using Reactistry.scripts.Buildings;
+using Reactistry.scripts.Models;
+using Reactistry.scripts.UI;
 using Godot;
 
-namespace ChemFactory.scripts;
+namespace Reactistry.scripts;
 
 public class TasksController : Node
 {

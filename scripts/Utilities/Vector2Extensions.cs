@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChemFactory.scripts.Models;
+using Reactistry.scripts.Models;
 using Godot;
 
-namespace ChemFactory.scripts.Utilities;
+namespace Reactistry.scripts.Utilities;
 
 public static class Vector2Extensions
 {

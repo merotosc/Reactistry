@@ -1,4 +1,4 @@
-﻿namespace ChemFactory.scripts.Models;
+﻿namespace Reactistry.scripts.Models;
 
 public class ResourceSpawnRule(Molecule molecule, int min, int weight)
 {

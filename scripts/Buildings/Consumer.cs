@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Models;
-using ChemFactory.scripts.Utilities;
+using Reactistry.scripts.Models;
+using Reactistry.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Buildings;
+namespace Reactistry.scripts.Buildings;
 
 public class Consumer(Vector2 anchorPosition, Direction direction)
     : Building(anchorPosition, direction)

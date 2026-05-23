@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using ChemFactory.scripts.Models;
-using ChemFactory.scripts.Utilities;
+using Reactistry.scripts.Models;
+using Reactistry.scripts.Utilities;
 using Godot;
 
-namespace ChemFactory.scripts.Buildings;
+namespace Reactistry.scripts.Buildings;
 
 public class Pipe(Vector2 anchorPosition, Direction direction, PipeVariant variant = PipeVariant.Forward)
     : Building(anchorPosition, direction, (int)variant)

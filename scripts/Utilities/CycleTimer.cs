@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ChemFactory.scripts.Utilities;
+namespace Reactistry.scripts.Utilities;
 
 public class CycleTimer(float duration)
 {

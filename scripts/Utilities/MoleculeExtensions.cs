@@ -1,7 +1,7 @@
-﻿using ChemFactory.scripts.Models;
+﻿using Reactistry.scripts.Models;
 using Godot;
 
-namespace ChemFactory.scripts.Utilities;
+namespace Reactistry.scripts.Utilities;
 
 public static class MoleculeExtensions
 {

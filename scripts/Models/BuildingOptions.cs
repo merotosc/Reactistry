@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace ChemFactory.scripts.Models;
+namespace Reactistry.scripts.Models;
 
 public class BuildingOptions
 {

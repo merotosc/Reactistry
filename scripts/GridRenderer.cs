@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace ChemFactory.scripts;
+namespace Reactistry.scripts;
 
 public class GridRenderer : Node2D
 {

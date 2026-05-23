@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ChemFactory.scripts.Models;
+namespace Reactistry.scripts.Models;
 
 public class Molecule(List<Atom> atoms, int count = 1)
 {

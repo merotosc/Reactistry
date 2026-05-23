@@ -1,7 +1,7 @@
-﻿using ChemFactory.scripts.UI;
+﻿using Reactistry.scripts.UI;
 using Godot;
 
-namespace ChemFactory.scripts;
+namespace Reactistry.scripts;
 
 public class GameController : Node
 {

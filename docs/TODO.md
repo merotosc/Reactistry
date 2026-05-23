@@ -2,7 +2,7 @@
 
 ## General
 
-- [ ] rename project to Reactistry
+- [ ] better csv reading avoiding duplicate code
 - [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
@@ -22,6 +22,7 @@
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [x] rename project to Reactistry
 - [x] read level tasks from csv file
 - [x] level tasks
 - [x] extraction sites
@@ -41,6 +42,7 @@
 
 ## UI
 
+- [ ] change icon of game
 - [ ] display level/task number
 - [ ] hint tooltip on molecule resource
 - [ ] left, middle mouse, pan, scroll in, scroll out hints

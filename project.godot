@@ -10,7 +10,7 @@ config_version=4
 
 [application]
 
-config/name="ChemFactory"
+config/name="Reactistry"
 run/main_scene="res://scenes/game.tscn"
 config/icon="res://icon.png"
 
@@ -26,7 +26,7 @@ theme/custom_font="res://assets/pixel_operator.tres"
 
 [mono]
 
-project/assembly_name="ChemFactory"
+project/assembly_name="Reactistry"
 
 [physics]
 

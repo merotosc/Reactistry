@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace ChemFactory.scripts.Utilities;
+namespace Reactistry.scripts.Utilities;
 
 public static class StringExtensions
 {

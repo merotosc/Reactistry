@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ChemFactory.scripts.Models;
+namespace Reactistry.scripts.Models;
 
 public class LevelTasks : List<LabTask>
 {

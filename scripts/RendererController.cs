@@ -3,11 +3,13 @@ using Reactistry.scripts.Buildings;
 using Reactistry.scripts.Models;
 using Reactistry.scripts.Utilities;
 using Godot;
+using System;
 
 namespace Reactistry.scripts;
 
 public class RendererController : Node
 {
+    private const float AnimationDelay = 0.3f;
     private TileMap resourcesTileMap;
     private TileMap baseTileMap;
     private TileMap overlayTileMap;
@@ -67,9 +69,12 @@ public class RendererController : Node
     {
         foreach (var item in itemsToRemove)
         {
-            var sprite = itemSprites[item];
-            itemLayer.RemoveChild(sprite);
-            itemSprites.Remove(item);
+            if (!itemSprites.TryGetValue(item, out var sprite))
+            {
+                continue;
+            }
+
+            DeleteItemSprite(item, sprite);
         }
     }
 
@@ -85,6 +90,62 @@ public class RendererController : Node
 
         itemSprites.Add(item, sprite);
         itemLayer.AddChild(sprite);
+
+        var tween = new Tween();
+        sprite.AddChild(tween);
+
+        tween.InterpolateProperty(
+            sprite,
+            "scale",
+            Vector2.Zero,
+            Vector2.One,
+            AnimationDelay,
+            Tween.TransitionType.Back,
+            Tween.EaseType.Out);
+
+        tween.InterpolateProperty(
+            sprite,
+            "modulate:a",
+            0.5f,
+            1f,
+            AnimationDelay);
+
+        tween.Start();
+        tween.Connect("tween_all_completed", tween, "queue_free");
+    }
+
+    private void DeleteItemSprite(Item item, Sprite sprite)
+    {
+        var tween = new Tween();
+        sprite.AddChild(tween);
+
+        tween.InterpolateProperty(
+            sprite,
+            "scale",
+            sprite.Scale,
+            Vector2.Zero,
+            AnimationDelay,
+            Tween.TransitionType.Back,
+            Tween.EaseType.In);
+
+        tween.InterpolateProperty(
+            sprite,
+            "modulate:a",
+            1f,
+            0.5f,
+            AnimationDelay);
+
+        tween.Start();
+        tween.Connect("tween_all_completed", this, nameof(OnItemShrinkCompleted));
+
+        void OnItemShrinkCompleted()
+        {
+            itemLayer.RemoveChild(sprite);
+            itemSprites.Remove(item);
+
+            tween.QueueFree();
+            sprite.QueueFree();
+        }
     }
 
     private void DrawItems()

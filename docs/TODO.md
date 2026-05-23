@@ -48,7 +48,7 @@
 ## UI
 
 - [ ] display save icon
-- [ ] better molecules resource tile
+- [ ] better molecules resource tile instead of same as molecule item
 - [ ] icon for invalid molecule
 - [ ] change icon of game
 - [ ] display level/task number
@@ -66,7 +66,8 @@
 - [ ] display warning for non-wired inputs/outputs
 - [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
-- [ ] custom tile for different molecule resource
+- [ ] item creation and deletion animations
+- [x] custom tile for different molecule resource
 - [x] display chunks grid
 - [x] molecules resource icon/tile
 - [x] display invalid build positions

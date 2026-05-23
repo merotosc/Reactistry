@@ -18,8 +18,8 @@ public class World
     public event Action<Vector2, Molecule> ResourceCreated;
     public event Action<IBuilding> BuildingCreated;
     public event Action<Vector2> BuildingDeleted;
-    public event Action<IEnumerable<Item>> ItemCreated;
-    public event Action<IEnumerable<Item>> ItemDeleted;
+    public event Action<IEnumerable<Item>> ItemsCreated;
+    public event Action<IEnumerable<Item>> ItemsDeleted;
 
     public void GenerateWorld()
     {
@@ -40,7 +40,7 @@ public class World
     public void AddItems(params IEnumerable<Item> itemsToAdd)
     {
         items.AddRange(itemsToAdd);
-        ItemCreated?.Invoke(itemsToAdd);
+        ItemsCreated?.Invoke(itemsToAdd);
     }
 
     public void DeleteItems(params IEnumerable<Item> itemsToRemove)
@@ -50,7 +50,7 @@ public class World
             items.Remove(item);
         }
 
-        ItemDeleted?.Invoke(itemsToRemove);
+        ItemsDeleted?.Invoke(itemsToRemove);
     }
 
     public bool TryMoveItem(Item item, Vector2 targetPosition, Direction fromDirection)

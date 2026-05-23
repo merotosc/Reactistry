@@ -9,7 +9,7 @@ public class Constants
     public const int TicksPerSecond = 20;
     public const float TickRate = 1.0f / TicksPerSecond;
     public const int PixelsPerTile = 16;
-    public const float ItemSpeed = 20;
+    public const float ItemSpeed = 2;
 
     public static class TileSet
     {
@@ -35,21 +35,21 @@ public class Constants
         {
             [1] = // Ring 1
             [
-                new(Molecule.O2, min: 2, weight: 5),
-                new(Molecule.H2, min: 2, weight: 5),
+                new(Molecule.O2, min: 3, weight: 5),
+                new(Molecule.H2, min: 3, weight: 5),
             ],
             [2] = // Ring 2
             [
-                new(Molecule.O2, min: 2, weight: 5),
-                new(Molecule.H2, min: 2, weight: 5),
-                new(Molecule.C, min: 2, weight: 2),
+                new(Molecule.O2, min: 3, weight: 5),
+                new(Molecule.H2, min: 3, weight: 5),
+                new(Molecule.C, min: 3, weight: 2),
             ],
             [3] = // Ring 3
             [
-                new(Molecule.O2, min: 2, weight: 5),
-                new(Molecule.H2, min: 2, weight: 5),
-                new(Molecule.C, min: 2, weight: 2),
-                new(Molecule.N2, min: 2, weight: 1),
+                new(Molecule.O2, min: 4, weight: 5),
+                new(Molecule.H2, min: 4, weight: 5),
+                new(Molecule.C, min: 4, weight: 2),
+                new(Molecule.N2, min: 4, weight: 1),
             ],
         };
     }

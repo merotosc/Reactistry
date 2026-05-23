@@ -8,25 +8,30 @@ namespace Reactistry.scripts;
 
 public class RendererController : Node
 {
-    private TileMap backgroundTileMap;
+    private TileMap resourcesTileMap;
     private TileMap baseTileMap;
     private TileMap overlayTileMap;
     private Node2D itemLayer;
+    private Texture moleculeTexture;
     private World world;
+    private readonly Dictionary<Molecule, int> moleculesTileId = [];
     private readonly Dictionary<Item, Sprite> itemSprites = [];
 
     public void Init(World world)
     {
-        backgroundTileMap = GetNode<TileMap>("BackgroundTileMap");
+        resourcesTileMap = GetNode<TileMap>("ResourcesTileMap");
         baseTileMap = GetNode<TileMap>("BaseTileMap");
         overlayTileMap = GetNode<TileMap>("OverlayTileMap");
         itemLayer = GetNode<Node2D>("Items");
+        moleculeTexture = GD.Load<Texture>("res://assets/molecule.png");
+        CreateMoleculesTileSet();
+
         this.world = world;
         this.world.ResourceCreated += OnResourceCreated;
         this.world.BuildingCreated += OnBuildingCreated;
         this.world.BuildingDeleted += OnBuildingDeleted;
-        this.world.ItemCreated += OnItemCreated;
-        this.world.ItemDeleted += OnItemDeleted;
+        this.world.ItemsCreated += OnItemsCreated;
+        this.world.ItemsDeleted += OnItemsDeleted;
     }
 
     public override void _Process(float delta)
@@ -36,7 +41,7 @@ public class RendererController : Node
 
     private void OnResourceCreated(Vector2 position, Molecule molecule)
     {
-        backgroundTileMap.SetCellv(position, tile: Constants.TileSet.MoleculesId, autotileCoord: new Vector2(0, 0)); // TODO: correct molecule tile based on type
+        resourcesTileMap.SetCellv(position, moleculesTileId.GetValueOrDefault(molecule, 0));
     }
 
     private void OnBuildingCreated(IBuilding building)
@@ -50,7 +55,7 @@ public class RendererController : Node
         overlayTileMap.SetCellv(position, tile: -1);
     }
 
-    private void OnItemCreated(IEnumerable<Item> itemsToAdd)
+    private void OnItemsCreated(IEnumerable<Item> itemsToAdd)
     {
         foreach (var item in itemsToAdd)
         {
@@ -58,7 +63,7 @@ public class RendererController : Node
         }
     }
 
-    private void OnItemDeleted(IEnumerable<Item> itemsToRemove)
+    private void OnItemsDeleted(IEnumerable<Item> itemsToRemove)
     {
         foreach (var item in itemsToRemove)
         {
@@ -74,9 +79,8 @@ public class RendererController : Node
         var sprite = new Sprite
         {
             Name = name,
-            Texture = GD.Load<Texture>("res://assets/molecule.png"),
-            ZIndex = 5,
-            Modulate = name.ColorHash(),
+            Texture = moleculeTexture,
+            Modulate = item.Molecule.GetColor(),
         };
 
         itemSprites.Add(item, sprite);
@@ -90,5 +94,27 @@ public class RendererController : Node
             var localPosition = item.GetPositionOnPath();
             sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
         }
+    }
+
+    private void CreateMoleculesTileSet()
+    {
+        var tileSet = resourcesTileMap.TileSet;
+        var texture = moleculeTexture;
+        var molecules = new List<Molecule> { Molecule.InvalidMolecule, Molecule.H2, Molecule.C, Molecule.N2, Molecule.O2 };
+
+        for (var i = 0; i < molecules.Count; i++)
+        {
+            var molecule = molecules[i];
+            CreateTile(tileSet, i, texture, molecule.GetColor());
+            moleculesTileId.Add(molecule, i);
+        }
+    }
+
+    private void CreateTile(TileSet tileSet, int tileId, Texture texture, Color color)
+    {
+        tileSet.CreateTile(tileId);
+        tileSet.TileSetTexture(tileId, texture);
+        tileSet.TileSetRegion(tileId, new Rect2(0, 0, Constants.PixelsPerTile, Constants.PixelsPerTile));
+        tileSet.TileSetModulate(tileId, color);
     }
 }

@@ -116,7 +116,7 @@ public class TooltipUI : Control
         if (item != null)
         {
             ui.GetNode<Label>("Name").Text = item.Molecule.ToString();
-            ui.GetNode<Control>("ImageFrame/Image").Modulate = item.Molecule.ToString().ColorHash();
+            ui.GetNode<Control>("ImageFrame/Image").Modulate = item.Molecule.GetColor();
         }
         else
         {

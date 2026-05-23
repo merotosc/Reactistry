@@ -5,15 +5,17 @@ namespace Reactistry.scripts.Utilities;
 
 public static class MoleculeExtensions
 {
-    public static Vector2 GetTileCoord(this Molecule molecule)
+    public static Color GetColor(this Molecule molecule)
     {
-        return molecule.ToString() switch
+        var name = molecule.ToString();
+        return name switch
         {
-            "H2" => new Vector2(0, 0),
-            "C" => new Vector2(1, 0),
-            "N2" => new Vector2(2, 0),
-            "O2" => new Vector2(3, 0),
-            _ => Vector2.Zero,
+            "H2" => new Color("FFFFFF"),
+            "C" => new Color("909090"),
+            "N2" => new Color("3050F8"),
+            "O2" => new Color("FF0D0D"),
+            "Invalid" => new Color("000000"),
+            _ => name.ColorHash(),
         };
     }
 }

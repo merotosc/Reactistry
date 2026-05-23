@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[deps]
+
+files=[ "res://assets/atoms.Element.translation", "res://assets/atoms.RGB.translation", "res://assets/atoms.Hex.translation" ]
+
+source_file="res://assets/atoms.csv"
+dest_files=[ "res://assets/atoms.Element.translation", "res://assets/atoms.RGB.translation", "res://assets/atoms.Hex.translation" ]
+
+[params]
+
+compress=true
+delimiter=0

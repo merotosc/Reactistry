@@ -2,6 +2,8 @@
 
 ## General
 
+- [ ] read atom colors from atoms.csv
+- [ ] developer docs
 - [ ] better csv reading avoiding duplicate code
 - [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
@@ -42,13 +44,15 @@
 
 ## UI
 
+- [ ] display chunks grid
+- [ ] better molecules resource tile
+- [ ] icon for invalid molecule
 - [ ] change icon of game
 - [ ] display level/task number
 - [ ] hint tooltip on molecule resource
 - [ ] left, middle mouse, pan, scroll in, scroll out hints
 - [ ] hide building tooltip if build tool active
 - [ ] show selected tool/building in toolbar
-- [ ] molecules resource icon/tile
 - [ ] atom numbers in formula in subscript
 - [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)
@@ -60,6 +64,7 @@
 - [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
 - [ ] custom tile for different molecule resource
+- [x] molecules resource icon/tile
 - [x] display invalid build positions
 - [x] display shortcut hints
 - [x] better buttons ui for hover, pressed

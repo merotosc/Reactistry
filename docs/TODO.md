@@ -2,6 +2,7 @@
 
 ## General
 
+- [ ] rename project to Reactistry
 - [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
@@ -44,6 +45,7 @@
 - [ ] hint tooltip on molecule resource
 - [ ] left, middle mouse, pan, scroll in, scroll out hints
 - [ ] hide building tooltip if build tool active
+- [ ] show selected tool/building in toolbar
 - [ ] molecules resource icon/tile
 - [ ] atom numbers in formula in subscript
 - [ ] reactions cheat sheet

@@ -44,7 +44,6 @@
 
 ## UI
 
-- [ ] display chunks grid
 - [ ] better molecules resource tile
 - [ ] icon for invalid molecule
 - [ ] change icon of game
@@ -64,6 +63,7 @@
 - [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
 - [ ] custom tile for different molecule resource
+- [x] display chunks grid
 - [x] molecules resource icon/tile
 - [x] display invalid build positions
 - [x] display shortcut hints

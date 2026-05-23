@@ -92,7 +92,7 @@ public class RendererController : Node
         foreach (var (item, sprite) in itemSprites)
         {
             var localPosition = item.GetPositionOnPath();
-            sprite.Position = (item.TilePosition + localPosition) * Constants.PixelsPerTile;
+            sprite.Position = (item.TilePosition + localPosition) * Constants.Map.TileSize;
         }
     }
 
@@ -114,7 +114,7 @@ public class RendererController : Node
     {
         tileSet.CreateTile(tileId);
         tileSet.TileSetTexture(tileId, texture);
-        tileSet.TileSetRegion(tileId, new Rect2(0, 0, Constants.PixelsPerTile, Constants.PixelsPerTile));
+        tileSet.TileSetRegion(tileId, new Rect2(0, 0, Constants.Map.TileSize, Constants.Map.TileSize));
         tileSet.TileSetModulate(tileId, color);
     }
 }

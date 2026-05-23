@@ -8,7 +8,6 @@ public class Constants
 {
     public const int TicksPerSecond = 20;
     public const float TickRate = 1.0f / TicksPerSecond;
-    public const int PixelsPerTile = 16;
     public const float ItemSpeed = 2;
 
     public static class TileSet
@@ -26,6 +25,7 @@ public class Constants
 
     public static class Map
     {
+        public const int TileSize = 16;
         public static readonly Vector2 WorldSize = new(7, 7);
         public static readonly Vector2 ChunkSize = new(33, 33);
         public static readonly Vector2 MinClusterSize = new(2, 2);
@@ -42,14 +42,14 @@ public class Constants
             [
                 new(Molecule.O2, min: 3, weight: 5),
                 new(Molecule.H2, min: 3, weight: 5),
-                new(Molecule.C, min: 3, weight: 2),
+                new(Molecule.C, min: 3, weight: 3),
             ],
             [3] = // Ring 3
             [
                 new(Molecule.O2, min: 4, weight: 5),
                 new(Molecule.H2, min: 4, weight: 5),
-                new(Molecule.C, min: 4, weight: 2),
-                new(Molecule.N2, min: 4, weight: 1),
+                new(Molecule.C, min: 4, weight: 3),
+                new(Molecule.N2, min: 4, weight: 2),
             ],
         };
     }

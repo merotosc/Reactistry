@@ -10,7 +10,7 @@ public static class Vector2Extensions
 {
     public static Vector2 ToTilePosition(this Vector2 position)
     {
-        var scaledPosition = position / Constants.PixelsPerTile;
+        var scaledPosition = position / Constants.Map.TileSize;
         return new Vector2(
             Mathf.Floor(scaledPosition.x),
             Mathf.Floor(scaledPosition.y)

@@ -13,14 +13,17 @@ public class GameController : Node
     {
         ReactionRegistry.Load();
         var saveController = GetNode<SaveController>("SaveController");
-        saveController.Init(world);
+        var tasksController = GetNode<TasksController>("TasksController");
+        var saveData = saveController.LoadGame();
+
+        saveController.Init(world, tasksController);
         GetNode<TasksUI>("Canvas/TasksUI").Init();
         GetNode<ToolsUI>("Canvas/ToolsUI").Init();
         GetNode<TooltipUI>("Canvas/TooltipUI").Init(world);
         GetNode<BuildController>("BuildController").Init(world);
         GetNode<RendererController>("RendererController").Init(world); // Renderer controller must init before as it subscribes to the buildings events
-        world.LoadWorld(saveController.LoadGame());
-        GetNode<TasksController>("TasksController").Init(world); // Tasks controller must init after because it requires an existing Lab building to exist in the World
+        world.LoadWorld(saveData);
+        tasksController.Init(world, saveData); // Tasks controller must init after because it requires an existing Lab building to exist in the World
     }
 
     public override void _PhysicsProcess(float delta)

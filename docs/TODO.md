@@ -2,6 +2,8 @@
 
 ## General
 
+- [ ] save items in buildings
+- [ ] button/shortcut to clear save data
 - [ ] read atom colors from atoms.csv
 - [ ] developer docs
 - [ ] better csv reading avoiding duplicate code
@@ -11,7 +13,6 @@
 - [ ] add try catch blocks to avoid game crash
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
-- [ ] save and load game data
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
 - [ ] pause/run simulation
@@ -24,6 +25,8 @@
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [x] save tasks progress
+- [x] save and load game data
 - [x] rename project to Reactistry
 - [x] read level tasks from csv file
 - [x] level tasks
@@ -44,12 +47,13 @@
 
 ## UI
 
+- [ ] display save icon
 - [ ] better molecules resource tile
 - [ ] icon for invalid molecule
 - [ ] change icon of game
 - [ ] display level/task number
 - [ ] hint tooltip on molecule resource
-- [ ] left, middle mouse, pan, scroll in, scroll out hints
+- [ ] left, middle mouse, pan, scroll in, scroll out, save hints
 - [ ] hide building tooltip if build tool active
 - [ ] show selected tool/building in toolbar
 - [ ] atom numbers in formula in subscript

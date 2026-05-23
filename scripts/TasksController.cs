@@ -12,12 +12,16 @@ public class TasksController : Node
     private const string TasksFile = "res://assets/tasks.csv";
     private World world;
     private TasksUI tasksUi;
-    private readonly Queue<LevelTasks> tasks = [];
-    private LevelTasks currentTask;
+    private readonly List<LevelTasks> tasks = [];
 
-    public void Init(World world)
+    public int CurrentLevel { get; private set; }
+
+    public LevelTasks CurrentTasks { get; private set; } = [];
+
+    public void Init(World world, SaveData saveData)
     {
         this.world = world;
+        CurrentLevel = saveData.Level;
         tasksUi = GetNode<TasksUI>("/root/Game/Canvas/TasksUI");
 
         foreach (var lab in world.Buildings.OfType<Lab>())
@@ -26,7 +30,7 @@ public class TasksController : Node
         }
 
         LoadTasksFromCsv();
-        GetNextTask();
+        RestoreCurrentTasks(saveData.CurrentTasks);
     }
 
     private void LoadTasksFromCsv()
@@ -82,7 +86,7 @@ public class TasksController : Node
                     levelTasks.Add(new(molecule, value));
                 }
 
-                tasks.Enqueue(levelTasks);
+                tasks.Add(levelTasks);
             }
 
             i++;
@@ -93,16 +97,17 @@ public class TasksController : Node
 
     private void OnItemDelivered(Item item)
     {
-        if (currentTask == null || !currentTask.TryGetLabTask(item.Molecule, out var labTask))
+        if (!CurrentTasks.TryGetLabTask(item.Molecule, out var labTask))
         {
             return;
         }
 
-        labTask.IncrementDeliveryCount();
+        labTask.AddDeliveredAmount(item.Molecule.Count);
 
-        if (currentTask.AllLabTasksCompleted())
+        if (CurrentTasks.AllLabTasksCompleted())
         {
-            GetNextTask();
+            CurrentLevel++;
+            LoadCurrentTask();
         }
         else
         {
@@ -110,20 +115,38 @@ public class TasksController : Node
         }
     }
 
-    private void GetNextTask()
+    private void RestoreCurrentTasks(List<LabTaskSaveData> tasksSaveData)
     {
-        if (tasks.TryDequeue(out var task))
+        LoadCurrentTask();
+
+        foreach (var taskSaveData in tasksSaveData)
         {
-            currentTask = task;
-            tasksUi.CreateNewTasks(currentTask);
+            var labTask = CurrentTasks.FirstOrDefault(x => x.Molecule.ToString() == taskSaveData.MoleculeName);
+            if (labTask == null)
+            {
+                continue;
+            }
+
+            labTask.AddDeliveredAmount(taskSaveData.AmountDelivered);
+        }
+
+        RefreshCurrentTask();
+    }
+
+    private void LoadCurrentTask()
+    {
+        if (tasks.Count > CurrentLevel)
+        {
+            CurrentTasks = tasks[CurrentLevel];
+            tasksUi.CreateNewTasks(CurrentTasks);
         }
     }
 
     private void RefreshCurrentTask()
     {
-        if (currentTask != null)
+        if (CurrentTasks.Any())
         {
-            tasksUi.UpdateTasks(currentTask);
+            tasksUi.UpdateTasks(CurrentTasks);
         }
     }
 }

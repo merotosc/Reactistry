@@ -19,6 +19,7 @@ public class TasksUI : Control
     {
         foreach (Node child in levelTasks.GetChildren())
         {
+            levelTasks.RemoveChild(child);
             child.QueueFree();
         }
 
@@ -35,7 +36,7 @@ public class TasksUI : Control
         var i = 0;
         foreach (var task in tasks)
         {
-            var ui = levelTasks.GetChild(i++) as Control;
+            var ui = levelTasks.GetChild<Control>(i++);
             SetTask(ui, task);
         }
     }
@@ -44,7 +45,7 @@ public class TasksUI : Control
     {
         ui.GetNode<Label>("Content/Amount").Text = $"{task.AmountDelivered}\n/{task.AmountRequired}";
         ui.GetNode<Label>("Content/Item/Name").Text = task.Molecule.ToString();
-        ui.GetNode<TextureRect>("Content/Item/ImageFrame/Image").Modulate = task.Molecule.ToString().ColorHash();
+        ui.GetNode<TextureRect>("Content/Item/ImageFrame/Image").Modulate = task.Molecule.GetColor();
 
         if (task.Completed)
         {

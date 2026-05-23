@@ -10,10 +10,12 @@ public class SaveController : Node
 {
     private float autosaveTimer = 0;
     private World world;
+    private TasksController tasksController;
 
-    public void Init(World world)
+    public void Init(World world, TasksController tasksController)
     {
         this.world = world;
+        this.tasksController = tasksController;
     }
 
     public override void _Process(float delta)
@@ -40,17 +42,28 @@ public class SaveController : Node
 
     public void SaveGame()
     {
+        var buildings = world.Buildings
+            .Where(x => x.Type != BuildingType.Lab)
+            .Select(x => new BuildingOptions
+            {
+                Type = x.Type,
+                Position = x.AnchorPosition,
+                Direction = x.Direction,
+                Variant = x.Variant,
+            }).ToList();
+
+        var currentTasks = tasksController.CurrentTasks
+            .Select(x => new LabTaskSaveData
+            {
+                MoleculeName = x.Molecule.ToString(),
+                AmountDelivered = x.AmountDelivered,
+            }).ToList();
+
         var saveData = new SaveData
         {
-            Buildings = world.Buildings
-                .Where(x => x.Type != BuildingType.Lab)
-                .Select(x => new BuildingOptions
-                {
-                    Type = x.Type,
-                    Position = x.AnchorPosition,
-                    Direction = x.Direction,
-                    Variant = x.Variant,
-                }).ToList()
+            Level = tasksController.CurrentLevel,
+            CurrentTasks = currentTasks,
+            Buildings = buildings,
         };
 
         var json = JsonConvert.SerializeObject(saveData, new StringEnumConverter());

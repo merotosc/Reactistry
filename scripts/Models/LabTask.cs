@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Reactistry.scripts.Models;
@@ -21,15 +22,13 @@ public class LabTask(Molecule molecule, int amountRequired)
 
     public int AmountRequired { get; } = amountRequired;
 
-    public int AmountDelivered { get; set; } = 0;
+    public int AmountDelivered { get; private set; } = 0;
 
     public bool Completed => AmountDelivered >= AmountRequired;
 
-    public void IncrementDeliveryCount()
+    public void AddDeliveredAmount(int count)
     {
-        if (AmountDelivered < AmountRequired)
-        {
-            AmountDelivered++;
-        }
+        AmountDelivered += count;
+        AmountDelivered = Math.Min(AmountDelivered, AmountRequired);
     }
 }

@@ -9,12 +9,12 @@
 - [ ] add try catch blocks to avoid game crash
 - [ ] pause/run simulation
 - [ ] check if buildings side by side without pipes do not create errors
-- [ ] merger round robin
-- [ ] splitter improve round robin
 
 ### vNext
 
+- [ ] save last position
 - [ ] save items in buildings
+- [ ] random seed every new game stored in save data
 - [ ] save/load from/to json save data
 - [ ] read atom colors from atoms.csv
 - [ ] developer docs
@@ -35,6 +35,8 @@
 
 ### Done
 
+- [x] merger improve round robin
+- [x] splitter improve round robin
 - [x] save tasks progress
 - [x] save and load game data
 - [x] rename project to Reactistry

@@ -13,6 +13,7 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
     private readonly int inputsCount = variant + 2;
     private readonly Item[] items = new Item[variant + 2];
     private ItemPath[] itemPaths;
+    private int roundRobin;
 
     public override BuildingType Type => BuildingType.Merger;
 
@@ -29,6 +30,9 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
                 }
             }
         }
+
+        roundRobin++;
+        roundRobin %= inputsCount;
     }
 
     public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
@@ -38,14 +42,27 @@ public class Merger(Vector2 anchorPosition, Direction direction, int variant = 0
             return false;
         }
 
-        var inputNumber = DistanceFromAnchor(targetPosition);
-        if (items[inputNumber] != null)
+        if (items.All(x => x != null))
         {
             return false;
         }
 
-        items[inputNumber] = item;
-        return true;
+        var inputNumber = DistanceFromAnchor(targetPosition);
+        if (inputNumber != roundRobin)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < items.Length; i++)
+        {
+            if (items[i] == null)
+            {
+                items[i] = item;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public override IEnumerable<Item> GetItems()

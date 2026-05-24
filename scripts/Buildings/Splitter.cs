@@ -35,18 +35,23 @@ public class Splitter(Vector2 anchorPosition, Direction direction, int variant =
 
     public override bool TryConsumeItem(Item item, Vector2 targetPosition, Direction fromDirection)
     {
-        if (fromDirection != this.inputDirection || targetPosition != AnchorPosition)
+        if (fromDirection != inputDirection || targetPosition != AnchorPosition)
         {
             return false;
         }
 
-        if (items[roundRobin] != null)
+        if (items.All(x => x != null))
         {
             return false;
+        }
+
+        while (items[roundRobin] != null)
+        {
+            roundRobin++;
+            roundRobin %= outputsCount;
         }
 
         items[roundRobin] = item;
-
         return true;
     }
 

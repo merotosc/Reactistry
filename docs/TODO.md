@@ -2,31 +2,39 @@
 
 ## General
 
+### Prototype
+
 - [ ] option to pan and delete using toolbar and left-click
+- [ ] button/shortcut to clear save data
+- [ ] add try catch blocks to avoid game crash
+- [ ] pause/run simulation
+- [ ] check if buildings side by side without pipes do not create errors
+- [ ] merger round robin
+- [ ] splitter improve round robin
+
+### vNext
+
 - [ ] save items in buildings
 - [ ] save/load from/to json save data
-- [ ] button/shortcut to clear save data
 - [ ] read atom colors from atoms.csv
 - [ ] developer docs
 - [ ] better csv reading avoiding duplicate code
 - [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
-- [ ] add try catch blocks to avoid game crash
 - [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
-- [ ] pause/run simulation
 - [ ] change simulation speed (0.5x, 2x, 4x)
 - [ ] instantiate preview entity object to avoid messy entity options code -> not easy to implement since building instance is mostly immutable
-- [ ] check if buildings side by side without pipes do not create errors
 - [ ] decide if use delta seconds or tick rate for entities speed
-- [ ] merger round robin
-- [ ] splitter improve round robin
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+
+### Done
+
 - [x] save tasks progress
 - [x] save and load game data
 - [x] rename project to Reactistry
@@ -49,26 +57,35 @@
 
 ## UI
 
-- [ ] display save icon
-- [ ] better molecules resource tile instead of same as molecule item
-- [ ] icon for invalid molecule
+### Prototype
+
 - [ ] change icon of game
-- [ ] display level/task number
 - [ ] hint tooltip on molecule resource
-- [ ] left, middle mouse, pan, scroll in, scroll out, save hints
-- [ ] hide building tooltip if build tool active
+- [ ] left, middle mouse, pan, scroll in, scroll out, save hints / cheat sheet
+- [ ] start/end of 1xN tiles recognizable
+- [ ] display tutorial hints / printscreen
+- [ ] display level/task number
 - [ ] show selected tool/building in toolbar
-- [ ] atom numbers in formula in subscript
+- [ ] display save icon
+
+### vNext
+
+- [ ] atom numbers in formula as subscript
+- [ ] hide building tooltip if build tool active
+- [ ] icon for invalid molecule
 - [ ] reactions cheat sheet
 - [ ] show debug infos (buildings & items count, item paths, building info)
 - [ ] custom cursor (default, build, deletion)
-- [ ] start/end of 1xN tiles recognizable
 - [ ] display more molecule information (formula, name)
 - [ ] display building info such as state, progress
 - [ ] display warning for non-wired inputs/outputs
-- [ ] display tutorial hints
 - [ ] reaction, extraction and consumer animations
-- [ ] item creation and deletion animations
+- [ ] pipes animations (e.g. moving bubbles)
+
+### Done
+
+- [x] better molecules resource tile instead of same as molecule item
+- [x] item creation and deletion animations
 - [x] custom tile for different molecule resource
 - [x] display chunks grid
 - [x] molecules resource icon/tile
@@ -87,14 +104,22 @@
 
 ## Editor
 
-- [ ] avoid switching item when dragging (messes up first building)
+### Prototype
+
 - [ ] orthogonal mode for pipes
-- [ ] entity options (reactor inputs count)
+
+### vNext
+
+- [ ] avoid switching item when dragging (messes up first building)
+- [ ] display entity options better for each building (e.g. reactor inputs count)
 - [ ] blueprints
 - [ ] move building
 - [ ] clone building
 - [ ] copy-paste region selection
 - [ ] region selection for deletion
+
+### Done
+
 - [x] fix gaps when dragging pipes
 - [x] remove multiple on drag
 - [x] position multiple buildings on hold

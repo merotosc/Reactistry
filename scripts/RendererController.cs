@@ -14,7 +14,8 @@ public class RendererController : Node
     private TileMap baseTileMap;
     private TileMap overlayTileMap;
     private Node2D itemLayer;
-    private Texture moleculeTexture;
+    private Texture moleculeItemTexture;
+    private Texture moleculeResourceTexture;
     private World world;
     private readonly Dictionary<Molecule, int> moleculesTileId = [];
     private readonly Dictionary<Item, Sprite> itemSprites = [];
@@ -25,7 +26,8 @@ public class RendererController : Node
         baseTileMap = GetNode<TileMap>("BaseTileMap");
         overlayTileMap = GetNode<TileMap>("OverlayTileMap");
         itemLayer = GetNode<Node2D>("Items");
-        moleculeTexture = GD.Load<Texture>("res://assets/molecule.png");
+        moleculeItemTexture = GD.Load<Texture>("res://assets/molecule_overlay.png");
+        moleculeResourceTexture = GD.Load<Texture>("res://assets/molecule.png");
         CreateMoleculesTileSet();
 
         this.world = world;
@@ -84,7 +86,7 @@ public class RendererController : Node
         var sprite = new Sprite
         {
             Name = name,
-            Texture = moleculeTexture,
+            Texture = moleculeItemTexture,
             Modulate = item.Molecule.GetColor(),
         };
 
@@ -160,7 +162,7 @@ public class RendererController : Node
     private void CreateMoleculesTileSet()
     {
         var tileSet = resourcesTileMap.TileSet;
-        var texture = moleculeTexture;
+        var texture = moleculeResourceTexture;
         var molecules = new List<Molecule> { Molecule.InvalidMolecule, Molecule.H2, Molecule.C, Molecule.N2, Molecule.O2 };
 
         for (var i = 0; i < molecules.Count; i++)

@@ -2,7 +2,9 @@
 
 ## General
 
+- [ ] option to pan and delete using toolbar and left-click
 - [ ] save items in buildings
+- [ ] save/load from/to json save data
 - [ ] button/shortcut to clear save data
 - [ ] read atom colors from atoms.csv
 - [ ] developer docs

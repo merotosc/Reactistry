@@ -14,7 +14,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
     private readonly Direction inputsDirection = direction.Reverse();
     private readonly int inputsCount = variant + 2;
     private readonly Item[] inputItems = new Item[variant + 2];
-    private readonly Queue<Item> outputItems = [];
+    private readonly Queue<Item>[] outputItems = [.. Enumerable.Range(0, variant + 2).Select(_ => new Queue<Item>())];
     private ItemPath itemOutputPath;
     private bool validReaction;
     private List<Molecule> outputMolecules;
@@ -28,28 +28,38 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
             timer.Advance(delta);
         }
 
-        if (outputItems.TryPeek(out var item) && item.PathEndReached)
+        for (var i = 0; i < outputItems.Length; i++)
         {
-            if (world.TryMoveItem(outputItems.Peek(), AnchorPosition + Direction.ToVector(), Direction.Reverse()))
+            var items = outputItems[i];
+            if (items.TryPeek(out var item) && item.PathEndReached)
             {
-                outputItems.Dequeue();
+                var nextTilePosition = AnchorPosition + Direction.Previous().ToVector() * i + Direction.ToVector();
+                if (world.TryMoveItem(items.Peek(), nextTilePosition, Direction.Reverse()))
+                {
+                    items.Dequeue();
+                }
             }
         }
-        else if (timer.TryTrigger(() => outputItems.Count == 0))
+
+        if (timer.TryTrigger(() => outputItems.All(x => x.Count == 0)))
         {
             (validReaction, outputMolecules) = ReactionRegistry.CreateReaction([.. inputItems.Select(x => x.Molecule)]);
 
-            // TODO: support multiple output molecules
-            var molecule = validReaction
-                ? outputMolecules.First()
-                : Molecule.InvalidMolecule;
+            var molecules = validReaction
+                ? outputMolecules
+                : [Molecule.InvalidMolecule];
 
-            for (var i = 0; i < molecule.Count; i++)
+            for (var differentMoleculesCount = 0; differentMoleculesCount < molecules.Count; differentMoleculesCount++)
             {
-                outputItems.Enqueue(new Item(new(molecule.Atoms), AnchorPosition, GetItemOutputPath()));
+                var molecule = molecules[differentMoleculesCount];
+                for (var moleculesCount = 0; moleculesCount < molecule.Count; moleculesCount++)
+                {
+                    var tilePosition = AnchorPosition + Direction.Previous().ToVector() * differentMoleculesCount;
+                    outputItems[differentMoleculesCount].Enqueue(new Item(new(molecule.Atoms), tilePosition, GetItemOutputPath()));
+                }
             }
 
-            world.AddItems(outputItems);
+            world.AddItems(outputItems.SelectMany(x => x));
             world.DeleteItems(inputItems);
             ClearItems();
         }
@@ -73,7 +83,9 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
     }
 
     public override IEnumerable<Item> GetItems()
-        => [.. inputItems.Concat(outputItems).Where(x => x != null)];
+        => [.. inputItems
+            .Concat(outputItems.SelectMany(x => x))
+            .Where(x => x != null)];
 
     private void ClearItems()
     {
@@ -92,6 +104,6 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
         => new()
         {
             InputItems = inputItems,
-            OutputItems = outputItems,
+            OutputItems = outputItems.SelectMany(x => x),
         };
 }

@@ -83,7 +83,7 @@ public class Molecule(List<Atom> atoms, int count = 1)
         => HashCode.Combine(Atoms, Count);
 
     public static bool operator ==(Molecule left, Molecule right)
-        => left.ToString() == right.ToString();
+        => left?.ToString() == right?.ToString();
 
     public static bool operator !=(Molecule left, Molecule right)
         => !(left == right);

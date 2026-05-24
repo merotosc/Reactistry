@@ -62,8 +62,16 @@
 ### Prototype
 
 - [ ] change icon of game
-- [ ] hint tooltip on molecule resource
 - [ ] left, middle mouse, pan, scroll in, scroll out, save hints / cheat sheet
+    - left: build/use/select
+    - right: delete
+    - middle: pan
+    - scroll: zoom
+    - esc: cancel
+    - 1-9: tool
+    - r: rotate
+    - t: variant
+    - s: save
 - [ ] start/end of 1xN tiles recognizable
 - [ ] display tutorial hints / printscreen
 - [ ] display level/task number
@@ -86,6 +94,7 @@
 
 ### Done
 
+- [x] hint tooltip on molecule resource
 - [x] better molecules resource tile instead of same as molecule item
 - [x] item creation and deletion animations
 - [x] custom tile for different molecule resource

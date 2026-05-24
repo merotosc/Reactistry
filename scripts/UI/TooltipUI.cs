@@ -15,6 +15,7 @@ public class TooltipUI : Control
     private Control outputsContainer;
     private PackedScene itemUi;
     private Vector2 lastTilePosition;
+    private Molecule currentResource;
     private IBuilding currentBuilding;
     private float hoverTime;
 
@@ -40,21 +41,28 @@ public class TooltipUI : Control
         {
             lastTilePosition = tilePosition;
 
-            if (!world.TryGetBuilding(tilePosition, out currentBuilding))
+            if (!world.TryGetBuilding(tilePosition, out currentBuilding) && !world.TryGetResource(tilePosition, out currentResource))
             {
                 hoverTime = 0;
                 HideTooltip();
             }
         }
 
-        if (currentBuilding == null)
+        if (currentBuilding == null && currentResource == null)
         {
             return;
         }
 
         if (hoverTime >= TooltipDelay)
         {
-            ShowTooltipForBuilding();
+            if (currentBuilding != null)
+            {
+                ShowTooltipForBuilding();
+            }
+            else if (currentResource != null)
+            {
+                ShowTooltipForResource();
+            }
         }
         else
         {
@@ -65,9 +73,36 @@ public class TooltipUI : Control
     private void ShowTooltipForBuilding()
     {
         var info = currentBuilding.GetInfo();
-
         label.Text = currentBuilding.Type.ToString();
 
+        ClearItems();
+
+        foreach (var item in info.InputItems)
+        {
+            AddItemElement(inputsContainer, item?.Molecule);
+        }
+
+        foreach (var item in info.OutputItems)
+        {
+            AddItemElement(outputsContainer, item?.Molecule);
+        }
+
+        ShowTooltip();
+    }
+
+    private void ShowTooltipForResource()
+    {
+        label.Text = "Resource";
+
+        ClearItems();
+
+        AddItemElement(inputsContainer, currentResource);
+
+        ShowTooltip();
+    }
+
+    private void ClearItems()
+    {
         foreach (Node child in inputsContainer.GetChildren())
         {
             child.QueueFree();
@@ -77,18 +112,23 @@ public class TooltipUI : Control
         {
             child.QueueFree();
         }
+    }
 
-        foreach (var item in info.InputItems)
+    private void AddItemElement(Control container, Molecule molecule)
+    {
+        var ui = itemUi.Instance();
+        if (molecule != null)
         {
-            AddItemElement(inputsContainer, item);
+            ui.GetNode<Label>("Name").Text = molecule.ToString();
+            ui.GetNode<Control>("ImageFrame/Image").Modulate = molecule.GetColor();
+        }
+        else
+        {
+            ui.GetNode<Label>("Name").Text = string.Empty;
+            ui.GetNode<Control>("ImageFrame/Image").Modulate = new Color(0, 0, 0, 0);
         }
 
-        foreach (var item in info.OutputItems)
-        {
-            AddItemElement(outputsContainer, item);
-        }
-
-        ShowTooltip();
+        container.AddChild(ui);
     }
 
     private void ShowTooltip()
@@ -108,22 +148,5 @@ public class TooltipUI : Control
     private void HideTooltip()
     {
         Hide();
-    }
-
-    private void AddItemElement(Control container, Item item)
-    {
-        var ui = itemUi.Instance();
-        if (item != null)
-        {
-            ui.GetNode<Label>("Name").Text = item.Molecule.ToString();
-            ui.GetNode<Control>("ImageFrame/Image").Modulate = item.Molecule.GetColor();
-        }
-        else
-        {
-            ui.GetNode<Label>("Name").Text = string.Empty;
-            ui.GetNode<Control>("ImageFrame/Image").Modulate = new Color(0, 0, 0, 0);
-        }
-
-        container.AddChild(ui);
     }
 }

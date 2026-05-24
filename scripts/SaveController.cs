@@ -3,6 +3,7 @@ using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Reactistry.scripts.Models;
+using Reactistry.scripts.Utilities;
 
 namespace Reactistry.scripts;
 
@@ -44,13 +45,8 @@ public class SaveController : Node
     {
         var buildings = world.Buildings
             .Where(x => x.Type != BuildingType.Lab)
-            .Select(x => new BuildingOptions
-            {
-                Type = x.Type,
-                Position = x.AnchorPosition,
-                Direction = x.Direction,
-                Variant = x.Variant,
-            }).ToList();
+            .Select(x => x.ToBuildingOptions())
+            .ToList();
 
         var currentTasks = tasksController.CurrentTasks
             .Select(x => new LabTaskSaveData

@@ -81,6 +81,9 @@ public class World
         return false;
     }
 
+    public bool TryGetResource(Vector2 position, out Molecule resource)
+        => resourceTiles.TryGetValue(position, out resource);
+
     public bool TryGetBuilding(Vector2 position, out IBuilding building)
         => buildingTiles.TryGetValue(position, out building);
 

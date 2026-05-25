@@ -65,7 +65,6 @@
 
 ### Prototype
 
-- [ ] better consumer/destroyer tile
 - [ ] change icon of game
 - [ ] left, middle mouse, pan, scroll in, scroll out, save hints / cheat sheet
     - left: build/use/select
@@ -75,15 +74,16 @@
     - esc: cancel
     - 1-9: tool
     - r: rotate
-    - t: variant
+    - t: variant (f or tab instead?)
     - shift+r: rotate counterclockwise
     - shift+t: variant counterclockwise
     - ctrl+s: save
+    - tab: cycle tools?
 - [ ] display tutorial hints / printscreen
-- [ ] auto tile 2d for lab
 
 ### vNext
 
+- [ ] auto tile 2d for lab
 - [ ] display level/task number
 - [ ] show selected tool/building in toolbar
 - [ ] atom numbers in formula as subscript
@@ -100,6 +100,7 @@
 
 ### Done
 
+- [x] better consumer/destroyer tile
 - [x] display save icon (saving... or saved)
 - [x] start/end of 1xN tiles recognizable
 - [x] hint tooltip on molecule resource

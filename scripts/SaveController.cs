@@ -27,7 +27,7 @@ public class SaveController : Node
     {
         autosaveTimer += delta;
 
-        if (autosaveTimer >= Constants.SaveData.AutosaveInterval)
+        if (autosaveTimer >= Constants.SaveData.AutosaveIntervalSeconds)
         {
             autosaveTimer = 0f;
             SaveGame();

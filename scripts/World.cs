@@ -98,7 +98,7 @@ public class World
         {
             BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
             BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, resourceTiles.GetValueOrDefault(buildingOptions.Position, Molecule.InvalidMolecule)),
-            BuildingType.Consumer => new Consumer(buildingOptions.Position, buildingOptions.Direction),
+            BuildingType.Destroyer => new Destroyer(buildingOptions.Position, buildingOptions.Direction),
             BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
             BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
             BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),

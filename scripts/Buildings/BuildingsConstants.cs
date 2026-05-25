@@ -25,7 +25,7 @@ public static class BuildingsConstants
         {
             BaseTileCoord = new Vector2(1, 0),
         },
-        [BuildingType.Consumer] = new()
+        [BuildingType.Destroyer] = new()
         {
             BaseTileCoord = new Vector2(2, 0),
         },

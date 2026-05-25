@@ -9,6 +9,6 @@ public enum BuildingType
     Reactor = 3,
     Splitter = 4,
     Merger = 5,
-    Consumer = 6,
+    Destroyer = 6,
     End,
 }

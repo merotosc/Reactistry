@@ -82,7 +82,7 @@ public class RendererController : Node
 
     private void CreateItemSprite(Item item)
     {
-        var name = item.Molecule.ToString();
+        var name = item.Molecule.Formula;
         var sprite = new Sprite
         {
             Name = name,

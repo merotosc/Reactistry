@@ -55,7 +55,7 @@ public class Reactor(Vector2 anchorPosition, Direction direction, int variant = 
                 for (var moleculesCount = 0; moleculesCount < molecule.Count; moleculesCount++)
                 {
                     var tilePosition = AnchorPosition + Direction.Previous().ToVector() * differentMoleculesCount;
-                    outputItems[differentMoleculesCount].Enqueue(new Item(new(molecule.Atoms), tilePosition, GetItemOutputPath()));
+                    outputItems[differentMoleculesCount].Enqueue(new Item(new(molecule.Elements), tilePosition, GetItemOutputPath()));
                 }
             }
 

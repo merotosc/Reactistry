@@ -4,12 +4,11 @@
 
 ### Prototype
 
-- [ ] write molecule formula as in csv file (CH4 instead of H4C)
 - [ ] option to pan and delete using toolbar and left-click
-- [ ] button/shortcut to clear save data
 - [ ] add try catch blocks to avoid game crash
-- [ ] pause/run simulation
 - [ ] check if buildings side by side without pipes do not create errors
+- [ ] button/shortcut to clear save data
+- [ ] pause/run simulation
 
 ### vNext
 
@@ -37,6 +36,7 @@
 
 ### Done
 
+- [x] write molecule formula as in csv file (CH4 instead of H4C)
 - [x] merger improve round robin
 - [x] splitter improve round robin
 - [x] save tasks progress
@@ -63,6 +63,7 @@
 
 ### Prototype
 
+- [ ] better consumer/destroyer tile
 - [ ] change icon of game
 - [ ] left, middle mouse, pan, scroll in, scroll out, save hints / cheat sheet
     - left: build/use/select
@@ -73,7 +74,9 @@
     - 1-9: tool
     - r: rotate
     - t: variant
-    - s: save
+    - shift+r: rotate counterclockwise
+    - shift+t: variant counterclockwise
+    - ctrl+s: save
 - [ ] display tutorial hints / printscreen
 - [ ] display save icon (saving... or saved)
 - [ ] auto tile 2d for lab

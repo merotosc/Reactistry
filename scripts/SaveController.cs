@@ -51,7 +51,7 @@ public class SaveController : Node
         var currentTasks = tasksController.CurrentTasks
             .Select(x => new LabTaskSaveData
             {
-                MoleculeName = x.Molecule.ToString(),
+                MoleculeFormula = x.Molecule.Formula,
                 AmountDelivered = x.AmountDelivered,
             }).ToList();
 

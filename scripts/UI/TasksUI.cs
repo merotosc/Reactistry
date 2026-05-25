@@ -44,7 +44,7 @@ public class TasksUI : Control
     private void SetTask(Control ui, LabTask task)
     {
         ui.GetNode<Label>("Content/Amount").Text = $"{task.AmountDelivered}\n/{task.AmountRequired}";
-        ui.GetNode<Label>("Content/Item/Name").Text = task.Molecule.ToString();
+        ui.GetNode<Label>("Content/Item/Name").Text = task.Molecule.Formula;
         ui.GetNode<TextureRect>("Content/Item/ImageFrame/Image").Modulate = task.Molecule.GetColor();
 
         if (task.Completed)

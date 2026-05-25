@@ -119,7 +119,7 @@ public class TooltipUI : Control
         var ui = itemUi.Instance();
         if (molecule != null)
         {
-            ui.GetNode<Label>("Name").Text = molecule.ToString();
+            ui.GetNode<Label>("Name").Text = molecule.Formula;
             ui.GetNode<Control>("ImageFrame/Image").Modulate = molecule.GetColor();
         }
         else

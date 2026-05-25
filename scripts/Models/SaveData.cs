@@ -13,7 +13,7 @@ public class SaveData
 
 public class LabTaskSaveData
 {
-    public string MoleculeName { get; set; }
+    public string MoleculeFormula { get; set; }
 
     public int AmountDelivered { get; set; }
 }

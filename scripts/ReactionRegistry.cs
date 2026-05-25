@@ -69,7 +69,7 @@ public static class ReactionRegistry
                     }
 
                     var molecule = molecules[column - 1];
-                    var newMolecule = new Molecule(molecule.Atoms, Math.Abs(value));
+                    var newMolecule = new Molecule(molecule.Elements, Math.Abs(value));
 
                     if (value < 0)
                     {
@@ -107,29 +107,20 @@ public static class ReactionRegistry
         return (true, reaction.OutputMolecules);
     }
 
-    public static string GetFormula(List<Molecule> molecules)
-        => string.Join("+", molecules
-            .OrderBy(m => m.ToString())
-            .Select(m => m.ToString()));
-
     public static string GetStableFormula(List<Molecule> molecules)
     {
-        var atoms = new Dictionary<AtomElement, int>();
+        var elements = new Dictionary<AtomElement, int>();
 
         foreach (var molecule in molecules)
         {
-            foreach (var atom in molecule.Atoms)
+            foreach (var element in molecule.Elements)
             {
-                if (!atoms.ContainsKey(atom.Element))
-                {
-                    atoms[atom.Element] = 0;
-                }
-
-                atoms[atom.Element] += atom.Count * molecule.Count;
+                elements.TryGetValue(element.Key, out var current);
+                elements[element.Key] = current + element.Value * molecule.Count;
             }
         }
 
-        return string.Join(":", atoms
+        return string.Join(":", elements
             .OrderBy(x => x.Key)
             .Select(x => $"{x.Key}{x.Value}"));
     }

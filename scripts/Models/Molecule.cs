@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Godot;
+using Reactistry.scripts.Utilities;
 
 namespace Reactistry.scripts.Models;
 
-public class Molecule(List<Atom> atoms, int count = 1)
+public record class Molecule
 {
     private static readonly Regex FormulaRegex = new(@"([A-Z][a-z]*)(\d*)", RegexOptions.Compiled);
 
-    public List<Atom> Atoms { get; } = atoms;
+    public string Formula { get; set; }
 
-    public int Count { get; } = count;
+    public Dictionary<AtomElement, int> Elements { get; }
+
+    public int Count { get; }
 
     public static Molecule InvalidMolecule
         = new(AtomElement.Invalid);
@@ -28,19 +32,21 @@ public class Molecule(List<Atom> atoms, int count = 1)
     public static Molecule O2
         = new(AtomElement.O, 2);
 
-    public Molecule(AtomElement atom, int count = 1)
-        : this(new(atom, count))
+    public Molecule(Dictionary<AtomElement, int> elements, int count = 1, string formula = null)
     {
+        Elements = elements;
+        Count = count;
+        Formula = formula ?? CalculateFormula();
     }
 
-    public Molecule(Atom atom)
-        : this([atom])
+    public Molecule(AtomElement atom, int count = 1)
+        : this(new Dictionary<AtomElement, int> { [atom] = count })
     {
     }
 
     public static Molecule Parse(string formula)
     {
-        var atoms = new List<Atom>();
+        var elements = new Dictionary<AtomElement, int>();
         var matches = FormulaRegex.Matches(formula);
 
         foreach (Match match in matches)
@@ -51,40 +57,38 @@ public class Molecule(List<Atom> atoms, int count = 1)
                 : int.Parse(match.Groups[2].Value);
 
             var elementParsed = Enum.TryParse<AtomElement>(element, ignoreCase: true, out var parsedElement);
-            atoms.Add(new Atom(elementParsed ? parsedElement : AtomElement.Invalid, count));
+            var elementName = elementParsed ? parsedElement : AtomElement.Invalid;
+            elements[elementName] = count;
         }
 
-        return new Molecule(atoms);
+        return new Molecule(elements, formula: formula);
     }
 
-    // TODO: make cached property and molecule immutable?
-    public override string ToString()
+    public Color GetColor()
     {
-        var atoms = Atoms
-            .OrderBy(x => x.Element)
-            .Select(x => x.ToString())
+        return Formula switch
+        {
+            "H2" => new Color("FFFFFF"),
+            "C" => new Color("909090"),
+            "N2" => new Color("3050F8"),
+            "O2" => new Color("FF0D0D"),
+            "Invalid" => new Color("000000"),
+            _ => Formula.ColorHash(),
+        };
+    }
+
+    private string CalculateFormula()
+    {
+        var elements = Elements
+            .Select(e => e.Value > 1
+                ? $"{e.Key}{e.Value}"
+                : $"{e.Key}")
             .ToArray();
 
-        var formula = string.Join("", atoms);
+        var formula = string.Join("", elements);
 
         return Count > 1
             ? $"{Count}{formula}"
             : formula;
     }
-
-    public override bool Equals(object obj)
-    {
-        return obj is Molecule molecule &&
-               EqualityComparer<List<Atom>>.Default.Equals(Atoms, molecule.Atoms) &&
-               Count == molecule.Count;
-    }
-
-    public override int GetHashCode()
-        => HashCode.Combine(Atoms, Count);
-
-    public static bool operator ==(Molecule left, Molecule right)
-        => left?.ToString() == right?.ToString();
-
-    public static bool operator !=(Molecule left, Molecule right)
-        => !(left == right);
 }

@@ -121,7 +121,7 @@ public class TasksController : Node
 
         foreach (var taskSaveData in tasksSaveData)
         {
-            var labTask = CurrentTasks.FirstOrDefault(x => x.Molecule.ToString() == taskSaveData.MoleculeName);
+            var labTask = CurrentTasks.FirstOrDefault(x => x.Molecule.Formula == taskSaveData.MoleculeFormula);
             if (labTask == null)
             {
                 continue;

@@ -4,7 +4,6 @@
 
 ### Prototype
 
-- [ ] option to pan and delete using toolbar and left-click
 - [ ] add try catch blocks to avoid game crash
 - [ ] check if buildings side by side without pipes do not create errors
 - [ ] button/shortcut to clear save data
@@ -12,6 +11,8 @@
 
 ### vNext
 
+- [ ] use input map for key bindings
+- [ ] option to pan and delete using toolbar and left-click
 - [ ] rename buildingOptions to buildingData?
 - [ ] save last camera position in save data
 - [ ] save items in buildings in save data
@@ -37,6 +38,7 @@
 
 ### Done
 
+- [x] use wasd for camera movement
 - [x] avoid key spam on key hold (build and save controller)
 - [x] write molecule formula as in csv file (CH4 instead of H4C)
 - [x] merger improve round robin
@@ -78,6 +80,7 @@
     - shift+r: rotate counterclockwise
     - shift+t: variant counterclockwise
     - ctrl+s: save
+    - space: run/pause simulation?
     - tab: cycle tools?
 - [ ] display tutorial hints / printscreen
 

@@ -8,7 +8,7 @@ public class LevelTasks : List<LabTask>
 {
     public bool TryGetLabTask(Molecule molecule, out LabTask labTask)
     {
-        labTask = this.FirstOrDefault(x => x.Molecule == molecule);
+        labTask = this.FirstOrDefault(x => x.Molecule.Formula == molecule.Formula);
         return labTask != null;
     }
 

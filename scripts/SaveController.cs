@@ -36,12 +36,9 @@ public class SaveController : Node
 
     public override void _Input(InputEvent e)
     {
-        if (e is InputEventKey key && key.Pressed && !key.Echo)
+        if (Input.IsActionJustPressed("save_game", true))
         {
-            if (key.Control && key.Scancode == (uint)KeyList.S)
-            {
-                SaveGame();
-            }
+            SaveGame();
         }
     }
 

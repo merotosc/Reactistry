@@ -7,6 +7,7 @@ public class CameraController : Camera2D
     private const float ZoomFactor = 1.2f;
     private const float MinZoom = 0.1f;
     private const float MaxZoom = 3f;
+    private const int PanSpeed = 800;
     private bool panning;
 
     public override void _Input(InputEvent e)
@@ -34,6 +35,38 @@ public class CameraController : Camera2D
         if (e is InputEventMouseMotion motion && panning)
         {
             Position -= motion.Relative * Zoom;
+            ClampCameraToBounds();
+        }
+    }
+
+    public override void _PhysicsProcess(float delta)
+    {
+        var movement = Vector2.Zero;
+
+        if (Input.IsActionPressed("camera_up", true))
+        {
+            movement.y -= 1;
+        }
+
+        if (Input.IsActionPressed("camera_left", true))
+        {
+            movement.x -= 1;
+        }
+
+        if (Input.IsActionPressed("camera_down", true))
+        {
+            movement.y += 1;
+        }
+
+        if (Input.IsActionPressed("camera_right", true))
+        {
+            movement.x += 1;
+        }
+
+        if (movement != Vector2.Zero)
+        {
+            movement = movement.Normalized();
+            Position += movement * Zoom * PanSpeed * delta;
             ClampCameraToBounds();
         }
     }

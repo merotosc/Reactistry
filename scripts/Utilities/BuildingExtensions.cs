@@ -1,57 +1,12 @@
-﻿using System;
-using Reactistry.scripts.Buildings;
+﻿using Reactistry.scripts.Buildings;
 using Reactistry.scripts.Models;
 using Godot;
+using System.Collections.Generic;
 
 namespace Reactistry.scripts.Utilities;
 
 public static class BuildingExtensions
 {
-    public static Vector2 GetTileCoordForBuilding(this BuildingType buildingType, int variant = 0)
-    {
-        return buildingType switch
-        {
-            BuildingType.Lab => new Vector2(0, Constants.TileSet.LabYOffset),
-            BuildingType.Pipe => new Vector2(variant, Constants.TileSet.PipesYOffset),
-            BuildingType.Extractor => new Vector2(0, Constants.TileSet.BuildingsYOffset),
-            BuildingType.Consumer => new Vector2(1, Constants.TileSet.BuildingsYOffset),
-            BuildingType.Reactor => new Vector2(2, Constants.TileSet.BuildingsYOffset),
-            BuildingType.Splitter => new Vector2(3, Constants.TileSet.BuildingsYOffset),
-            BuildingType.Merger => new Vector2(4, Constants.TileSet.BuildingsYOffset),
-            _ => Vector2.Zero,
-        };
-    }
-
-    public static Vector2 GetSizeForBuilding(this BuildingType buildingType, int variant = 0)
-    {
-        return buildingType switch
-        {
-            BuildingType.Lab => new Vector2(5, 5),
-            BuildingType.Pipe => Vector2.One,
-            BuildingType.Extractor => Vector2.One,
-            BuildingType.Consumer => Vector2.One,
-            BuildingType.Reactor => new Vector2(1, 2 + variant),
-            BuildingType.Splitter => new Vector2(1, 2 + variant),
-            BuildingType.Merger => new Vector2(1, 2 + variant),
-            _ => Vector2.One,
-        };
-    }
-
-    public static int GetVariantsCountForBuilding(this BuildingType buildingType)
-    {
-        return buildingType switch
-        {
-            BuildingType.Lab => 1,
-            BuildingType.Pipe => Enum.GetNames(typeof(PipeVariant)).Length,
-            BuildingType.Extractor => 1,
-            BuildingType.Consumer => 1,
-            BuildingType.Reactor => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
-            BuildingType.Splitter => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
-            BuildingType.Merger => Enum.GetNames(typeof(BuildingInputsVariant)).Length,
-            _ => 1,
-        };
-    }
-
     public static BuildingOptions ToBuildingOptions(this IBuilding building)
     {
         return new BuildingOptions
@@ -60,6 +15,61 @@ public static class BuildingExtensions
             Position = building.AnchorPosition,
             Direction = building.Direction,
             Variant = building.Variant,
+        };
+    }
+
+    public static BuildingDefinition GetDefinition(this BuildingType buildingType)
+        => BuildingsConstants.Definitions.GetValueOrDefault(buildingType, new());
+
+    public static Vector2 GetTileCoord(this BuildingOptions buildingOptions, Vector2 localPosition)
+    {
+        var buildingDefinition = buildingOptions.Type.GetDefinition();
+        var baseCoord = buildingDefinition.BaseTileCoord;
+        var tileMode = buildingDefinition.TileMode;
+
+        switch (tileMode)
+        {
+            case TileMode.Repeated:
+                return baseCoord;
+            case TileMode.Variant:
+                return baseCoord + new Vector2(0, buildingOptions.Variant);
+            case TileMode.Autotile1D:
+                {
+                    var size = buildingDefinition.GetSize(buildingOptions.Variant);
+                    var segment = localPosition.GetSegment(size);
+
+                    var localCoord = segment switch
+                    {
+                        TileSegment.Single or
+                        TileSegment.Start => new Vector2(0, 2),
+                        TileSegment.Middle => new Vector2(0, 1),
+                        TileSegment.End => new Vector2(0, 0),
+                        _ => new Vector2(0, 0),
+                    };
+
+                    return baseCoord + localCoord;
+                }
+            case TileMode.Autotile2D:
+                // TODO: implement correct logic for Autotile 2D
+                return baseCoord;
+            default:
+                return baseCoord;
+        }
+    }
+
+    public static Vector2 GetDefaultTileCoord(this BuildingType buildingType)
+    {
+        var buildingDefinition = buildingType.GetDefinition();
+        var baseCoord = buildingDefinition.BaseTileCoord;
+        var tileMode = buildingDefinition.TileMode;
+
+        return tileMode switch
+        {
+            TileMode.Repeated or
+            TileMode.Variant => baseCoord,
+            TileMode.Autotile1D or
+            TileMode.Autotile2D => baseCoord + new Vector2(0, 2),
+            _ => baseCoord,
         };
     }
 }

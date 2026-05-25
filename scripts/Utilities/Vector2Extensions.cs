@@ -34,33 +34,60 @@ public static class Vector2Extensions
 
     public static IEnumerable<Vector2> EnumeratePositions(this Vector2 anchorPosition, Direction direction, Vector2 size)
     {
-        var x0 = 0;
-        var y0 = 0;
-        var x1 = (int)size.x;
-        var y1 = (int)size.y;
-
-        if (direction is Direction.Down or Direction.Up)
+        foreach (var (position, _) in anchorPosition.EnumerateAllPositions(direction, size))
         {
-            (x1, y1) = (y1, x1);
+            yield return position;
         }
+    }
 
-        if (direction is Direction.Left or Direction.Down)
-        {
-            (y0, y1) = (1 - y1, 1 - y0);
-        }
+    public static IEnumerable<(Vector2 Position, Vector2 LocalPosition)> EnumerateAllPositions(this Vector2 anchorPosition, Direction direction, Vector2 size)
+    {
+        var width = (int)size.x;
+        var height = (int)size.y;
 
-        if (direction is Direction.Left or Direction.Up)
+        for (var y = 0; y < height; y++)
         {
-            (x0, x1) = (1 - x1, 1 - x0);
-        }
-
-        for (var xi = x0; xi < x1; xi++)
-        {
-            for (var yi = y0; yi < y1; yi++)
+            for (var x = 0; x < width; x++)
             {
-                yield return anchorPosition + new Vector2(xi, -yi);
+                var localPosition = new Vector2(x, y);
+                var position = anchorPosition + localPosition.RotateOffset(direction);
+
+                yield return (position, localPosition);
             }
         }
+    }
+
+    private static Vector2 RotateOffset(this Vector2 position, Direction direction)
+    {
+        var x = (int)position.x;
+        var y = (int)position.y;
+
+        return direction switch
+        {
+            Direction.Right => new Vector2(x, -y),
+            Direction.Down => new Vector2(y, x),
+            Direction.Left => new Vector2(-x, y),
+            Direction.Up => new Vector2(-y, -x),
+            _ => Vector2.Zero,
+        };
+    }
+
+    public static TileSegment GetSegment(this Vector2 position, Vector2 size)
+    {
+        if (size.y == 1)
+        {
+            return TileSegment.Single;
+        }
+        else if (position.y == 0)
+        {
+            return TileSegment.Start;
+        }
+        else if (position.y == size.y - 1)
+        {
+            return TileSegment.End;
+        }
+
+        return TileSegment.Middle;
     }
 
     public static IEnumerable<Vector2> EnumerateOrthogonalLinePositions(this Vector2 start, Vector2 end)

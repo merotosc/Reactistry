@@ -4,6 +4,7 @@ using System.Linq;
 using Reactistry.scripts.Models;
 using Reactistry.scripts.Utilities;
 using Godot;
+using Reactistry.scripts.Buildings;
 
 namespace Reactistry.scripts;
 
@@ -101,9 +102,9 @@ public class BuildController : Node2D
 
     private void ChangeBuildingVariant(bool reverse)
     {
-        var variantsCount = currentBuilding.Type.GetVariantsCountForBuilding();
+        var variantsCount = currentBuilding.Type.GetDefinition().VariantsCount;
         var offset = reverse ? -1 : 1;
-        currentBuilding.Variant = (currentBuilding.Variant + offset + variantsCount) % currentBuilding.Type.GetVariantsCountForBuilding();
+        currentBuilding.Variant = (currentBuilding.Variant + offset + variantsCount) % variantsCount;
         RedrawPreview();
     }
 

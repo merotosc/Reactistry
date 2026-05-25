@@ -17,9 +17,6 @@ public class Constants
         public const int BuildingsOverlayId = 1;
         public const int IconsId = 2;
         public const int MoleculesId = 4;
-        public const int PipesYOffset = 0;
-        public const int BuildingsYOffset = 1;
-        public const int LabYOffset = 2;
         public const int IconsYOffset = 0;
     }
 

@@ -118,6 +118,8 @@ public class RendererController : Node
 
     private void DeleteItemSprite(Item item, Sprite sprite)
     {
+        itemSprites.Remove(item);
+
         var tween = new Tween();
         sprite.AddChild(tween);
 
@@ -138,16 +140,14 @@ public class RendererController : Node
             AnimationDelay);
 
         tween.Start();
-        tween.Connect("tween_all_completed", this, nameof(OnItemShrinkCompleted));
+        tween.Connect("tween_all_completed", this, nameof(OnItemShrinkCompleted), [tween, sprite]);
+    }
 
-        void OnItemShrinkCompleted()
-        {
-            itemLayer.RemoveChild(sprite);
-            itemSprites.Remove(item);
-
-            tween.QueueFree();
-            sprite.QueueFree();
-        }
+    private void OnItemShrinkCompleted(Tween tween, Sprite sprite)
+    {
+        itemLayer.RemoveChild(sprite);
+        tween.QueueFree();
+        sprite.QueueFree();
     }
 
     private void DrawItems()

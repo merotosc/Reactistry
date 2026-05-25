@@ -128,7 +128,8 @@ public class World
 
     public bool ValidBuildingPosition(BuildingOptions buildingOptions)
     {
-        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingOptions.Type.GetSizeForBuilding(buildingOptions.Variant)))
+        var buildingSize = buildingOptions.Type.GetDefinition().GetSize(buildingOptions.Variant);
+        foreach (var tilePosition in buildingOptions.Position.EnumeratePositions(buildingOptions.Direction, buildingSize))
         {
             if (buildingTiles.ContainsKey(tilePosition))
             {

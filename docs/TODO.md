@@ -4,6 +4,7 @@
 
 ### Prototype
 
+- [ ] write molecule formula as in csv file (CH4 instead of H4C)
 - [ ] option to pan and delete using toolbar and left-click
 - [ ] button/shortcut to clear save data
 - [ ] add try catch blocks to avoid game crash
@@ -12,8 +13,9 @@
 
 ### vNext
 
-- [ ] save last position
-- [ ] save items in buildings
+- [ ] rename buildingOptions to buildingData?
+- [ ] save last camera position in save data
+- [ ] save items in buildings in save data
 - [ ] random seed every new game stored in save data
 - [ ] save/load from/to json save data
 - [ ] read atom colors from atoms.csv
@@ -72,14 +74,14 @@
     - r: rotate
     - t: variant
     - s: save
-- [ ] start/end of 1xN tiles recognizable
 - [ ] display tutorial hints / printscreen
-- [ ] display level/task number
-- [ ] show selected tool/building in toolbar
-- [ ] display save icon
+- [ ] display save icon (saving... or saved)
+- [ ] auto tile 2d for lab
 
 ### vNext
 
+- [ ] display level/task number
+- [ ] show selected tool/building in toolbar
 - [ ] atom numbers in formula as subscript
 - [ ] hide building tooltip if build tool active
 - [ ] icon for invalid molecule
@@ -94,6 +96,7 @@
 
 ### Done
 
+- [x] start/end of 1xN tiles recognizable
 - [x] hint tooltip on molecule resource
 - [x] better molecules resource tile instead of same as molecule item
 - [x] item creation and deletion animations

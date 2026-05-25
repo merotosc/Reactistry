@@ -1,6 +1,7 @@
 ﻿using Reactistry.scripts.Models;
 using Reactistry.scripts.Utilities;
 using Godot;
+using Reactistry.scripts.Buildings;
 
 namespace Reactistry.scripts.UI;
 
@@ -33,7 +34,7 @@ public class ToolsUI : Control
         var tileSet = baseTileMap.TileSet;
         var atlas = tileSet.TileGetTexture(Constants.TileSet.BuildingsId);
         var tileSize = tileSet.AutotileGetSize(Constants.TileSet.BuildingsId);
-        var tileCoord = buildingType.GetTileCoordForBuilding();
+        var tileCoord = buildingType.GetDefaultTileCoord();
         var region = new Rect2(tileCoord * tileSize, tileSize);
 
         var tileTexture = new AtlasTexture

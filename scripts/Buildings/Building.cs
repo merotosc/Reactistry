@@ -15,7 +15,7 @@ public abstract class Building(Vector2 anchorPosition, Direction direction, int 
 
     public Direction Direction { get; } = direction;
 
-    public Vector2 Size => Type.GetSizeForBuilding(Variant);
+    public Vector2 Size => Type.GetDefinition().GetSize(Variant);
 
     public int Variant => variant;
 

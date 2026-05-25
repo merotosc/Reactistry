@@ -168,6 +168,16 @@ script = ExtResource( 15 )
 
 [node name="ShortcutsUI" parent="Canvas" instance=ExtResource( 18 )]
 
+[node name="SaveNotification" type="Label" parent="Canvas"]
+modulate = Color( 0, 0, 0, 1 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -69.0
+margin_top = 20.0
+margin_right = 69.0
+margin_bottom = 16.0
+text = "Game Saved"
+
 [node name="RendererController" type="Node" parent="."]
 script = ExtResource( 4 )
 

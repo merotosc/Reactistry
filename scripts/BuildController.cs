@@ -57,7 +57,7 @@ public class BuildController : Node2D
             HandleMouseDrag();
         }
 
-        if (e is InputEventKey key && key.Pressed)
+        if (e is InputEventKey key && key.Pressed && !key.Echo)
         {
             switch (key.Scancode)
             {

@@ -9,12 +9,16 @@ namespace Reactistry.scripts;
 
 public class SaveController : Node
 {
-    private float autosaveTimer = 0;
+    private Label saveNotification;
     private World world;
     private TasksController tasksController;
+    private float autosaveTimer = 0;
 
     public void Init(World world, TasksController tasksController)
     {
+        saveNotification = GetNode<Label>("/root/Game/Canvas/SaveNotification");
+        saveNotification.Visible = false;
+
         this.world = world;
         this.tasksController = tasksController;
     }
@@ -32,7 +36,7 @@ public class SaveController : Node
 
     public override void _Input(InputEvent e)
     {
-        if (e is InputEventKey key && key.Pressed)
+        if (e is InputEventKey key && key.Pressed && !key.Echo)
         {
             if (key.Control && key.Scancode == (uint)KeyList.S)
             {
@@ -68,6 +72,8 @@ public class SaveController : Node
         file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
         file.StoreString(json);
         file.Close();
+
+        ShowSavedMessage();
     }
 
     public SaveData LoadGame()
@@ -87,5 +93,30 @@ public class SaveController : Node
         }
 
         return JsonConvert.DeserializeObject<SaveData>(json, new StringEnumConverter());
+    }
+
+    public async void ShowSavedMessage()
+    {
+        saveNotification.Visible = true;
+
+        await ToSignal(GetTree().CreateTimer(3), "timeout");
+
+        var tween = new Tween();
+        saveNotification.AddChild(tween);
+
+        tween.InterpolateProperty(
+            saveNotification,
+            "modulate:a",
+            1f,
+            0f,
+            1f);
+
+        tween.Start();
+
+        await ToSignal(tween, "tween_all_completed");
+
+        saveNotification.Visible = false;
+        saveNotification.Modulate = new Color(0, 0, 0, 1);
+        tween.QueueFree();
     }
 }

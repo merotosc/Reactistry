@@ -33,9 +33,11 @@
 - [ ] upgrade system
 - [ ] sandbox mode
 - [ ] use sprite pooling or other batching improvements for items
+- [ ] configurable user settings (autosave interval, zoom sensitivity)
 
 ### Done
 
+- [x] avoid key spam on key hold (build and save controller)
 - [x] write molecule formula as in csv file (CH4 instead of H4C)
 - [x] merger improve round robin
 - [x] splitter improve round robin
@@ -78,7 +80,6 @@
     - shift+t: variant counterclockwise
     - ctrl+s: save
 - [ ] display tutorial hints / printscreen
-- [ ] display save icon (saving... or saved)
 - [ ] auto tile 2d for lab
 
 ### vNext
@@ -99,6 +100,7 @@
 
 ### Done
 
+- [x] display save icon (saving... or saved)
 - [x] start/end of 1xN tiles recognizable
 - [x] hint tooltip on molecule resource
 - [x] better molecules resource tile instead of same as molecule item

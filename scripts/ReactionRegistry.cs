@@ -69,7 +69,7 @@ public static class ReactionRegistry
                     }
 
                     var molecule = molecules[column - 1];
-                    var newMolecule = new Molecule(molecule.Elements, Math.Abs(value));
+                    var newMolecule = molecule with { Count = Math.Abs(value) };
 
                     if (value < 0)
                     {
@@ -98,12 +98,14 @@ public static class ReactionRegistry
     public static (bool Valid, List<Molecule> OutputMolecules) CreateReaction(List<Molecule> molecules)
     {
         var formula = GetStableFormula(molecules);
+        //GD.PrintS("Requested reaction for", formula);
 
         if (!reactions.TryGetValue(formula, out var reaction))
         {
             return (false, null);
         }
 
+        //GD.PrintS("Found matching reaction", reaction.Name);
         return (true, reaction.OutputMolecules);
     }
 

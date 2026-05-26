@@ -11,6 +11,7 @@
 
 ### vNext
 
+- [ ] rename merger and splitter. Distributor, Balancer, Divider, Combiner?
 - [ ] use input map for key bindings
 - [ ] option to pan and delete using toolbar and left-click
 - [ ] rename buildingOptions to buildingData?

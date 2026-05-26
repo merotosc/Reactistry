@@ -11,11 +11,11 @@ public record class Molecule
 {
     private static readonly Regex FormulaRegex = new(@"([A-Z][a-z]*)(\d*)", RegexOptions.Compiled);
 
-    public string Formula { get; set; }
+    public string Formula { get; }
 
     public Dictionary<AtomElement, int> Elements { get; }
 
-    public int Count { get; }
+    public int Count { get; set; }
 
     public static Molecule InvalidMolecule
         = new(AtomElement.Invalid);
@@ -32,14 +32,14 @@ public record class Molecule
     public static Molecule O2
         = new(AtomElement.O, 2);
 
-    public Molecule(Dictionary<AtomElement, int> elements, int count = 1, string formula = null)
+    private Molecule(Dictionary<AtomElement, int> elements, int count = 1, string formula = null)
     {
         Elements = elements;
         Count = count;
         Formula = formula ?? CalculateFormula();
     }
 
-    public Molecule(AtomElement atom, int count = 1)
+    private Molecule(AtomElement atom, int count = 1)
         : this(new Dictionary<AtomElement, int> { [atom] = count })
     {
     }
@@ -58,7 +58,9 @@ public record class Molecule
 
             var elementParsed = Enum.TryParse<AtomElement>(element, ignoreCase: true, out var parsedElement);
             var elementName = elementParsed ? parsedElement : AtomElement.Invalid;
-            elements[elementName] = count;
+
+            elements.TryGetValue(elementName, out var currentCount);
+            elements[elementName] = currentCount + count;
         }
 
         return new Molecule(elements, formula: formula);

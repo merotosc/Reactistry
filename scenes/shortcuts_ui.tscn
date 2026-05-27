@@ -1,102 +1,96 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/icons.png" type="Texture" id=2]
+[ext_resource path="res://assets/custom_theme.tres" type="Theme" id=1]
+[ext_resource path="res://scripts/UI/ShortcutsUI.cs" type="Script" id=2]
 
-[sub_resource type="AtlasTexture" id=1]
-atlas = ExtResource( 2 )
-region = Rect2( 32, 0, 16, 16 )
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 1, 1, 1, 0.392157 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
-[sub_resource type="AtlasTexture" id=2]
-atlas = ExtResource( 2 )
-region = Rect2( 48, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=3]
-atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 16, 16 )
-
-[sub_resource type="AtlasTexture" id=4]
-atlas = ExtResource( 2 )
-region = Rect2( 64, 0, 16, 16 )
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 1, 1, 0.196078 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
 [node name="ShortcutsUI" type="Control"]
 modulate = Color( 1, 1, 1, 0.588235 )
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -14.0
-margin_top = -14.0
+margin_top = 20.0
+script = ExtResource( 2 )
 
-[node name="Container" type="HBoxContainer" parent="."]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -168.0
-margin_top = -80.0
-grow_horizontal = 0
-grow_vertical = 0
+[node name="Sidebar" type="VBoxContainer" parent="."]
+margin_left = -2.0
+margin_right = 332.0
+margin_bottom = 284.0
+grow_vertical = 2
 
-[node name="Rotate" type="VBoxContainer" parent="Container"]
-margin_right = 40.0
-margin_bottom = 80.0
-
-[node name="Image" type="TextureRect" parent="Container/Rotate"]
-margin_right = 40.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 40, 40 )
-texture = SubResource( 1 )
-expand = true
-
-[node name="Shortcut" type="Label" parent="Container/Rotate"]
-modulate = Color( 0, 0, 0, 1 )
-margin_top = 44.0
-margin_right = 40.0
-margin_bottom = 60.0
-text = "R"
-align = 1
-
-[node name="Variant" type="VBoxContainer" parent="Container"]
-margin_left = 44.0
-margin_right = 84.0
-margin_bottom = 80.0
-
-[node name="Image" type="TextureRect" parent="Container/Variant"]
-margin_right = 40.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 40, 40 )
-texture = SubResource( 2 )
-expand = true
-
-[node name="Shortcut" type="Label" parent="Container/Variant"]
-modulate = Color( 0, 0, 0, 1 )
-margin_top = 44.0
-margin_right = 40.0
-margin_bottom = 60.0
-text = "T"
-align = 1
-
-[node name="Delete" type="VBoxContainer" parent="Container"]
-margin_left = 88.0
-margin_right = 128.0
-margin_bottom = 80.0
-
-[node name="Image" type="TextureRect" parent="Container/Delete"]
-margin_right = 40.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 40, 40 )
-texture = SubResource( 3 )
-expand = true
-
-[node name="CenterContainer" type="CenterContainer" parent="Container/Delete"]
-margin_top = 44.0
-margin_right = 40.0
-margin_bottom = 69.0
-
-[node name="Shortcut" type="TextureRect" parent="Container/Delete/CenterContainer"]
-margin_left = 7.0
+[node name="ToggleButton" type="Button" parent="Sidebar"]
+modulate = Color( 0.8, 0.8, 0.8, 1 )
 margin_right = 32.0
-margin_bottom = 25.0
-rect_min_size = Vector2( 25, 25 )
-texture = SubResource( 4 )
-expand = true
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 32 )
+focus_mode = 0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 0
+custom_styles/hover = SubResource( 2 )
+custom_styles/normal = SubResource( 1 )
+enabled_focus_mode = 0
+text = "<"
+
+[node name="PanelContainer" type="PanelContainer" parent="Sidebar"]
+margin_top = 36.0
+margin_right = 334.0
+margin_bottom = 284.0
+theme = ExtResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Sidebar/PanelContainer"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 326.0
+margin_bottom = 240.0
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Sidebar/PanelContainer/VBoxContainer"]
+margin_right = 318.0
+margin_bottom = 232.0
+custom_constants/separation = 12
+
+[node name="Shortcuts" type="Label" parent="Sidebar/PanelContainer/VBoxContainer/HBoxContainer"]
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 120.0
+margin_bottom = 232.0
+custom_constants/line_spacing = 8
+text = "LMB
+RMB
+MMB/WASD
+Scroll
+Esc
+1-9
+R
+F
+Space
+CTRL+S"
+align = 2
+
+[node name="Meaning" type="Label" parent="Sidebar/PanelContainer/VBoxContainer/HBoxContainer"]
+modulate = Color( 0, 0, 0, 1 )
+margin_left = 132.0
+margin_right = 316.0
+margin_bottom = 232.0
+custom_constants/line_spacing = 8
+text = "Build
+Delete
+Pan
+Zoom
+Cancel
+Select Building
+Rotate Building
+Building Variant
+Run/Pause
+Save"
+
+[connection signal="pressed" from="Sidebar/ToggleButton" to="." method="OnButtonPressed"]

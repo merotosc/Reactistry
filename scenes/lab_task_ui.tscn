@@ -4,15 +4,14 @@
 [ext_resource path="res://assets/custom_theme.tres" type="Theme" id=2]
 
 [node name="LabTask" type="PanelContainer"]
-margin_right = 182.0
+margin_right = 392.0
 margin_bottom = 72.0
-grow_horizontal = 0
 theme = ExtResource( 2 )
 
 [node name="Content" type="HBoxContainer" parent="."]
 margin_left = 8.0
 margin_top = 8.0
-margin_right = 174.0
+margin_right = 384.0
 margin_bottom = 64.0
 
 [node name="Amount" type="Label" parent="Content"]
@@ -27,5 +26,5 @@ align = 2
 
 [node name="Item" parent="Content" instance=ExtResource( 1 )]
 margin_left = 64.0
-margin_right = 166.0
+margin_right = 376.0
 margin_bottom = 56.0

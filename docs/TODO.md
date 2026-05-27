@@ -70,7 +70,11 @@
 ### Prototype
 
 - [ ] change icon of game
-- [ ] left, middle mouse, pan, scroll in, scroll out, save hints / cheat sheet
+- [ ] display tutorial hints / printscreen
+
+### vNext
+
+- [ ] improve shortcuts and cheat sheet
     - left: build/use/select
     - right: delete
     - middle: pan
@@ -84,12 +88,7 @@
     - space: pause/run
     - ctrl+s: save
     - ctrl+shift+alt+x: clear
-    - space: run/pause simulation?
     - tab: cycle tools?
-- [ ] display tutorial hints / printscreen
-
-### vNext
-
 - [ ] auto tile 2d for lab
 - [ ] display level/task number
 - [ ] show selected tool/building in toolbar

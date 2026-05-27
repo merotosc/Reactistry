@@ -10,7 +10,7 @@ margin_left = 8.0
 margin_right = 8.0
 margin_top = 8.0
 margin_bottom = 8.0
-modulate_color = Color( 0.9, 0.9, 0.9, 0.705882 )
+modulate_color = Color( 0.901961, 0.901961, 0.901961, 0.705882 )
 
 [sub_resource type="StyleBoxTexture" id=20]
 texture = ExtResource( 1 )
@@ -52,8 +52,8 @@ margin_bottom = 8.0
 modulate_color = Color( 1, 1, 1, 0.705882 )
 
 [resource]
-Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
-Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
+Button/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+Button/colors/font_color_disabled = Color( 0.901961, 0.901961, 0.901961, 0.2 )
 Button/colors/font_color_focus = Color( 0.94, 0.94, 0.94, 1 )
 Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
 Button/colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )

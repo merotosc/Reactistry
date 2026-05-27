@@ -70,7 +70,7 @@ public class BuildController : Node2D
                 case (uint)KeyList.R:
                     RotateBuilding(!key.Shift);
                     break;
-                case (uint)KeyList.T:
+                case (uint)KeyList.F:
                     ChangeBuildingVariant(key.Shift);
                     break;
                 case (uint)KeyList.Escape:

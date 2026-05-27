@@ -9,15 +9,15 @@ namespace Reactistry.scripts;
 
 public class SaveController : Node
 {
-    private Label saveNotification;
+    private Label notificationMessage;
     private World world;
     private TasksController tasksController;
     private float autosaveTimer = 0;
 
     public void Init(World world, TasksController tasksController)
     {
-        saveNotification = GetNode<Label>("/root/Game/Canvas/SaveNotification");
-        saveNotification.Visible = false;
+        notificationMessage = GetNode<Label>("/root/Game/Canvas/NotificationMessage");
+        notificationMessage.Visible = false;
 
         this.world = world;
         this.tasksController = tasksController;
@@ -39,6 +39,11 @@ public class SaveController : Node
         if (Input.IsActionJustPressed("save_game", true))
         {
             SaveGame();
+        }
+
+        if (Input.IsActionJustPressed("clear_game", true))
+        {
+            ClearGame();
         }
     }
 
@@ -70,7 +75,7 @@ public class SaveController : Node
         file.StoreString(json);
         file.Close();
 
-        ShowSavedMessage();
+        ShowMessage("Game Saved");
     }
 
     public SaveData LoadGame()
@@ -92,17 +97,28 @@ public class SaveController : Node
         return JsonConvert.DeserializeObject<SaveData>(json, new StringEnumConverter());
     }
 
-    public async void ShowSavedMessage()
+    public void ClearGame()
     {
-        saveNotification.Visible = true;
+        var file = new File();
+        file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
+        file.StoreString(string.Empty);
+        file.Close();
+
+        ShowMessage("Game Cleared");
+    }
+
+    public async void ShowMessage(string message)
+    {
+        notificationMessage.Visible = true;
+        notificationMessage.Text = message;
 
         await ToSignal(GetTree().CreateTimer(3), "timeout");
 
         var tween = new Tween();
-        saveNotification.AddChild(tween);
+        notificationMessage.AddChild(tween);
 
         tween.InterpolateProperty(
-            saveNotification,
+            notificationMessage,
             "modulate:a",
             1f,
             0f,
@@ -112,8 +128,8 @@ public class SaveController : Node
 
         await ToSignal(tween, "tween_all_completed");
 
-        saveNotification.Visible = false;
-        saveNotification.Modulate = new Color(0, 0, 0, 1);
+        notificationMessage.Visible = false;
+        notificationMessage.Modulate = new Color(0, 0, 0, 1);
         tween.QueueFree();
     }
 }

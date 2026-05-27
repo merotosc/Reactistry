@@ -6,7 +6,6 @@
 
 - [ ] add try catch blocks to avoid game crash
 - [ ] check if buildings side by side without pipes do not create errors
-- [ ] button/shortcut to clear save data
 - [ ] pause/run simulation
 
 ### vNext
@@ -39,6 +38,7 @@
 
 ### Done
 
+- [x] button/shortcut to clear save data -> ctrl+shift+alt+x
 - [x] use wasd for camera movement
 - [x] avoid key spam on key hold (build and save controller)
 - [x] write molecule formula as in csv file (CH4 instead of H4C)
@@ -84,6 +84,7 @@
     - space: run/pause simulation?
     - tab: cycle tools?
 - [ ] display tutorial hints / printscreen
+- [ ] blue arrow for extractor output
 
 ### vNext
 

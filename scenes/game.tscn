@@ -168,7 +168,7 @@ script = ExtResource( 15 )
 
 [node name="ShortcutsUI" parent="Canvas" instance=ExtResource( 18 )]
 
-[node name="SaveNotification" type="Label" parent="Canvas"]
+[node name="NotificationMessage" type="Label" parent="Canvas"]
 modulate = Color( 0, 0, 0, 1 )
 anchor_left = 0.5
 anchor_right = 0.5

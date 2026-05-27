@@ -9,6 +9,8 @@
 
 ### vNext
 
+- [ ] reload game on save data clear
+- [ ] keep tool when canceling operation with esc?
 - [ ] rename merger and splitter. Distributor, Balancer, Divider, Combiner?
 - [ ] use input map for key bindings
 - [ ] option to pan and delete using toolbar and left-click
@@ -131,10 +133,6 @@
 
 ## Editor
 
-### Prototype
-
-- [ ] orthogonal mode for pipes
-
 ### vNext
 
 - [ ] avoid switching item when dragging (messes up first building)
@@ -143,10 +141,12 @@
 - [ ] move building
 - [ ] clone building
 - [ ] copy-paste region selection
-- [ ] region selection for deletion
+- [ ] region selection for deletion (with shift + right-click drag?)
 
 ### Done
 
+- [x] set horizontal/vertical orthogonal mode priority based on direction from first to second tile
+- [x] orthogonal mode for pipes
 - [x] fix gaps when dragging pipes
 - [x] remove multiple on drag
 - [x] position multiple buildings on hold

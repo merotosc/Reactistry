@@ -4,7 +4,6 @@ using System.Linq;
 using Reactistry.scripts.Models;
 using Reactistry.scripts.Utilities;
 using Godot;
-using Reactistry.scripts.Buildings;
 
 namespace Reactistry.scripts;
 
@@ -18,6 +17,7 @@ public class BuildController : Node2D
     private readonly HashSet<Vector2> draggedTiles = [];
     private Vector2? lastDragTile;
     private MouseButton pressedButton;
+    private BuildMode buildMode = BuildMode.OrthogonalHorizontal;
 
     public void Init(World world)
     {
@@ -75,6 +75,9 @@ public class BuildController : Node2D
                     break;
                 case (uint)KeyList.Escape:
                     CancelOperation();
+                    break;
+                case (uint)KeyList.Alt:
+                    buildMode = buildMode == BuildMode.Free ? BuildMode.OrthogonalHorizontal : BuildMode.Free;
                     break;
             }
         }
@@ -145,8 +148,6 @@ public class BuildController : Node2D
             return;
         }
 
-        lastDragTile = tilePosition;
-
         if (pressedButton == MouseButton.Right)
         {
             AddMissingDragTiles(tilePosition, UpdateDeletionDrag);
@@ -156,8 +157,9 @@ public class BuildController : Node2D
         {
             if (currentBuilding.Type == BuildingType.Pipe)
             {
+                CalculateOrthogonalPriority(tilePosition);
                 AddMissingDragBuildings(tilePosition, UpdatePipesDrag);
-                UpdatePipesDrag(tilePosition);
+                UpdatePipesDrag(tilePosition); // TODO: even required? Ev make AddMissing... add also first/last tile?
             }
             else if (currentBuilding.Type != BuildingType.None)
             {
@@ -165,6 +167,8 @@ public class BuildController : Node2D
                 UpdateBuildingDrag(tilePosition);
             }
         }
+
+        lastDragTile = tilePosition;
     }
 
     private void HandleMouseReleased()
@@ -179,6 +183,21 @@ public class BuildController : Node2D
         }
     }
 
+    private void CalculateOrthogonalPriority(Vector2 tilePosition)
+    {
+        if (buildMode is BuildMode.Free || lastDragTile == null || draggedBuildings.Count != 1)
+        {
+            return;
+        }
+
+        var direction = (tilePosition - lastDragTile.Value).ToDirection();
+        buildMode = direction switch
+        {
+            Direction.Up or Direction.Down => BuildMode.OrthogonalVertical,
+            Direction.Left or Direction.Right or _ => BuildMode.OrthogonalHorizontal,
+        };
+    }
+
     private void AddMissingDragBuildings(Vector2 tilePosition, Action<Vector2> action)
     {
         if (!draggedBuildings.TryPeek(out var previousBuilding))
@@ -186,7 +205,14 @@ public class BuildController : Node2D
             return;
         }
 
-        foreach (var position in previousBuilding.Position.EnumerateOrthogonalLinePositions(tilePosition))
+        if (buildMode is BuildMode.OrthogonalHorizontal or BuildMode.OrthogonalVertical)
+        {
+            previousBuilding = draggedBuildings.Last();
+            draggedBuildings.Clear();
+            draggedBuildings.Push(previousBuilding);
+        }
+
+        foreach (var position in previousBuilding.Position.EnumerateOrthogonalLinePositions(tilePosition, buildMode is BuildMode.OrthogonalVertical))
         {
             action(position);
         }

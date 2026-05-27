@@ -90,9 +90,11 @@ public static class Vector2Extensions
         return TileSegment.Middle;
     }
 
-    public static IEnumerable<Vector2> EnumerateOrthogonalLinePositions(this Vector2 start, Vector2 end)
+    public static IEnumerable<Vector2> EnumerateOrthogonalLinePositions(this Vector2 start, Vector2 end, bool verticalFirst = false)
     {
-        var corner = new Vector2(start.x, end.y);
+        var corner = verticalFirst
+            ? new Vector2(start.x, end.y)
+            : new Vector2(end.x, start.y);
         var line1 = start.EnumerateLinePositions(corner);
         var line2 = corner.EnumerateLinePositions(end);
         return line1.Concat(line2).Distinct().Where(x => x != start && x != end);

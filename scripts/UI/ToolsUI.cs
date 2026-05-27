@@ -47,6 +47,7 @@ public class ToolsUI : Control
         button.GetNode<TextureRect>("Image").Texture = tileTexture;
         button.Connect("pressed", buildController, nameof(BuildController.SelectBuilding), [buildingType]);
         button.HintTooltip = $"{buildingType} ({(int)buildingType})";
+        button.FocusMode = FocusModeEnum.None;
         tools.AddChild(button);
     }
 }

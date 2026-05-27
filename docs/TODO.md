@@ -4,9 +4,8 @@
 
 ### Prototype
 
+- [ ] move to Azure Static Web App
 - [ ] add try catch blocks to avoid game crash
-- [ ] check if buildings side by side without pipes do not create errors
-- [ ] pause/run simulation
 
 ### vNext
 
@@ -38,6 +37,8 @@
 
 ### Done
 
+- [x] pause/run simulation
+- [x] check if buildings side by side without pipes do not create errors
 - [x] button/shortcut to clear save data -> ctrl+shift+alt+x
 - [x] use wasd for camera movement
 - [x] avoid key spam on key hold (build and save controller)
@@ -77,14 +78,15 @@
     - esc: cancel
     - 1-9: tool
     - r: rotate
-    - t: variant (f or tab instead?)
+    - t: variant (f instead?)
     - shift+r: rotate counterclockwise
-    - shift+t: variant counterclockwise
+    - shift+t(f?): variant counterclockwise
+    - space: pause/run
     - ctrl+s: save
+    - ctrl+shift+alt+x: clear
     - space: run/pause simulation?
     - tab: cycle tools?
 - [ ] display tutorial hints / printscreen
-- [ ] blue arrow for extractor output
 
 ### vNext
 
@@ -105,6 +107,7 @@
 
 ### Done
 
+- [x] blue arrow for extractor output
 - [x] better consumer/destroyer tile
 - [x] display save icon (saving... or saved)
 - [x] start/end of 1xN tiles recognizable

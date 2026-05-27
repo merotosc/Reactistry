@@ -38,7 +38,7 @@ public class RendererController : Node
         this.world.ItemsDeleted += OnItemsDeleted;
     }
 
-    public override void _Process(float delta)
+    public void Tick(float _delta)
     {
         DrawItems();
     }

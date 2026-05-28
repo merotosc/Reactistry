@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://scripts/BuildController.cs" type="Script" id=1]
 [ext_resource path="res://scripts/GameController.cs" type="Script" id=2]
@@ -19,6 +19,7 @@
 [ext_resource path="res://assets/molecule.png" type="Texture" id=17]
 [ext_resource path="res://scenes/shortcuts_ui.tscn" type="PackedScene" id=18]
 [ext_resource path="res://scripts/SaveController.cs" type="Script" id=19]
+[ext_resource path="res://scenes/tutorial_ui.tscn" type="PackedScene" id=20]
 
 [sub_resource type="TileSet" id=2]
 
@@ -167,6 +168,8 @@ script = ExtResource( 12 )
 script = ExtResource( 15 )
 
 [node name="ShortcutsUI" parent="Canvas" instance=ExtResource( 18 )]
+
+[node name="TutorialUI" parent="Canvas" instance=ExtResource( 20 )]
 
 [node name="NotificationMessage" type="Label" parent="Canvas"]
 modulate = Color( 0, 0, 0, 1 )

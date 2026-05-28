@@ -19,7 +19,8 @@ border_width_bottom = 2
 
 [node name="ShortcutsUI" type="Control"]
 modulate = Color( 1, 1, 1, 0.588235 )
-margin_top = 20.0
+margin_top = 50.0
+margin_bottom = 50.0
 script = ExtResource( 2 )
 
 [node name="Sidebar" type="VBoxContainer" parent="."]

@@ -14,7 +14,7 @@ public class TasksUI : Control
         labTaskUi = GD.Load<PackedScene>("res://scenes/lab_task_ui.tscn");
     }
 
-    public void CreateNewTasks(LevelTasks tasks)
+    public void RecreateTasks(LabTasks tasks)
     {
         foreach (Node child in levelTasks.GetChildren())
         {
@@ -30,7 +30,7 @@ public class TasksUI : Control
         }
     }
 
-    public void UpdateTasks(LevelTasks tasks)
+    public void UpdateTasks(LabTasks tasks)
     {
         var i = 0;
         foreach (var task in tasks)

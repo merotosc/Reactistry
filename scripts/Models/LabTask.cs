@@ -4,20 +4,24 @@ using System.Linq;
 
 namespace Reactistry.scripts.Models;
 
-public class LevelTasks : List<LabTask>
+public class LabTasks : List<LabTask>
 {
-    public bool TryGetLabTask(Molecule molecule, out LabTask labTask)
+    public bool TryGetTask(Molecule molecule, out LabTask task)
     {
-        labTask = this.FirstOrDefault(x => x.Molecule.Formula == molecule.Formula);
-        return labTask != null;
+        task = this.FirstOrDefault(x => x.Molecule.Formula == molecule.Formula);
+        return task != null;
     }
 
-    public bool AllLabTasksCompleted()
-        => this.All(x => x.Completed);
+    public bool RemoveTaskById(string id)
+    {
+        return RemoveAll(x => x.Id == id) == 1;
+    }
 }
 
-public class LabTask(Molecule molecule, int amountRequired)
+public class LabTask(string id, Molecule molecule, int amountRequired)
 {
+    public string Id { get; } = id;
+
     public Molecule Molecule { get; } = molecule;
 
     public int AmountRequired { get; } = amountRequired;

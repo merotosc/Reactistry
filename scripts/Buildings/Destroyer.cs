@@ -42,9 +42,9 @@ public class Destroyer(Vector2 anchorPosition, Direction direction)
         {
             itemPaths = [];
 
-            var right = Direction.ToVector() / 2;
+            var right = Vector2.Right / 2;
             var left = -right;
-            var down = Direction.Next().ToVector() / 2;
+            var down = Vector2.Down / 2;
             var up = -down;
 
             itemPaths.Add(Direction.Right, new(right, Vector2.Zero));

@@ -57,14 +57,14 @@ public class SaveController : Node
         var currentTasks = tasksController.CurrentTasks
             .Select(x => new LabTaskSaveData
             {
-                MoleculeFormula = x.Molecule.Formula,
+                Id = x.Id,
                 AmountDelivered = x.AmountDelivered,
             }).ToList();
 
         var saveData = new SaveData
         {
-            Level = tasksController.CurrentLevel,
             CurrentTasks = currentTasks,
+            CompletedTasks = tasksController.CompletedTasks,
             Buildings = buildings,
         };
 

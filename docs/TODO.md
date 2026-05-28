@@ -39,6 +39,7 @@
 
 ### Done
 
+- [x] unlock next task when one single finished
 - [x] pause/run simulation
 - [x] check if buildings side by side without pipes do not create errors
 - [x] button/shortcut to clear save data -> ctrl+shift+alt+x
@@ -76,6 +77,8 @@
 
 ### vNext
 
+- [ ] animation with delay on task complete
+- [ ] show message when all tasks completed
 - [ ] improve shortcuts and cheat sheet
     - left: build/use/select
     - right: delete

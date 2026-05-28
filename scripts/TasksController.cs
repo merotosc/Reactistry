@@ -10,18 +10,18 @@ namespace Reactistry.scripts;
 public class TasksController : Node
 {
     private const string TasksFile = "res://assets/tasks.csv";
+    private const int MaxTasks = 3;
     private World world;
     private TasksUI tasksUi;
-    private readonly List<LevelTasks> tasks = [];
+    private readonly Queue<LabTask> tasks = [];
 
-    public int CurrentLevel { get; private set; }
+    public LabTasks CurrentTasks { get; private set; } = [];
 
-    public LevelTasks CurrentTasks { get; private set; } = [];
+    public List<string> CompletedTasks { get; private set; } = [];
 
     public void Init(World world, SaveData saveData)
     {
         this.world = world;
-        CurrentLevel = saveData.Level;
         tasksUi = GetNode<TasksUI>("/root/Game/Canvas/TasksUI");
 
         foreach (var lab in world.Buildings.OfType<Lab>())
@@ -30,7 +30,7 @@ public class TasksController : Node
         }
 
         LoadTasksFromCsv();
-        RestoreCurrentTasks(saveData.CurrentTasks);
+        RestoreCurrentTasks(saveData.CompletedTasks, saveData.CurrentTasks);
     }
 
     private void LoadTasksFromCsv()
@@ -45,13 +45,13 @@ public class TasksController : Node
         file.Open(TasksFile, File.ModeFlags.Read);
 
         List<Molecule> molecules = [];
-        var i = 0;
+        var rowIndex = 0;
 
         while (!file.EofReached())
         {
             var row = file.GetCsvLine();
 
-            if (i == 0)
+            if (rowIndex == 0)
             {
                 foreach (var column in row.Skip(1))
                 {
@@ -61,35 +61,35 @@ public class TasksController : Node
             }
             else
             {
-                var levelTasks = new LevelTasks();
-
-                for (var column = 0; column < row.Length; column++)
+                var taskId = row.FirstOrDefault();
+                if (string.IsNullOrWhiteSpace(taskId))
                 {
-                    var text = row[column];
+                    GD.PrintErr("No ID found for task at row ", rowIndex);
+                    return;
+                }
 
-                    if (column == 0)
+                for (var column = 1; column < row.Length; column++)
+                {
+                    var moleculeCount = row[column];
+
+                    if (string.IsNullOrWhiteSpace(moleculeCount))
                     {
                         continue;
                     }
 
-                    if (string.IsNullOrWhiteSpace(text))
+                    if (!int.TryParse(moleculeCount, out var value) || value == 0)
                     {
-                        continue;
-                    }
-
-                    if (!int.TryParse(text, out var value) || value == 0)
-                    {
+                        GD.PrintErr("Molecule count is invalid for task with ID ", taskId);
                         continue;
                     }
 
                     var molecule = molecules[column - 1];
-                    levelTasks.Add(new(molecule, value));
+                    tasks.Enqueue(new(taskId, molecule, value));
+                    break;
                 }
-
-                tasks.Add(levelTasks);
             }
 
-            i++;
+            rowIndex++;
         }
 
         file.Close();
@@ -97,17 +97,24 @@ public class TasksController : Node
 
     private void OnItemDelivered(Item item)
     {
-        if (!CurrentTasks.TryGetLabTask(item.Molecule, out var labTask))
+        if (!CurrentTasks.TryGetTask(item.Molecule, out var labTask))
         {
             return;
         }
 
         labTask.AddDeliveredAmount(item.Molecule.Count);
 
-        if (CurrentTasks.AllLabTasksCompleted())
+        if (labTask.Completed)
         {
-            CurrentLevel++;
-            LoadCurrentTask();
+            CompletedTasks.Add(labTask.Id);
+            CurrentTasks.RemoveTaskById(labTask.Id);
+
+            if (CurrentTasks.Count < MaxTasks && tasks.TryDequeue(out var task))
+            {
+                CurrentTasks.Add(task);
+            }
+
+            RecreateCurrentTasks();
         }
         else
         {
@@ -115,31 +122,33 @@ public class TasksController : Node
         }
     }
 
-    private void RestoreCurrentTasks(List<LabTaskSaveData> tasksSaveData)
+    private void RestoreCurrentTasks(List<string> completedTasks, List<LabTaskSaveData> currentTasks)
     {
-        LoadCurrentTask();
-
-        foreach (var taskSaveData in tasksSaveData)
+        while (CurrentTasks.Count < MaxTasks && tasks.TryDequeue(out var task))
         {
-            var labTask = CurrentTasks.FirstOrDefault(x => x.Molecule.Formula == taskSaveData.MoleculeFormula);
-            if (labTask == null)
+            if (completedTasks.Contains(task.Id))
             {
+                CompletedTasks.Add(task.Id);
                 continue;
             }
 
-            labTask.AddDeliveredAmount(taskSaveData.AmountDelivered);
+            var currentTask = currentTasks.FirstOrDefault(x => x.Id == task.Id);
+            if (currentTask != null)
+            {
+                task.AddDeliveredAmount(currentTask.AmountDelivered);
+                CurrentTasks.Add(task);
+                continue;
+            }
+
+            CurrentTasks.Add(task);
         }
 
-        RefreshCurrentTask();
+        RecreateCurrentTasks();
     }
 
-    private void LoadCurrentTask()
+    private void RecreateCurrentTasks()
     {
-        if (tasks.Count > CurrentLevel)
-        {
-            CurrentTasks = tasks[CurrentLevel];
-            tasksUi.CreateNewTasks(CurrentTasks);
-        }
+        tasksUi.RecreateTasks(CurrentTasks);
     }
 
     private void RefreshCurrentTask()

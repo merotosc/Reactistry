@@ -2,10 +2,6 @@
 
 ## General
 
-### Prototype
-
-- [ ] move to other hosting website (GitHub Pages?)
-
 ### vNext
 
 - [ ] reload game on save data clear
@@ -38,6 +34,7 @@
 
 ### Done
 
+- [x] move to other hosting website (GitHub Pages?)
 - [x] add try catch blocks to avoid game crash
 - [x] unlock next task when one single finished
 - [x] pause/run simulation
@@ -69,11 +66,6 @@
 - [x] buildings bigger than one tile
 
 ## UI
-
-### Prototype
-
-- [ ] change icon of game
-- [ ] display tutorial hints / printscreen
 
 ### vNext
 
@@ -111,6 +103,8 @@
 
 ### Done
 
+- [x] change icon of game
+- [x] display tutorial hints / printscreen
 - [x] blue arrow for extractor output
 - [x] better consumer/destroyer tile
 - [x] display save icon (saving... or saved)

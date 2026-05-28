@@ -34,14 +34,21 @@ public class BuildController : Node2D
 
     public override void _Process(float delta)
     {
-        if (currentBuilding.Type != BuildingType.None) // TODO: remove and use move to UpdateBuildingDrag?
+        try
         {
-            var tilePosition = GetGlobalMousePosition().ToTilePosition();
-            if (tilePosition != currentBuilding.Position)
+            if (currentBuilding.Type != BuildingType.None) // TODO: remove and use move to UpdateBuildingDrag?
             {
-                currentBuilding.Position = tilePosition;
-                RedrawPreview();
+                var tilePosition = GetGlobalMousePosition().ToTilePosition();
+                if (tilePosition != currentBuilding.Position)
+                {
+                    currentBuilding.Position = tilePosition;
+                    RedrawPreview();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred during build controller process\n", ex);
         }
     }
 

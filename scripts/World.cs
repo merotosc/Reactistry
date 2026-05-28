@@ -23,14 +23,21 @@ public class World
 
     public void LoadWorld(SaveData saveData)
     {
-        GenerateWorld();
-
-        foreach (var building in saveData.Buildings)
+        try
         {
-            if (!TryCreateBuilding(building))
+            GenerateWorld();
+
+            foreach (var building in saveData.Buildings)
             {
-                GD.PrintErr("Could not create building from save data: ", building.Type);
+                if (!TryCreateBuilding(building))
+                {
+                    GD.PrintErr("Could not create building from save data: ", building.Type);
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred loading the world\n", ex);
         }
     }
 
@@ -46,8 +53,15 @@ public class World
 
     public void Tick(float delta)
     {
-        UpdateEntities(delta);
-        UpdateItems(delta);
+        try
+        {
+            UpdateEntities(delta);
+            UpdateItems(delta);
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred during world tick\n", ex);
+        }
     }
 
     public void AddItems(params IEnumerable<Item> itemsToAdd)
@@ -89,41 +103,57 @@ public class World
 
     public bool TryCreateBuilding(BuildingOptions buildingOptions)
     {
-        if (!ValidBuildingPosition(buildingOptions))
+        try
         {
+            if (!ValidBuildingPosition(buildingOptions))
+            {
+                return false;
+            }
+
+            IBuilding building = buildingOptions.Type switch
+            {
+                BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
+                BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, resourceTiles.GetValueOrDefault(buildingOptions.Position, Molecule.InvalidMolecule)),
+                BuildingType.Destroyer => new Destroyer(buildingOptions.Position, buildingOptions.Direction),
+                BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
+                BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
+                BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
+                _ => null,
+            };
+
+            if (building == null)
+            {
+                GD.PrintErr("Building to create not found", buildingOptions.Type);
+                return false;
+            }
+
+            AddBuilding(building);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred trying to create a building\n", ex);
             return false;
         }
-
-        IBuilding building = buildingOptions.Type switch
-        {
-            BuildingType.Pipe => new Pipe(buildingOptions.Position, buildingOptions.Direction, (PipeVariant)buildingOptions.Variant),
-            BuildingType.Extractor => new Extractor(buildingOptions.Position, buildingOptions.Direction, resourceTiles.GetValueOrDefault(buildingOptions.Position, Molecule.InvalidMolecule)),
-            BuildingType.Destroyer => new Destroyer(buildingOptions.Position, buildingOptions.Direction),
-            BuildingType.Reactor => new Reactor(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
-            BuildingType.Splitter => new Splitter(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
-            BuildingType.Merger => new Merger(buildingOptions.Position, buildingOptions.Direction, buildingOptions.Variant),
-            _ => null,
-        };
-
-        if (building == null)
-        {
-            GD.PrintErr("Building to create not found", buildingOptions.Type);
-            return false;
-        }
-
-        AddBuilding(building);
-        return true;
     }
 
     public bool TryDeleteBuilding(Vector2 position)
     {
-        if (!buildingTiles.TryGetValue(position, out var building) || building is Lab)
+        try
         {
+            if (!buildingTiles.TryGetValue(position, out var building) || building is Lab)
+            {
+                return false;
+            }
+
+            RemoveBuildings(building);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred trying to delete a building\n", ex);
             return false;
         }
-
-        RemoveBuildings(building);
-        return true;
     }
 
     public bool ValidBuildingPosition(BuildingOptions buildingOptions)

@@ -16,7 +16,14 @@ public static class ReactionRegistry
 
     public static void Load()
     {
-        LoadReactionsFromCsv();
+        try
+        {
+            LoadReactionsFromCsv();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred loading the reactions csv file\n", ex);
+        }
     }
 
     public static void LoadReactionsFromCsv()

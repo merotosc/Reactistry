@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Godot;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -49,62 +50,86 @@ public class SaveController : Node
 
     public void SaveGame()
     {
-        var buildings = world.Buildings
-            .Where(x => x.Type != BuildingType.Lab)
-            .Select(x => x.ToBuildingOptions())
-            .ToList();
-
-        var currentTasks = tasksController.CurrentTasks
-            .Select(x => new LabTaskSaveData
-            {
-                Id = x.Id,
-                AmountDelivered = x.AmountDelivered,
-            }).ToList();
-
-        var saveData = new SaveData
+        try
         {
-            CurrentTasks = currentTasks,
-            CompletedTasks = tasksController.CompletedTasks,
-            Buildings = buildings,
-        };
+            var buildings = world.Buildings
+                .Where(x => x.Type != BuildingType.Lab)
+                .Select(x => x.ToBuildingOptions())
+                .ToList();
 
-        var json = JsonConvert.SerializeObject(saveData, new StringEnumConverter());
+            var currentTasks = tasksController.CurrentTasks
+                .Select(x => new LabTaskSaveData
+                {
+                    Id = x.Id,
+                    AmountDelivered = x.AmountDelivered,
+                }).ToList();
 
-        var file = new File();
-        file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
-        file.StoreString(json);
-        file.Close();
+            var saveData = new SaveData
+            {
+                CurrentTasks = currentTasks,
+                CompletedTasks = tasksController.CompletedTasks,
+                Buildings = buildings,
+            };
 
-        ShowMessage("Game Saved");
+            var json = JsonConvert.SerializeObject(saveData, new StringEnumConverter());
+
+            var file = new File();
+            file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
+            file.StoreString(json);
+            file.Close();
+
+            ShowMessage("Game Saved");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred saving the game\n", ex);
+            ShowMessage("Error Saving Game");
+        }
     }
 
     public SaveData LoadGame()
     {
-        var file = new File();
-        if (!file.FileExists(Constants.SaveData.Path))
+        try
         {
+            var file = new File();
+            if (!file.FileExists(Constants.SaveData.Path))
+            {
+                return new();
+            }
+
+            file.Open(Constants.SaveData.Path, File.ModeFlags.Read);
+
+            var json = file.GetAsText();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return new();
+            }
+
+            return JsonConvert.DeserializeObject<SaveData>(json, new StringEnumConverter());
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred loading the game\n", ex);
             return new();
         }
-
-        file.Open(Constants.SaveData.Path, File.ModeFlags.Read);
-
-        var json = file.GetAsText();
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return new();
-        }
-
-        return JsonConvert.DeserializeObject<SaveData>(json, new StringEnumConverter());
     }
 
     public void ClearGame()
     {
-        var file = new File();
-        file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
-        file.StoreString(string.Empty);
-        file.Close();
+        try
+        {
+            var file = new File();
+            file.Open(Constants.SaveData.Path, File.ModeFlags.Write);
+            file.StoreString(string.Empty);
+            file.Close();
 
-        ShowMessage("Game Cleared");
+            ShowMessage("Game Cleared");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred saving the game\n", ex);
+            ShowMessage("Error Clearing Game");
+        }
     }
 
     public async void ShowMessage(string message)

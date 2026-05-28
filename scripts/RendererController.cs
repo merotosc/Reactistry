@@ -40,7 +40,14 @@ public class RendererController : Node
 
     public void Tick(float _delta)
     {
-        DrawItems();
+        try
+        {
+            DrawItems();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("An exception occurred during renderer controller tick\n", ex);
+        }
     }
 
     private void OnResourceCreated(Vector2 position, Molecule molecule)

@@ -1,5 +1,6 @@
 ﻿using Reactistry.scripts.UI;
 using Godot;
+using System;
 
 namespace Reactistry.scripts;
 
@@ -31,18 +32,25 @@ public class GameController : Node
 
     public override void _PhysicsProcess(float delta)
     {
-        if (isPaused)
+        try
         {
-            return;
+            if (isPaused)
+            {
+                return;
+            }
+
+            elapsedTime += delta;
+
+            if (elapsedTime >= Constants.TickRate)
+            {
+                world.Tick(elapsedTime);
+                rendererController.Tick(elapsedTime);
+                elapsedTime -= Constants.TickRate;
+            }
         }
-
-        elapsedTime += delta;
-
-        if (elapsedTime >= Constants.TickRate)
+        catch (Exception ex)
         {
-            world.Tick(elapsedTime);
-            rendererController.Tick(elapsedTime);
-            elapsedTime -= Constants.TickRate;
+            GD.PrintErr("An exception occurred during game controller physics process\n", ex);
         }
     }
 

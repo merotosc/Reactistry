@@ -5,7 +5,6 @@
 ### Prototype
 
 - [ ] move to Azure Static Web App
-- [ ] add try catch blocks to avoid game crash
 
 ### vNext
 
@@ -39,6 +38,7 @@
 
 ### Done
 
+- [x] add try catch blocks to avoid game crash
 - [x] unlock next task when one single finished
 - [x] pause/run simulation
 - [x] check if buildings side by side without pipes do not create errors

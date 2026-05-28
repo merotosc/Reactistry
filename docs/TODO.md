@@ -4,7 +4,7 @@
 
 ### Prototype
 
-- [ ] move to Azure Static Web App
+- [ ] move to other hosting website (GitHub Pages?)
 
 ### vNext
 

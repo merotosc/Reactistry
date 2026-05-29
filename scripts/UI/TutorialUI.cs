@@ -47,7 +47,10 @@ public class TutorialUI : Control
 
         LoadTutorialSteps();
 
-        panel.Visible = firstRun;
+        if (firstRun)
+        {
+            ToggleTutorial();
+        }
     }
 
     private void LoadTutorialSteps()

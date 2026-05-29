@@ -42,7 +42,7 @@ public static class ResourcesRandomizer
         var maxClusterSize = Constants.Map.MaxClusterSize;
 
         var chunkOrigin = (chunk * chunkSize - chunkSize / 2).Ceil();
-        var rng = chunk.GetRandom();
+        var rng = new Vector3(chunk.x, chunk.y, Constants.Map.Seed).GetRandom();
         var offsetX = rng.Next(0, (int)(chunkSize.x - maxClusterSize.x));
         var offsetY = rng.Next(0, (int)(chunkSize.y - maxClusterSize.y));
         var localOffset = new Vector2(offsetX, offsetY);
@@ -60,6 +60,7 @@ public static class ResourcesRandomizer
             }
         }
     }
+
     private static Dictionary<int, Queue<Molecule>> GetRandomMoleculesPerRing()
     {
         var moleculesPerRing = new Dictionary<int, Queue<Molecule>>();
@@ -68,7 +69,7 @@ public static class ResourcesRandomizer
         {
             var molecules = new List<Molecule>();
             var chunksCount = ring * 2 * 4; // Height/width doubled and 4 sides
-            var rng = new Vector2(ring, chunksCount).GetRandom();
+            var rng = new Vector2(ring, Constants.Map.Seed).GetRandom();
 
             foreach (var rule in rules)
             {

@@ -32,6 +32,12 @@ public static class Vector2Extensions
         return new Random(seed);
     }
 
+    public static Random GetRandom(this Vector3 chunk)
+    {
+        var seed = (int)chunk.x * 73856093 ^ (int)chunk.y * 19349663 ^ (int)chunk.z * 83492791;
+        return new Random(seed);
+    }
+
     public static IEnumerable<Vector2> EnumeratePositions(this Vector2 anchorPosition, Direction direction, Vector2 size)
     {
         foreach (var (position, _) in anchorPosition.EnumerateAllPositions(direction, size))

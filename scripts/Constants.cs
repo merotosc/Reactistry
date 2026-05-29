@@ -22,6 +22,7 @@ public class Constants
 
     public static class Map
     {
+        public static readonly int Seed = "56cfe6dd-bd14-4053-b876-9f4c39653317".GetHashCode();
         public const int TileSize = 16;
         public static readonly Vector2 WorldSize = new(7, 7);
         public static readonly Vector2 ChunkSize = new(33, 33);
@@ -34,6 +35,7 @@ public class Constants
             [
                 new(Molecule.O2, min: 3, weight: 5),
                 new(Molecule.H2, min: 3, weight: 5),
+                new(Molecule.C, min: 2, weight: 3),
             ],
             [2] = // Ring 2
             [

@@ -12,7 +12,7 @@ public class ShortcutsUI : Control
     private Vector2 expandedPosition;
     private Vector2 collapsedPosition;
 
-    public override void _Ready()
+    public void Init(bool firstRun)
     {
         sidebar = GetNode<Control>("Sidebar/PanelContainer");
         toggleButton = GetNode<Button>("Sidebar/ToggleButton");
@@ -22,6 +22,11 @@ public class ShortcutsUI : Control
 
         expandedPosition = sidebar.RectPosition;
         collapsedPosition = expandedPosition - new Vector2(sidebar.RectSize.x, 0);
+
+        if (!firstRun)
+        {
+            TogglePanel();
+        }
     }
 
     public void OnButtonPressed()

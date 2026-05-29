@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Reactistry.scripts.Models;
 
 public class SaveData
 {
+    public DateTime? LastSaved { get; set; } = null;
+
     public List<LabTaskSaveData> CurrentTasks { get; set; } = [];
 
     public List<string> CompletedTasks { get; set; } = [];

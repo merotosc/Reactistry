@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Reactistry.scripts.UI;
@@ -25,7 +26,7 @@ public class TutorialUI : Control
 
     private Control panel;
 
-    public override void _Ready()
+    public void Init(bool firstRun)
     {
         helpButton = GetNode<Button>("HelpButton");
 
@@ -46,7 +47,7 @@ public class TutorialUI : Control
 
         LoadTutorialSteps();
 
-        panel.Visible = false;
+        panel.Visible = firstRun;
     }
 
     private void LoadTutorialSteps()

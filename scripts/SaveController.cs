@@ -66,6 +66,7 @@ public class SaveController : Node
 
             var saveData = new SaveData
             {
+                LastSaved = DateTime.UtcNow,
                 CurrentTasks = currentTasks,
                 CompletedTasks = tasksController.CompletedTasks,
                 Buildings = buildings,

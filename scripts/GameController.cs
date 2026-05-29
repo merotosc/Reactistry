@@ -23,6 +23,8 @@ public class GameController : Node
         GetNode<TasksUI>("Canvas/TasksUI").Init();
         GetNode<ToolsUI>("Canvas/ToolsUI").Init();
         GetNode<TooltipUI>("Canvas/TooltipUI").Init(world);
+        GetNode<ShortcutsUI>("Canvas/ShortcutsUI").Init(saveData.LastSaved == null);
+        GetNode<TutorialUI>("Canvas/TutorialUI").Init(saveData.LastSaved == null);
         saveController.Init(world, tasksController);
         buildController.Init(world);
         rendererController.Init(world); // Renderer controller must init before as it subscribes to the buildings events

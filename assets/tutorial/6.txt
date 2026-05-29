@@ -1,1 +1,4 @@
-﻿Use a reactor to make chemicals react and produce new compounds. The key here is to manage the reaction with the correct stoichiometry. For example, one molecule of H2 can react with one molecule of O2 to produce H2O2. But what happens if the reactor receives three inputs instead of two, such as two H2 molecules and one O2 molecule?
+﻿Use a reactor to make chemicals react and produce new compounds. The key here is to manage the reaction with the correct stoichiometry.
+For example, one molecule of H2 can react with one molecule of O2 to produce H2O2.
+You can also change the inputs count with the 'F' shortcut.
+Now what will happen if the reactor receives three inputs, such as two H2 molecules and one O2 molecule?

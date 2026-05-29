@@ -2,6 +2,11 @@
 
 ## General
 
+### Bugs
+
+- [ ] merger sometimes only merges one input when many items throughput
+- [ ] reactor with H2+H2+H2+CO gives the same 4 items as output
+
 ### vNext
 
 - [ ] reload game on save data clear
@@ -69,6 +74,7 @@
 
 ### vNext
 
+- [ ] save icon less dark
 - [ ] animation with delay on task complete
 - [ ] show message when all tasks completed
 - [ ] improve shortcuts and cheat sheet

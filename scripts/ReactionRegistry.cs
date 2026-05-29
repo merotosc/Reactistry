@@ -91,8 +91,9 @@ public static class ReactionRegistry
                 if (reaction.InputMolecules.Any() && reaction.OutputMolecules.Any())
                 {
                     var formula = GetStableFormula(reaction.InputMolecules);
+                    var formulaOutput = GetStableFormula(reaction.OutputMolecules);
                     reactions.Add(formula, reaction);
-                    //GD.PrintT("Registered reaction", reaction.Name, formula);
+                    GD.PrintT("Registered reaction", reaction.Name, formula, formulaOutput);
                 }
             }
 

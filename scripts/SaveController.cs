@@ -155,7 +155,7 @@ public class SaveController : Node
         await ToSignal(tween, "tween_all_completed");
 
         notificationMessage.Visible = false;
-        notificationMessage.Modulate = new Color(0, 0, 0, 1);
+        notificationMessage.Modulate = new Color(notificationMessage.Modulate, 1);
         tween.QueueFree();
     }
 }

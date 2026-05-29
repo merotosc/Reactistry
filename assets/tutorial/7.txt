@@ -1,0 +1,1 @@
+﻿You can then use a splitter to divide a single flow of chemicals into multiple separate flows of that same chemical.

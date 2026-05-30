@@ -1,1 +1,4 @@
-﻿The Building Bar (Bottom-Center): This is your construction toolkit. Here, you'll find the main buildings (which we will explore in just a second). Simply select a building with your mouse to start constructing your factory.
+﻿The Toolbar (Bottom-Center): This is your construction toolkit.
+Here, you'll find the main buildings (which we will explore in just a second).
+Simply select a building with your mouse (or use the number keys as shortcut) to start constructing your factory.
+You can also rotate the buildings by using the 'R' shortcut.

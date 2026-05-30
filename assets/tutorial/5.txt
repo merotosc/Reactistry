@@ -1,1 +1,2 @@
 ﻿By connecting pipes to the extractor, you can transport the chemicals wherever you need them.
+By using the 'Alt' shortcut you can toggle between orthogonal and free mode placement.

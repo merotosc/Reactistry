@@ -2,14 +2,13 @@
 
 ## General
 
-### Bugs
-
-- [ ] merger sometimes only merges one input when many items throughput
-- [ ] reactor with H2+H2+H2+CO gives the same 4 items as output
-
 ### vNext
 
+- [ ] merger sometimes only merges one input when many items throughput (or waiting output items?)
+- [ ] reactor with H2+H2+H2+CO gives the same 4 items as output
+- [ ] use random seed on each game start
 - [ ] reload game on save data clear
+- [ ] support multiple save data
 - [ ] keep tool when canceling operation with esc?
 - [ ] rename merger and splitter. Distributor, Balancer, Divider, Combiner?
 - [ ] use input map for key bindings
@@ -18,14 +17,13 @@
 - [ ] save last camera position in save data
 - [ ] save items in buildings in save data
 - [ ] random seed every new game stored in save data
-- [ ] save/load from/to json save data
+- [ ] save/load from/to json save data (e.g. Ctrl+Shift+S and Ctrl+O)
 - [ ] read atom colors from atoms.csv
 - [ ] developer docs
 - [ ] better csv reading avoiding duplicate code
 - [ ] unlock rings based on levels
 - [ ] remove GetItems in favor of GetInfo?
 - [ ] helper method to determine output position and direction for item in building
-- [ ] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [ ] decide if okay that ItemPath is set in producers when creating and in world when moving -> ev set or return path when consuming item
 - [ ] mirror option for buildings
 - [ ] use state machine for buildings update loop
@@ -39,6 +37,7 @@
 
 ### Done
 
+- [x] refactor building extension methods to a Dictionary<BuildingType, BuildingDefinition>
 - [x] move to other hosting website (GitHub Pages?)
 - [x] add try catch blocks to avoid game crash
 - [x] unlock next task when one single finished
@@ -74,7 +73,8 @@
 
 ### vNext
 
-- [ ] save icon less dark
+- [ ] button with hint for bugs
+- [ ] make buildings inputs/outputs more visible (e.g. with arrows on input/output tiles)
 - [ ] animation with delay on task complete
 - [ ] show message when all tasks completed
 - [ ] improve shortcuts and cheat sheet
@@ -109,6 +109,7 @@
 
 ### Done
 
+- [x] save icon less dark
 - [x] change icon of game
 - [x] display tutorial hints / printscreen
 - [x] blue arrow for extractor output

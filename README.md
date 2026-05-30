@@ -11,7 +11,7 @@ The game is available both as a downloadable Windows application and as a web ve
 
 ### Web Page
 
-Open the following url in the browser: `https://merotosc.github.io/Reactistry`
+Open the following url in the browser: <https://merotosc.github.io/Reactistry>
 
 ### Windows Executable
 

@@ -1,4 +1,6 @@
 ﻿Welcome to Reactistry!
-Your journey to becoming the CEO of a booming chemical empire starts here.
+
+Your journey to becoming the CEO of a chemical empire starts here.
 Get ready to build your very own chemical factory from scratch, solve complex reaction puzzles, and deliver vital compounds to the lab.
+
 Are you ready to innovate? Let’s go!

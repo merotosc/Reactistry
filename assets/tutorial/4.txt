@@ -1,1 +1,3 @@
-﻿Now that you understand the basics of the interface, you can start looking around the map. You should look for resources, which are where the raw chemical components are located. By placing an extractor on top of a raw material resource, you can begin harvesting it and start building your factory.
+﻿Now that you understand the basics of the interface, you can start looking around the map.
+You should look for resources, which are where the raw chemical components are located.
+By placing an extractor on top of a raw material resource, you can begin harvesting it and start building your factory.

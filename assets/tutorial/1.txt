@@ -1,3 +1,4 @@
 ﻿Before you can mix your first chemicals, let's take a quick look at how everything works:
 
-The Command Guide (Top-Left Corner): Need a reminder on how to play? Click the handy popup window in the upper-left corner. It contains explanations for all the controls you'll need, and you can access it at any time during the game.
+The Shortcuts List (Top-Left Corner): Need a reminder on the available shortcuts? Click the popup window in the upper-left corner.
+It contains explanations for all the controls you'll need, and you can access it at any time during the game.

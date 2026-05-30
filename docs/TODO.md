@@ -73,6 +73,7 @@
 
 ### vNext
 
+- [ ] fix icon for windows exe
 - [ ] button with hint for bugs
 - [ ] make buildings inputs/outputs more visible (e.g. with arrows on input/output tiles)
 - [ ] animation with delay on task complete
